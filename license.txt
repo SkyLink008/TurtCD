@@ -1,0 +1,38 @@
+TurtCD License (EULA)
+Author and Copyright Holder:
+Yuri Evgenievich Kartavykh
+Effective Date: October 25, 2025
+
+1. General Provisions
+1.1. This license (hereinafter referred to as the Agreement) governs the use of the TurtCD program (hereinafter referred to as the Program), developed and owned by Yuri Evgenievich Kartavykh (hereinafter referred to as the Copyright Holder).
+1.2. By installing, using, or otherwise interacting with the Program, the user acknowledges that they have read and accept the terms of this license.
+1.3. The Program is provided free of charge for non-commercial use.
+
+2. Rights and Restrictions
+2.1. The user is granted a limited right to install and use the Program for personal and educational purposes.
+2.2. The user is prohibited from:
+copying, distributing, modifying, or decompiling the source code of the Program;
+
+transferring the Program to third parties without the written permission of the Copyright Holder;
+
+Create derivative works based on the Program;
+
+Distribute or modify any materials, add-ons, plug-ins, or content provided through the TurtCD store or included in the official installer.
+
+3. Commercial Use
+3.1. The Program may be used to create your own products.
+3.2. If a product created using the Program is distributed or sold commercially, the user is obligated to:
+notify the Copyright Holder of such commercial use;
+
+enter into an agreement on the amount of the license fee (a percentage of sales) determined by mutual agreement of the parties.
+3.3. Commercial use without the consent of the Copyright Holder is considered a violation of the license terms and will result in the termination of all rights granted.
+
+4. Liability
+4.1. The Program is provided "as is" without any warranties, express or implied.
+4.2. The Copyright Holder shall not be liable for any damage, loss, or loss of data arising from the use of the Program.
+4.3. Violation of this Agreement shall result in the termination of all rights granted and may entail legal liability in accordance with applicable law.
+
+5. Final Provisions
+5.1. All rights to the Program, its code, design, TurtCD store materials, and related resources belong to the Copyright Holder.
+5.2. Any changes to the license terms shall take effect upon publication of the new version on the project's official resources.
+5.3. All disputes arising from the use of the Program shall be subject to the laws of the Russian Federation at the location of the Copyright Holder.

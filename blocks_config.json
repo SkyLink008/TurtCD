@@ -1,0 +1,1522 @@
+{
+  "mod_allow": true,
+  "categories": [
+    {
+      "id": "main",
+      "name": "Система",
+      "color": "#3498db",
+      "collapsed": false,
+      "blocks": [
+        {
+          "id": "start",
+          "name": "При запуске программы",
+          "type": "header",
+          "color": "#2196F3",
+          "code": "import os\n\n\n\n\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_ec4de4ae",
+          "name": "Произвольная строка",
+          "type": "action",
+          "color": "#2196f3",
+          "code": "{line}\n",
+          "fields": [
+            {
+              "name": "line",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "line"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_2d89de0b",
+          "name": "Выполнить команду в терминале",
+          "type": "action",
+          "color": "#b90746",
+          "code": "os.system(\"{command}\")\n",
+          "fields": [
+            {
+              "name": "command",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "command"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_e5a89a9b",
+          "name": "Использовать глобальную переменную",
+          "type": "action",
+          "color": "#2196f3",
+          "code": "global {value}\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_af72cacb",
+          "name": "Комментарий",
+          "type": "action",
+          "color": "#f2a20d",
+          "code": "# {comment}\n",
+          "fields": [
+            {
+              "name": "comment",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "line"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_89fde9c8",
+      "name": "Данные",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_727e3a1a",
+          "name": "Создать строковую переменную",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "{name} = \"{value}\"\n\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "value"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_85d1f072",
+          "name": "Создать числовую переменную",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "{name} = {value}\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "number",
+              "required": true,
+              "placeholder": "value (number)"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_36e2d71a",
+          "name": "Запросить строку",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "{name} = input(\"{message}\")\n\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "message"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_05abf01a",
+          "name": "Запросить число",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "{name} = int(input(\"{message}\"))\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "message"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_c9be8be3",
+          "name": "Отобразить переменную",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "print({name})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_7b422628",
+          "name": "Установить значение для строки",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "{name} = \"{value}\"\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "value"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_77fc8a9d",
+          "name": "Установить значение для числа",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "{name} = {value}\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "number",
+              "required": true,
+              "placeholder": "value (number)"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_21524203",
+          "name": "Создать переменную с дробным числом",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "{name} = {value}\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "number",
+              "required": true,
+              "placeholder": "value (float)"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_09e6ccc7",
+          "name": "Установить дробное значение",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "{name} = {value}\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "value (float)"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_b64d8539",
+          "name": "Запросить дробное значение",
+          "type": "action",
+          "color": "#ff00ff",
+          "code": "{name} = float(input(\"{message}\"))\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "message"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_ab38b389",
+      "name": "Исключения",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_ca1acac6",
+          "name": "Иначе",
+          "type": "loop",
+          "color": "#126b61",
+          "code": "except:\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_f8b13a60",
+          "name": "Попытаться",
+          "type": "loop",
+          "color": "#126b61",
+          "code": "try:\n\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fb44d843",
+      "name": "Импорт",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_c4b8543e",
+          "name": "Проимпортировать библиотеку",
+          "type": "action",
+          "color": "#ff0080",
+          "code": "import {name}\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_f436251c",
+          "name": "Обратиться",
+          "type": "action",
+          "color": "#ff0080",
+          "code": "{entry}\n",
+          "fields": [
+            {
+              "name": "entry",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "line"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_d4dcbe53",
+      "name": "Функции",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_7d60459a",
+          "name": "Создать функцию",
+          "type": "loop",
+          "color": "#800000",
+          "code": "def {name}():\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_8b598c66",
+          "name": "Вызвать функцию",
+          "type": "action",
+          "color": "#800000",
+          "code": "{name}()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_5c33a218",
+          "name": "Принудительно завершить функцию",
+          "type": "action",
+          "color": "#800000",
+          "code": "break\n\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_68c9fdaf",
+          "name": "Вернуть",
+          "type": "action",
+          "color": "#800000",
+          "code": "return {name}\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "value / name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_1788ecec",
+      "name": "Консоль",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_a2d05b60",
+          "name": "Вывести",
+          "type": "action",
+          "color": "#8000ff",
+          "code": "print(\"{text}\")\n",
+          "fields": [
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "text"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_30c98e4e",
+          "name": "Вывести в линию",
+          "type": "action",
+          "color": "#8000ff",
+          "code": "print(\"{text}\", end=\"\")\n",
+          "fields": [
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "text"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_908d4dcc",
+          "name": "Вывести переменную",
+          "type": "action",
+          "color": "#8000ff",
+          "code": "print(str({name}))\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_b4f36434",
+          "name": "Вывести переменную в линию",
+          "type": "action",
+          "color": "#8000ff",
+          "code": "print(str({name}), end=\"\")\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_f7c341c7",
+      "name": "Математика",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_5bf24e14",
+          "name": "Умножить (C = A * B)",
+          "type": "action",
+          "color": "#00b000",
+          "code": "{C} = {A} * {B}\n\n",
+          "fields": [
+            {
+              "name": "C",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "C"
+            },
+            {
+              "name": "A",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "A"
+            },
+            {
+              "name": "B",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "B"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_b24ee093",
+          "name": "Вычесть (C = A - B)",
+          "type": "action",
+          "color": "#00b000",
+          "code": "{nameC} = {name} - {count}\n\n\n\n",
+          "fields": [
+            {
+              "name": "nameC",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "C"
+            },
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "A"
+            },
+            {
+              "name": "count",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "B"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_ad3eba5a",
+          "name": "Разделить нацело (С = A / B)",
+          "type": "action",
+          "color": "#00b000",
+          "code": "{C} = {A} / {B}\n\n",
+          "fields": [
+            {
+              "name": "C",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "C"
+            },
+            {
+              "name": "A",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "A"
+            },
+            {
+              "name": "B",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "B"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_b30b06ae",
+          "name": "Возвести в степень (C = A ^ B)",
+          "type": "action",
+          "color": "#00b000",
+          "code": "{C} = {A} ** {B}\n\n",
+          "fields": [
+            {
+              "name": "C",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "C"
+            },
+            {
+              "name": "A",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "A"
+            },
+            {
+              "name": "B",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "B"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fd35966f",
+          "name": "Остаток от деления (C = A % B)",
+          "type": "action",
+          "color": "#00b000",
+          "code": "{C} = {A} % {B}\n\n",
+          "fields": [
+            {
+              "name": "C",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "C"
+            },
+            {
+              "name": "A",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "A"
+            },
+            {
+              "name": "B",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "B"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_65bd227a",
+          "name": "Произвольное выражение",
+          "type": "action",
+          "color": "#00b000",
+          "code": "{value}\n",
+          "fields": [
+            {
+              "name": "value",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "entry"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_47f2808e",
+          "name": "Деление (C = A / B)",
+          "type": "action",
+          "color": "#00b000",
+          "code": "{c} = {a} / {b}\n\n",
+          "fields": [
+            {
+              "name": "c",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "C"
+            },
+            {
+              "name": "a",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "A"
+            },
+            {
+              "name": "c",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "B"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_5356ddb9",
+          "name": "Сложить (C = A + B)",
+          "type": "action",
+          "color": "#00b000",
+          "code": "{result} = {A} + {B}\n\n\n",
+          "fields": [
+            {
+              "name": "result",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "C"
+            },
+            {
+              "name": "A",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "A"
+            },
+            {
+              "name": "B",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "B"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_035f44b0",
+      "name": "Циклы и условия",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_d981d4bc",
+          "name": "Бесконечный цикл",
+          "type": "loop",
+          "color": "#25dacc",
+          "code": "while True:\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_188e6425",
+          "name": "Пока истинно",
+          "type": "loop",
+          "color": "#25dacc",
+          "code": "while {condition}:\n\n",
+          "fields": [
+            {
+              "name": "condition",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "condition"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_c1af2fb1",
+          "name": "Прервать",
+          "type": "action",
+          "color": "#25dacc",
+          "code": "break\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_c342c51a",
+          "name": "Условие",
+          "type": "condition",
+          "color": "#25dacc",
+          "code": "if {condition}:\n\n\n",
+          "fields": [
+            {
+              "name": "condition",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "condition"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_d9a18627",
+          "name": "Иначе",
+          "type": "condition",
+          "color": "#25dacc",
+          "code": "else:\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_f4b9e162",
+          "name": "Повторить n раз",
+          "type": "loop",
+          "color": "#25dacc",
+          "code": "for {tick} in range({count}):\n\n\n\n",
+          "fields": [
+            {
+              "name": "count",
+              "label": "",
+              "type": "number",
+              "required": true,
+              "placeholder": "n"
+            },
+            {
+              "name": "tick",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "flag"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_a659f13f",
+      "name": "Работа со строками",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_6a07a94f",
+          "name": "В верхний  регистр",
+          "type": "action",
+          "color": "#808080",
+          "code": "{value} = {value}.upper()\n",
+          "fields": [
+            {
+              "name": "value",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "value"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_133f1417",
+          "name": "В нижний регистр",
+          "type": "action",
+          "color": "#808080",
+          "code": "{a} = {a}.lower()\n\n",
+          "fields": [
+            {
+              "name": "a",
+              "label": "",
+              "type": "text",
+              "required": false,
+              "placeholder": "value"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_9de65112",
+          "name": "Определить длинну",
+          "type": "action",
+          "color": "#808080",
+          "code": "{a} = len({line})\n",
+          "fields": [
+            {
+              "name": "a",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "len_to_save"
+            },
+            {
+              "name": "line",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "line"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_572fc020",
+          "name": "Объеденить в строку",
+          "type": "action",
+          "color": "#808080",
+          "code": "{result} = str({elements})\n\n",
+          "fields": [
+            {
+              "name": "result",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "result"
+            },
+            {
+              "name": "elements",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "elements"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_923356d4",
+          "name": "Заменить А на B",
+          "type": "action",
+          "color": "#808080",
+          "code": "{value} = {value}.replace({A}, {B})\n\n",
+          "fields": [
+            {
+              "name": "A",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "A"
+            },
+            {
+              "name": "B",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "B"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "value"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_dd068b74",
+      "name": "Массивы",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_3879c17e",
+          "name": "Создать массив",
+          "type": "action",
+          "color": "#dfdea4",
+          "code": "{name} = [{elements}]\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "elements",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "elements"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_98a05926",
+          "name": "Добавить в массив",
+          "type": "action",
+          "color": "#dfdea4",
+          "code": "{name}.append({element})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "element",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "element"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_4db734a3",
+          "name": "Получить из массива",
+          "type": "action",
+          "color": "#dfdea4",
+          "code": "{output} = {name}[{index}]\n\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "massive"
+            },
+            {
+              "name": "index",
+              "label": "",
+              "type": "number",
+              "required": true,
+              "placeholder": "index"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_1374924a",
+          "name": "Получить индекс",
+          "type": "action",
+          "color": "#dfdea4",
+          "code": "{output} = {massive}.index({element})\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "massive",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "massive"
+            },
+            {
+              "name": "element",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "element"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_91a4c22c",
+          "name": "Получить длинну массива",
+          "type": "action",
+          "color": "#dfdea4",
+          "code": "{output} = len({massive})\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "massive",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "massive"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_9a2a5f0f",
+      "name": "Файлы",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_a84eb5d7",
+          "name": "Открыть файл",
+          "type": "action",
+          "color": "#FF9800",
+          "code": "{name} = open({path}, '{type}', encoding=\"utf-8\")\n\n\n\n\n",
+          "fields": [
+            {
+              "name": "path",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"path\""
+            },
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "type",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "type"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_4f79488f",
+          "name": "Прочитать файл",
+          "type": "action",
+          "color": "#FF9800",
+          "code": "{output} = {name}.read()\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_71bcc246",
+          "name": "Записать в файл",
+          "type": "action",
+          "color": "#FF9800",
+          "code": "{name}.write({text})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_85f89aef",
+          "name": "Закрыть файл",
+          "type": "action",
+          "color": "#FF9800",
+          "code": "{name}.close()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_d720fb90",
+          "name": "Удалить файл",
+          "type": "action",
+          "color": "#FF9800",
+          "code": "os.remove({path})\n",
+          "fields": [
+            {
+              "name": "path",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"path\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_1e304c40",
+          "name": "Если файл существует",
+          "type": "condition",
+          "color": "#FF9800",
+          "code": "if os.path.isfile({path}):\n",
+          "fields": [
+            {
+              "name": "path",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"path\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_2be8c0a9",
+          "name": "Создать папку",
+          "type": "action",
+          "color": "#FF9800",
+          "code": "os.mkdir({path})\n",
+          "fields": [
+            {
+              "name": "path",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"path\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_449fde10",
+          "name": "Если папка есть",
+          "type": "condition",
+          "color": "#FF9800",
+          "code": "if os.path.isdir({path}):\n",
+          "fields": [
+            {
+              "name": "path",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"path\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_99d80a13",
+      "name": "Базы данных",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_9dfae0b4",
+          "name": "Создать key-value базу данных",
+          "type": "action",
+          "color": "#808040",
+          "code": "{name}kv_k = []\n{name}kv_o = []\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_864f0d74",
+          "name": "Сохранить в key-value значение",
+          "type": "action",
+          "color": "#808040",
+          "code": "{name}kv_k.append({key})\n{name}kv_o.append({object})\n\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "key",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "\"key\""
+            },
+            {
+              "name": "object",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "\"object\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_628306e4",
+          "name": "Получить значение из key-value",
+          "type": "action",
+          "color": "#808040",
+          "code": "{output} = {name}kv_o[{name}kv_k.index({key})]\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "key",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "\"key\""
+            },
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_4140526a",
+          "name": "Выгрузить из backup",
+          "type": "action",
+          "color": "#808040",
+          "code": "{name}kv_o = {backup}[0]\n{name}kv_k = {backup}[1]\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "backup",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "backup"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_05a5fd1b",
+          "name": "Если key существует",
+          "type": "condition",
+          "color": "#808040",
+          "code": "if {key} in {db}kv_k:\n\n\n",
+          "fields": [
+            {
+              "name": "key",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "\"key\""
+            },
+            {
+              "name": "db",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "database"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_0e72d302",
+          "name": "Удалить запись по key",
+          "type": "action",
+          "color": "#808040",
+          "code": "kv_temp_db = {db}kv_k.index({key})\n{db}kv_k.pop(kv_temp_db)\n{db}kv_o.pop(kv_temp_db)\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    }
+  ]
+}
