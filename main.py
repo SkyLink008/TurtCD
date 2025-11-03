@@ -570,6 +570,9 @@ def generate_python_code(project):
         block_cfg = find_block_config(block.get('template'))
         if not block_cfg:
             return
+        
+        is_ignored = block.get('ignored', False)
+        
         code = block_cfg.get('code', '')
         for n, v in block.get('fields', {}).items():
             code = code.replace(f"{{{n}}}", str(v or ""))
@@ -578,10 +581,16 @@ def generate_python_code(project):
             lines = code.rstrip().split('\n')
             for line in lines:
                 if line.strip():  # Добавляем только непустые строки
-                    code_lines.append("    " * indent + line)
+                    if is_ignored:
+                        # Комментируем строки игнорированного блока
+                        code_lines.append("    " * indent + "# " + line)
+                    else:
+                        code_lines.append("    " * indent + line)
         if block_cfg['type'] in ['condition', 'loop']:
             body = next((c for c in outgoing.get(block_id, []) if c['fromConnector'] == 'right'), None)
             if body:
+                # Если блок игнорирован, все блоки на правом коннекторе также будут игнорированы
+                # и автоматически закомментированы внутри compile_block
                 compile_block(body['to'], indent + 1)
             nxt = next((c for c in outgoing.get(block_id, []) if c['fromConnector'] == 'bottom'), None)
             if nxt:
