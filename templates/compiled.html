@@ -691,7 +691,7 @@ html, body {
 <div class="modal-text">
 <div style="margin-bottom: 12px;">
 <label style="display: block; margin-bottom: 4px; font-weight: 500;">Имя EXE файла:</label>
-<input class="input" id="exeName" placeholder="program.exe" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:var(--white);" value="program.exe"/>
+<input class="input" id="exeName" placeholder="program.exe" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:var(--white);"/>
 </div>
 <div style="margin-bottom: 12px;">
 <label style="display: block; margin-bottom: 4px; font-weight: 500;">Иконка (опционально):</label>
@@ -868,7 +868,10 @@ function closeLeaveModal(){
 function openSavePyModal(){
   const modal = document.getElementById('savePyModal');
   const input = document.getElementById('savePyName');
-  input.value = 'program.py';
+  // Получаем имя проекта из localStorage
+  const currentProject = localStorage.getItem('currentProject') || 'program';
+  const projectName = currentProject.replace('.turtcd', '');
+  input.value = projectName + '.py';
   modal.classList.remove('hidden');
   modal.setAttribute('aria-hidden','false');
   setTimeout(()=> input.focus(), 0);
@@ -883,6 +886,13 @@ function closeSavePyModal(){
 // EXE Compilation functions
 function openExeCompileModal(){
   const modal = document.getElementById('exeCompileModal');
+  // Получаем имя проекта из localStorage и устанавливаем в поле ввода
+  const currentProject = localStorage.getItem('currentProject') || 'program';
+  const projectName = currentProject.replace('.turtcd', '');
+  const exeNameInput = document.getElementById('exeName');
+  if (exeNameInput) {
+    exeNameInput.value = projectName + '.exe';
+  }
   modal.classList.remove('hidden');
   modal.setAttribute('aria-hidden','false');
 }
