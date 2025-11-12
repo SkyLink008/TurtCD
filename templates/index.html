@@ -1255,6 +1255,57 @@ button, .button, input[type=button], input[type=submit] {
     font-family: monospace !important;
     font-size: 16px !important;
 }
+
+/* Лицензионное соглашение */
+.license-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 16px;
+  background: rgba(0,0,0,0.25);
+  margin-bottom: 16px;
+  box-shadow: inset 0 0 12px rgba(0,0,0,0.25);
+}
+
+.license-text {
+  white-space: pre-wrap;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--white);
+}
+
+.license-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+/* License badge */
+.license-badge {
+  position: fixed;
+  right: 12px;
+  top: 10px;
+  z-index: 10060;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--white);
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 6px 10px;
+  border-radius: 10px;
+  backdrop-filter: blur(2px);
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.license-badge:hover {
+  background: rgba(0,0,0,0.5);
+  border-color: rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
 </style>
 </head>
 <body>
@@ -5012,12 +5063,76 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
+/* ========== License modal ========== */
+async function loadVersion() {
+  try {
+    const response = await fetch('/api/version');
+    const data = await response.json();
+    if (data.status === 'success' && data.version) {
+      const versionBadge = document.getElementById('versionBadge');
+      if (versionBadge) {
+        versionBadge.textContent = `v${data.version}`;
+      }
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки версии:', error);
+  }
+}
+
+async function openLicenseModal() {
+  const modal = document.getElementById('licenseModal');
+  const licenseText = document.getElementById('licenseText');
+  const errorEl = document.getElementById('licenseError');
+  
+  if (!modal || !licenseText) return;
+  
+  modal.style.display = 'block';
+  licenseText.textContent = 'Загрузка лицензионного соглашения...';
+  errorEl.style.display = 'none';
+  
+  try {
+    const response = await fetch('/api/license/text');
+    const data = await response.json();
+    
+    if (data.status === 'success' && data.text) {
+      licenseText.textContent = data.text;
+    } else {
+      licenseText.textContent = 'Ошибка загрузки лицензионного соглашения.';
+      errorEl.textContent = data.message || 'Не удалось загрузить лицензию';
+      errorEl.style.display = 'block';
+    }
+  } catch (error) {
+    licenseText.textContent = 'Ошибка загрузки лицензионного соглашения.';
+    errorEl.textContent = 'Не удалось подключиться к серверу';
+    errorEl.style.display = 'block';
+    console.error('Ошибка загрузки лицензии:', error);
+  }
+}
+
+function closeLicenseModal() {
+  const modal = document.getElementById('licenseModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+// Закрытие модального окна лицензии по Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const licenseModal = document.getElementById('licenseModal');
+    if (licenseModal && licenseModal.style.display === 'block') {
+      closeLicenseModal();
+    }
+  }
+});
+
 /* ========== Init ========== */
 (async function init(){
   await loadBlocksConfig();
   loadTheme();
   loadValueHistory(); // Загружаем историю значений для автодополнения
   await loadCurrentProject();
+  await loadVersion(); // Загружаем версию
   // apply camera transform
   updateCamera();
   updateCounts();
@@ -5025,8 +5140,24 @@ document.addEventListener('keydown', function(e) {
 })();
 </script>
 </body>
-<!-- License badge -->
-<div style="position: fixed; right: 12px; top: 10px; z-index: 10060; font-size: 12px; font-weight: 700; color: var(--white); background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); padding: 6px 10px; border-radius: 10px; backdrop-filter: blur(2px); user-select: none; pointer-events: none;">
-  🛡 licensed by TurtCD
+  <!-- License badge -->
+<div id="licenseBadge" class="license-badge" onclick="openLicenseModal()">
+  🛡 licensed by TurtCD <span id="versionBadge" style="opacity: 0.7;">v1.0.0</span>
 </div>
+
+  <!-- License modal -->
+  <div id="licenseModal" style="display:none">
+    <div class="modal-backdrop" onclick="if(event.target === this) closeLicenseModal()">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="licenseModalTitle">
+        <h3 id="licenseModalTitle">Лицензионное соглашение</h3>
+        <div id="licenseError" class="license-hint" style="display:none; color: var(--danger);"></div>
+        <div id="licenseScroll" class="license-scroll">
+          <pre id="licenseText" class="license-text">Загрузка лицензионного соглашения...</pre>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-ghost" onclick="closeLicenseModal()">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </html>

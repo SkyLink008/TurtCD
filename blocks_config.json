@@ -1008,43 +1008,11 @@
           "height": 80
         },
         {
-          "id": "block_923356d4",
-          "name": "Заменить А на B",
-          "type": "action",
-          "color": "#808080",
-          "code": "{value} = {value}.replace({A}, {B})\n\n",
-          "fields": [
-            {
-              "name": "A",
-              "label": "",
-              "type": "text",
-              "required": true,
-              "placeholder": "A"
-            },
-            {
-              "name": "B",
-              "label": "",
-              "type": "text",
-              "required": true,
-              "placeholder": "B"
-            },
-            {
-              "name": "value",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "value"
-            }
-          ],
-          "width": 180,
-          "height": 80
-        },
-        {
           "id": "block_72b9de4d",
           "name": "Разбить по символу n",
           "type": "action",
-          "color": "#ff9800",
-          "code": "{output} = {line}.split({n})\n\n",
+          "color": "#808080",
+          "code": "{output} = {line}.split({n})\n\n\n",
           "fields": [
             {
               "name": "n",
@@ -1066,6 +1034,45 @@
               "type": "text",
               "required": true,
               "placeholder": "\"line\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_923356d4",
+          "name": "Заменить А на B",
+          "type": "action",
+          "color": "#808080",
+          "code": "{value} = {mass}.replace({A}, {B})\n\n\n\n",
+          "fields": [
+            {
+              "name": "A",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "A"
+            },
+            {
+              "name": "B",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "B"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "mass",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "mass"
             }
           ],
           "width": 180,
@@ -1296,6 +1303,67 @@
       ]
     },
     {
+      "id": "category_75d56e8e",
+      "name": "Случайность",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_f19a0eda",
+          "name": "Инициализировать случайность",
+          "type": "action",
+          "color": "#00ff00",
+          "code": "import random\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_7f66b960",
+          "name": "Случайное целое значение от 0 до n",
+          "type": "action",
+          "color": "#00ff00",
+          "code": "{output} = random.randint(0, {max})\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "max",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "n"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_5b82c0cc",
+          "name": "Перемешать элементы в списке n",
+          "type": "action",
+          "color": "#00ff00",
+          "code": "random.shuffle({n})\n",
+          "fields": [
+            {
+              "name": "n",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "n"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
       "id": "category_9a2a5f0f",
       "name": "Файлы",
       "color": "#3498db",
@@ -1470,156 +1538,6 @@
               "placeholder": "\"path\""
             }
           ],
-          "width": 180,
-          "height": 80
-        }
-      ]
-    },
-    {
-      "id": "category_99d80a13",
-      "name": "Базы данных",
-      "color": "#3498db",
-      "collapsed": true,
-      "blocks": [
-        {
-          "id": "block_9dfae0b4",
-          "name": "Создать key-value базу данных",
-          "type": "action",
-          "color": "#808040",
-          "code": "{name}kv_k = []\n{name}kv_o = []\n",
-          "fields": [
-            {
-              "name": "name",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "name"
-            }
-          ],
-          "width": 180,
-          "height": 80
-        },
-        {
-          "id": "block_864f0d74",
-          "name": "Сохранить в key-value значение",
-          "type": "action",
-          "color": "#808040",
-          "code": "{name}kv_k.append({key})\n{name}kv_o.append({object})\n\n\n\n",
-          "fields": [
-            {
-              "name": "name",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "name"
-            },
-            {
-              "name": "key",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "\"key\""
-            },
-            {
-              "name": "object",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "\"object\""
-            }
-          ],
-          "width": 180,
-          "height": 80
-        },
-        {
-          "id": "block_628306e4",
-          "name": "Получить значение из key-value",
-          "type": "action",
-          "color": "#808040",
-          "code": "{output} = {name}kv_o[{name}kv_k.index({key})]\n",
-          "fields": [
-            {
-              "name": "name",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "name"
-            },
-            {
-              "name": "key",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "\"key\""
-            },
-            {
-              "name": "output",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "output"
-            }
-          ],
-          "width": 180,
-          "height": 80
-        },
-        {
-          "id": "block_4140526a",
-          "name": "Выгрузить из backup",
-          "type": "action",
-          "color": "#808040",
-          "code": "{name}kv_o = {backup}[0]\n{name}kv_k = {backup}[1]\n",
-          "fields": [
-            {
-              "name": "name",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "name"
-            },
-            {
-              "name": "backup",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "backup"
-            }
-          ],
-          "width": 180,
-          "height": 80
-        },
-        {
-          "id": "block_05a5fd1b",
-          "name": "Если key существует",
-          "type": "condition",
-          "color": "#808040",
-          "code": "if {key} in {db}kv_k:\n\n\n",
-          "fields": [
-            {
-              "name": "key",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "\"key\""
-            },
-            {
-              "name": "db",
-              "label": "",
-              "type": "value",
-              "required": true,
-              "placeholder": "database"
-            }
-          ],
-          "width": 180,
-          "height": 80
-        },
-        {
-          "id": "block_0e72d302",
-          "name": "Удалить запись по key",
-          "type": "action",
-          "color": "#808040",
-          "code": "kv_temp_db = {db}kv_k.index({key})\n{db}kv_k.pop(kv_temp_db)\n{db}kv_o.pop(kv_temp_db)\n",
-          "fields": [],
           "width": 180,
           "height": 80
         }

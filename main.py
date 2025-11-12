@@ -157,6 +157,19 @@ def read_license_text():
         return None
 
 
+def read_version():
+    version_file = 'version'
+    if not os.path.exists(version_file):
+        return '1.0.0'  # Версия по умолчанию
+    try:
+        with open(version_file, 'r', encoding='utf-8') as f:
+            version = f.read().strip()
+            return version if version else '1.0.0'
+    except Exception as e:
+        print(f"Ошибка чтения версии: {e}")
+        return '1.0.0'
+
+
 @app.route('/')
 def index():
     return render_template('project_selection.html')
@@ -195,6 +208,11 @@ def license_accept():
     if mark_license_accepted():
         return jsonify({"status": "success"})
     return jsonify({"status": "error", "message": "Не удалось сохранить состояние"}), 500
+
+
+@app.route('/api/version')
+def get_version():
+    return jsonify({"status": "success", "version": read_version()})
 
 
 @app.route('/api/project/save-file', methods=['POST'])
