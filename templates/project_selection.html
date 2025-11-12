@@ -481,6 +481,46 @@
     color: var(--muted);
   }
 
+  /* Лицензионное соглашение */
+  body.license-modal-open {
+    overflow: hidden;
+  }
+
+  .license-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px;
+    background: rgba(0,0,0,0.25);
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.25);
+  }
+
+  .license-text {
+    white-space: pre-wrap;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--white);
+  }
+
+  .license-hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  #acceptLicenseBtn {
+    min-width: 140px;
+  }
+
+  #acceptLicenseBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
   /* Небольшая адаптация под мобильные экраны */
   @media (max-width: 600px) {
     .header h1 { font-size: 20px; }
@@ -904,10 +944,154 @@
   <input type="file" id="editFolderInput" webkitdirectory directory multiple style="display: none;" onchange="handleEditFolderSelection(event)">
   <input type="file" id="modUploadInput" accept=".json" style="display: none;" onchange="uploadModFile(event)">
 
+  <!-- Модальное окно лицензии -->
+  <div id="licenseModal" style="display:none">
+    <div class="modal-backdrop" data-locked="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="licenseModalTitle">
+        <h3 id="licenseModalTitle">Лицензионное соглашение</h3>
+        <div class="license-hint" id="licenseHint">Прокрутите документ до конца, чтобы принять соглашение.</div>
+        <div id="licenseScroll" class="license-scroll">
+          <pre id="licenseText" class="license-text">Загрузка лицензионного соглашения...</pre>
+        </div>
+        <div id="licenseError" class="license-hint" style="display:none; color: var(--danger);"></div>
+        <div class="modal-actions">
+          <button id="acceptLicenseBtn" class="btn" onclick="acceptLicenseAgreement()" disabled>Принять</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
 let projects = [];
 let currentDeleteProject = null;
 let currentEditProject = null;
+let licenseAcceptUnlocked = false;
+let licenseScrollListenerAttached = false;
+let licenseModalVisible = false;
+
+/* ========== License agreement ========== */
+async function checkLicenseStatus() {
+  try {
+    const response = await fetch('/api/license/status');
+    const data = await response.json();
+    if (!data.accepted) {
+      await openLicenseModal();
+    }
+  } catch (error) {
+    console.error('Ошибка проверки статуса лицензии:', error);
+    await openLicenseModal();
+  }
+}
+
+async function openLicenseModal() {
+  const modalWrapper = document.getElementById('licenseModal');
+  const scrollContainer = document.getElementById('licenseScroll');
+  const licenseText = document.getElementById('licenseText');
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const errorEl = document.getElementById('licenseError');
+  const hint = document.getElementById('licenseHint');
+
+  if (!modalWrapper || !scrollContainer || !licenseText || !acceptBtn) return;
+
+  licenseModalVisible = true;
+  licenseAcceptUnlocked = false;
+  acceptBtn.disabled = true;
+  acceptBtn.textContent = 'Принять';
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+  if (hint) {
+    hint.style.display = 'block';
+  }
+
+  modalWrapper.style.display = 'block';
+  document.body.classList.add('license-modal-open');
+
+  licenseText.textContent = 'Загрузка лицензионного соглашения...';
+
+  try {
+    const response = await fetch('/api/license/text');
+    const data = await response.json();
+    if (data.status === 'success' && typeof data.text === 'string') {
+      licenseText.textContent = data.text;
+    } else {
+      throw new Error(data.message || 'Неизвестная ошибка');
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки лицензионного соглашения:', error);
+    licenseText.textContent = '';
+    if (errorEl) {
+      errorEl.textContent = 'Не удалось загрузить лицензионное соглашение: ' + error.message;
+      errorEl.style.display = 'block';
+    }
+  }
+
+  scrollContainer.scrollTop = 0;
+  if (!licenseScrollListenerAttached) {
+    scrollContainer.addEventListener('scroll', handleLicenseScroll, { passive: true });
+    licenseScrollListenerAttached = true;
+  }
+  handleLicenseScroll();
+}
+
+function handleLicenseScroll() {
+  if (licenseAcceptUnlocked) return;
+  const scrollContainer = document.getElementById('licenseScroll');
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const licenseText = document.getElementById('licenseText');
+  if (!scrollContainer || !acceptBtn || !licenseText) return;
+  if (!licenseText.textContent || licenseText.textContent.trim().length === 0) {
+    acceptBtn.disabled = true;
+    return;
+  }
+  const nearBottom = Math.ceil(scrollContainer.scrollTop + scrollContainer.clientHeight) >= scrollContainer.scrollHeight - 10;
+  if (nearBottom) {
+    licenseAcceptUnlocked = true;
+    acceptBtn.disabled = false;
+  }
+}
+
+async function acceptLicenseAgreement() {
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const errorEl = document.getElementById('licenseError');
+  if (!licenseAcceptUnlocked || !acceptBtn) return;
+
+  acceptBtn.disabled = true;
+  acceptBtn.textContent = 'Сохранение...';
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+
+  try {
+    const response = await fetch('/api/license/accept', { method: 'POST' });
+    const data = await response.json();
+    if (data.status === 'success') {
+      closeLicenseModal();
+      showNotification('success', 'Спасибо!', 'Лицензионное соглашение принято.');
+    } else {
+      throw new Error(data.message || 'Неизвестная ошибка');
+    }
+  } catch (error) {
+    console.error('Ошибка сохранения лицензии:', error);
+    if (errorEl) {
+      errorEl.textContent = 'Ошибка сохранения: ' + error.message;
+      errorEl.style.display = 'block';
+    }
+    acceptBtn.disabled = false;
+    acceptBtn.textContent = 'Принять';
+  }
+}
+
+function closeLicenseModal() {
+  const modalWrapper = document.getElementById('licenseModal');
+  if (modalWrapper) {
+    modalWrapper.style.display = 'none';
+  }
+  document.body.classList.remove('license-modal-open');
+  licenseModalVisible = false;
+}
 
 /* ========== Theme management ========== */
 function setTheme(theme) {
@@ -1381,10 +1565,11 @@ function escapeHtml(text) {
 document.addEventListener('DOMContentLoaded', function() {
   loadTheme();
   loadProjects();
+  checkLicenseStatus();
 
   // Закрытие модальных окон при клике вне их
   document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('modal-backdrop')) {
+    if (event.target.classList.contains('modal-backdrop') && event.target.dataset.locked !== 'true') {
       event.target.style.display = 'none';
     }
   });
@@ -1394,6 +1579,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (event.key === 'Escape') {
       const modals = document.querySelectorAll('.modal-backdrop');
       modals.forEach(modal => {
+        if (modal.dataset.locked === 'true') return;
         modal.style.display = 'none';
       });
     }

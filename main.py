@@ -21,6 +21,8 @@ config = {
 }
 
 BLOCKS_CONFIG_PATH = 'blocks_config.json'
+LICENSE_FILE_PATH = 'license.txt'
+LICENSE_ACCEPT_MARKER = '.turtcd_license.accepted'
 
 DEFAULT_BLOCKS_CONFIG = {
     "categories": [
@@ -109,6 +111,52 @@ PROJECTS_FOLDER = 'projects'
 os.makedirs(PROJECTS_FOLDER, exist_ok=True)
 
 
+def license_marker_path():
+    return os.path.abspath(LICENSE_ACCEPT_MARKER)
+
+
+def is_license_accepted():
+    return os.path.exists(license_marker_path())
+
+
+def mark_license_accepted():
+    try:
+        marker = license_marker_path()
+        with open(marker, 'w', encoding='utf-8') as f:
+            f.write(json.dumps({
+                "accepted_at": datetime.utcnow().isoformat() + 'Z',
+                "app_version": "1.0"
+            }))
+        # Make file hidden on Windows
+        if os.name == 'nt':
+            try:
+                import ctypes
+                FILE_ATTRIBUTE_HIDDEN = 0x02
+                ctypes.windll.kernel32.SetFileAttributesW(marker, FILE_ATTRIBUTE_HIDDEN)
+            except Exception as e:
+                print(f"Не удалось скрыть файл маркера лицензии: {e}")
+        else:
+            try:
+                os.chmod(marker, 0o600)
+            except Exception:
+                pass
+        return True
+    except Exception as e:
+        print(f"Ошибка создания маркера лицензии: {e}")
+        return False
+
+
+def read_license_text():
+    if not os.path.exists(LICENSE_FILE_PATH):
+        return None
+    try:
+        with open(LICENSE_FILE_PATH, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        print(f"Ошибка чтения лицензии: {e}")
+        return None
+
+
 @app.route('/')
 def index():
     return render_template('project_selection.html')
@@ -127,6 +175,26 @@ def compiled():
 @app.route('/api/blocks')
 def get_blocks():
     return jsonify(load_blocks_config())
+
+
+@app.route('/api/license/status')
+def license_status():
+    return jsonify({"accepted": is_license_accepted()})
+
+
+@app.route('/api/license/text')
+def license_text():
+    text = read_license_text()
+    if text is None:
+        return jsonify({"status": "error", "message": "Файл license.txt не найден"}), 404
+    return jsonify({"status": "success", "text": text})
+
+
+@app.route('/api/license/accept', methods=['POST'])
+def license_accept():
+    if mark_license_accepted():
+        return jsonify({"status": "success"})
+    return jsonify({"status": "error", "message": "Не удалось сохранить состояние"}), 500
 
 
 @app.route('/api/project/save-file', methods=['POST'])

@@ -18,7 +18,7 @@ import json
 class TurtCDLauncher:
     def __init__(self, root):
         self.root = root
-        self.root.title("🚀 TurtCD Launcher")
+        self.root.title("TurtCD Launcher")
         self.root.geometry("450x380")
         self.root.resizable(False, False)
         

@@ -552,6 +552,12 @@
   .connector-bottom{ bottom:-10px; left:50%; transform:translateX(-50%); }
   .connector-right{ top:50%; right:-10px; transform:translateY(-50%); }
   .connector-left{ top:50%; left:-10px; transform:translateY(-50%); }
+  .connector.connector-collapsed {
+    background:#adff2f;
+    border-color:#73c21f;
+    box-shadow:0 0 12px rgba(173,255,47,0.6);
+    cursor:not-allowed;
+  }
 
   /* Тултип для коннекторов */
   .connector-tooltip {
@@ -1341,6 +1347,7 @@ button, .button, input[type=button], input[type=submit] {
         
       </div>
       <div id="lockMenuItem" class="menu-item" style="padding:8px; cursor:pointer; color:#ffffff;" onclick="toggleLockForContextBlock()">🔒 Заблокировать блок</div>
+      <div id="collapseBranchMenuItem" class="menu-item" style="padding:8px; cursor:pointer; color:#ffffff; display:none;" onclick="toggleContextBlockRightBranch()">➖ Свернуть ветку</div>
       <div class="menu-item" style="padding:8px; cursor:pointer; color:#ffffff;" onclick="duplicateContextBlock()">📄 Дублировать</div>
       <div class="menu-item" style="padding:8px; cursor:pointer; color:#ffffff;" onclick="toggleFieldInputType()">🔄 Переключить тип полей</div>
       <div class="menu-item" style="padding:8px; cursor:pointer; color:#ffffff;" onclick="clearContextBlock()">🧹 Очистить блок</div>
@@ -2261,7 +2268,9 @@ function createFromTemplate(templateId, x, y){
     width: cfg.width || 160, height: cfg.height || 80,
     fields: {},
     fieldTypes: {}, // Инициализируем типы полей
-    ignoreIssues: isGlobalIgnoreEnabled() ? true : false
+    ignoreIssues: isGlobalIgnoreEnabled() ? true : false,
+    hiddenBy: [],
+    collapsedRightBranch: false
   };
   if(cfg.fields) {
     cfg.fields.forEach(f => {
@@ -2290,6 +2299,17 @@ function allowedConnect(from, to, fromBlockId, toBlockId) {
   // - top не может быть источником (нельзя соединять из top)
   
   if (!['bottom', 'right'].includes(from) || to !== 'top') {
+    return false;
+  }
+
+  if (from === 'right' && fromBlockId) {
+    const fromBlock = projectData.blocks.find(b => b.id === fromBlockId);
+    if (fromBlock && fromBlock.collapsedRightBranch) {
+      return false;
+    }
+  }
+  
+  if (toBlockId && isBlockHidden(toBlockId)) {
     return false;
   }
   
@@ -2461,6 +2481,7 @@ function addConnectorTooltip(connector, position, text) {
 
 function createInstance(blockData){
   const cfg = findCfg(blockData.template);
+  const isBranchBlock = cfg && (cfg.type === 'condition' || cfg.type === 'loop');
   const wrapper = el('div', { className: 'block' });
   wrapper.style.left = blockData.x + 'px';
   wrapper.style.top = blockData.y + 'px';
@@ -2639,10 +2660,14 @@ function createInstance(blockData){
   addConnectorTooltip(bottomConnector, 'bottom', '<output>');
   wrapper.appendChild(bottomConnector);
   // right connector for branching/loop blocks
-  if(cfg && (cfg.type === 'condition' || cfg.type === 'loop')) {
+  if(isBranchBlock) {
     const rightConnector = Object.assign(document.createElement('div'), { className: 'connector connector-right' });
     addConnectorTooltip(rightConnector, 'right', '<body>');
     wrapper.appendChild(rightConnector);
+  }
+
+  if (isBranchBlock) {
+    applyRightConnectorState(wrapper, blockData);
   }
 
   wrapper.appendChild(indicator);
@@ -2673,6 +2698,7 @@ function createInstance(blockData){
   if (blockData.ignored === true) {
     wrapper.classList.add('block-ignored');
   }
+  applyBlockVisibility(blockData.id);
   
   // Обновляем связи после добавления блока на canvas (с небольшой задержкой для завершения рендеринга)
   setTimeout(() => {
@@ -2751,10 +2777,15 @@ document.getElementById('viewport').addEventListener('mouseleave', ()=>{
 mainCanvas.addEventListener('mousedown', (e)=>{
   const conn = e.target.closest('.connector');
   if(!conn) return;
+  const blockEl = conn.closest('.block');
+  if(!blockEl) return;
+  const blockId = blockEl.dataset.blockId;
+  const blockData = projectData.blocks.find(b => b.id === blockId);
+  if (blockData && isBlockHidden(blockId)) return;
+  if (blockData && conn.classList.contains('connector-right') && blockData.collapsedRightBranch) return;
   e.preventDefault();
   // disable text selection while creating connection
   document.body.style.userSelect = 'none';
-  const blockEl = conn.closest('.block');
   const crect = conn.getBoundingClientRect(), canv = mainCanvas.getBoundingClientRect();
   const startX = crect.left + crect.width/2 - canv.left;
   const startY = crect.top + crect.height/2 - canv.top;
@@ -2815,6 +2846,73 @@ function isBlockIgnored(blockId) {
   return block && block.ignored === true;
 }
 
+function isBlockHidden(blockId) {
+  const block = projectData.blocks.find(b => b.id === blockId);
+  return !!(block && Array.isArray(block.hiddenBy) && block.hiddenBy.length > 0);
+}
+
+function applyBlockVisibility(blockId) {
+  const blockEl = mainCanvas.querySelector(`.block[data-block-id="${blockId}"]`);
+  if (!blockEl) return;
+  const hidden = isBlockHidden(blockId);
+  blockEl.style.display = hidden ? 'none' : '';
+}
+
+function applyRightConnectorState(blockEl, blockData) {
+  if (!blockEl) return;
+  const rightConnector = blockEl.querySelector('.connector-right');
+  if (!rightConnector) return;
+  const isCollapsed = !!blockData.collapsedRightBranch;
+  rightConnector.classList.toggle('connector-collapsed', isCollapsed);
+  if (rightConnector._tooltip) {
+    rightConnector._tooltip.textContent = isCollapsed ? 'hidden...' : '<body>';
+    rightConnector._tooltip.style.color = isCollapsed ? '#adff2f' : '#ffd700';
+  }
+  if (isCollapsed) {
+    rightConnector.classList.remove('connector-valid', 'connector-invalid');
+  }
+}
+
+function collectBranchBlockIds(startBlockId, connectorType = 'right') {
+  const result = new Set();
+  const stack = [];
+  const connections = projectData.connections || [];
+
+  connections
+    .filter(c => c.from === startBlockId && c.fromConnector === connectorType)
+    .forEach(c => stack.push(c.to));
+
+  while (stack.length) {
+    const current = stack.pop();
+    if (!current || result.has(current)) continue;
+    result.add(current);
+    connections
+      .filter(c => c.from === current && (c.fromConnector === 'bottom' || c.fromConnector === 'right'))
+      .forEach(c => stack.push(c.to));
+  }
+
+  return Array.from(result);
+}
+
+function setBlockHiddenBy(blockId, sourceId, hidden) {
+  const block = projectData.blocks.find(b => b.id === blockId);
+  if (!block) return;
+  if (!Array.isArray(block.hiddenBy)) {
+    block.hiddenBy = [];
+  }
+  const idx = block.hiddenBy.indexOf(sourceId);
+  if (hidden) {
+    if (idx === -1) block.hiddenBy.push(sourceId);
+  } else if (idx !== -1) {
+    block.hiddenBy.splice(idx, 1);
+  }
+  applyBlockVisibility(blockId);
+}
+
+function setBlocksHiddenBy(sourceId, blockIds, hidden) {
+  blockIds.forEach(blockId => setBlockHiddenBy(blockId, sourceId, hidden));
+}
+
 function updateConnectorHighlighting(connecting) {
   // Очищаем предыдущую подсветку
   clearConnectorHighlighting();
@@ -2843,6 +2941,12 @@ function updateConnectorHighlighting(connecting) {
     
     const toConnectorType = connectorType(conn);
     const toBlockId = toBlock.dataset.blockId;
+    if (isBlockHidden(toBlockId)) return;
+    const toBlockData = projectData.blocks.find(b => b.id === toBlockId);
+    if (toBlockData && conn.classList.contains('connector-right') && toBlockData.collapsedRightBranch) {
+      conn.classList.add('connector-invalid');
+      return;
+    }
     
     // Проверяем, имеет ли целевой коннектор уже соединение
     const toConnectorHasConnection = hasConnectorConnection(toBlock, toConnectorType).hasConnection;
@@ -2886,6 +2990,7 @@ function updateConnections(){
   
   // iterate
   projectData.connections.forEach(c=>{
+    if (isBlockHidden(c.from) || isBlockHidden(c.to)) return;
     const fromEl = mainCanvas.querySelector(`.block[data-block-id="${c.from}"]`);
     const toEl = mainCanvas.querySelector(`.block[data-block-id="${c.to}"]`);
     if(!fromEl || !toEl) return;
@@ -2993,6 +3098,16 @@ document.addEventListener('contextmenu', (e)=>{
         const isIgnored = !!(bd && bd.ignoreIssues === true);
         item.textContent = (isIgnored ? '🔴 Отключить игнорирование ошибок для этого блока' : '🟢 Включить игнорирование ошибок для этого блока');
       }
+      const collapseMenuItem = document.getElementById('collapseBranchMenuItem');
+      if (collapseMenuItem) {
+        if (cfg && (cfg.type === 'condition' || cfg.type === 'loop')) {
+          const isCollapsed = !!bd.collapsedRightBranch;
+          collapseMenuItem.style.display = 'block';
+          collapseMenuItem.textContent = isCollapsed ? '👁️ Показать ветку' : '➖ Свернуть ветку';
+        } else {
+          collapseMenuItem.style.display = 'none';
+        }
+      }
       // Обновляем пункты меню в зависимости от блокировки
       const lockItem = document.getElementById('lockMenuItem');
       const allItems = Array.from(menu.querySelectorAll('.menu-item'));
@@ -3000,15 +3115,21 @@ document.addEventListener('contextmenu', (e)=>{
         const locked = !!bd.locked;
         lockItem.textContent = locked ? '🔓 Разблокировать блок' : '🔒 Заблокировать блок';
         if (locked){
-          // показываем только строку пути и пункт разблокировки
+          // показываем только строку пути, пункт разблокировки и управление веткой (если свернута)
           allItems.forEach(mi => {
-            if (mi.id === 'blockPathInfo' || mi.id === 'lockMenuItem') mi.style.display = 'block';
-            else mi.style.display = 'none';
+            const shouldShow = mi.id === 'blockPathInfo' || mi.id === 'lockMenuItem' || (mi.id === 'collapseBranchMenuItem' && bd.collapsedRightBranch);
+            mi.style.display = shouldShow ? 'block' : 'none';
           });
         } else {
           // показываем все пункты (кроме тех, которые скрыты по другим причинам)
           allItems.forEach(mi => { 
-            if (mi.id !== 'ignoreBlockMenuItem' || (ignoreBlockItem && ignoreBlockItem.style.display !== 'none')) {
+            if (mi.id === 'ignoreBlockMenuItem') {
+              if (ignoreBlockItem && ignoreBlockItem.style.display !== 'none') {
+                mi.style.display = 'block';
+              }
+            } else if (mi.id === 'collapseBranchMenuItem') {
+              // оставляем состояние, заданное ранее при расчете
+            } else {
               mi.style.display = 'block'; 
             }
           });
@@ -3162,6 +3283,42 @@ function clearContextBlock(){
   // Обновляем историю значений
   loadValueHistory();
   document.getElementById('blockContextMenu').style.display='none';
+}
+
+function toggleContextBlockRightBranch(){
+  if(!contextBlockEl) return;
+  const id = contextBlockEl.dataset.blockId;
+  const blockData = projectData.blocks.find(b => b.id === id);
+  if(!blockData) return;
+  const cfg = findCfg(blockData.template);
+  if(!cfg || (cfg.type !== 'condition' && cfg.type !== 'loop')) return;
+
+  if (blockData.collapsedRightBranch) {
+    expandRightBranch(blockData);
+  } else {
+    collapseRightBranch(blockData);
+  }
+
+  const menu = document.getElementById('blockContextMenu');
+  if (menu) menu.style.display='none';
+}
+
+function collapseRightBranch(blockData){
+  blockData.collapsedRightBranch = true;
+  const branchIds = collectBranchBlockIds(blockData.id, 'right');
+  setBlocksHiddenBy(blockData.id, branchIds, true);
+  const blockEl = mainCanvas.querySelector(`.block[data-block-id="${blockData.id}"]`);
+  if (blockEl) applyRightConnectorState(blockEl, blockData);
+  updateConnections();
+}
+
+function expandRightBranch(blockData){
+  blockData.collapsedRightBranch = false;
+  const branchIds = collectBranchBlockIds(blockData.id, 'right');
+  setBlocksHiddenBy(blockData.id, branchIds, false);
+  const blockEl = mainCanvas.querySelector(`.block[data-block-id="${blockData.id}"]`);
+  if (blockEl) applyRightConnectorState(blockEl, blockData);
+  updateConnections();
 }
 
 // Переключение игнорирования блока (комментирование кода)
