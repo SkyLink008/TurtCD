@@ -1282,30 +1282,46 @@ button, .button, input[type=button], input[type=submit] {
   margin-bottom: 12px;
 }
 
-/* License badge */
-.license-badge {
-  position: fixed;
-  right: 12px;
-  top: 10px;
-  z-index: 10060;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--white);
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,0.12);
-  padding: 6px 10px;
-  border-radius: 10px;
-  backdrop-filter: blur(2px);
-  user-select: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+  /* License badge */
+  .license-badge {
+    position: fixed;
+    right: 12px;
+    top: 10px;
+    z-index: 10060;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--white);
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 6px 10px;
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+    user-select: none;
+    pointer-events: none;
+  }
 
-.license-badge:hover {
-  background: rgba(0,0,0,0.5);
-  border-color: rgba(255,255,255,0.2);
-  transform: translateY(-1px);
-}
+  /* Selection area */
+  .selection-area {
+    position: absolute;
+    border: 2px dashed;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .selection-area.has-issues {
+    border-color: #d4a017;
+  }
+
+  .selection-area.no-issues {
+    border-color: #10b981;
+  }
+
+  /* Selected blocks */
+  .block-selected {
+    outline: 2px solid rgba(14, 165, 233, 0.8);
+    outline-offset: 2px;
+  }
 </style>
 </head>
 <body>
@@ -1441,6 +1457,15 @@ button, .button, input[type=button], input[type=submit] {
     </div>
   </div>
 
+  <!-- Context menu for selection -->
+  <div id="selectionContextMenu" style="position:absolute; display:none; z-index:20000;">
+    <div style="background:#071025; padding:8px; border-radius:8px; box-shadow:0 8px 28px rgba(2,6,23,0.6); min-width:200px;">
+      <div class="menu-item" style="padding:8px; cursor:pointer; color:#ffffff;" onclick="clearSelectedBlocks()">🧹 Очистить поля ввода</div>
+      <div class="menu-item" style="padding:8px; cursor:pointer; color:#ffffff;" onclick="deleteSelectedBlocksConnections()">🔗 Удалить связи</div>
+      <div id="toggleIgnoreIssuesMenuItem" class="menu-item" style="padding:8px; cursor:pointer; color:#ffffff;" onclick="toggleIgnoreIssuesForSelected()">🟢 Включить игнорирование ошибок</div>
+      <div id="toggleIgnoreMenuItem" class="menu-item" style="padding:8px; cursor:pointer; color:#ffffff;" onclick="toggleIgnoreSelectedBlocks()">🚫 Игнорировать</div>
+    </div>
+  </div>
 
   <!-- Save modal -->
   <div id="saveModal" style="display:none">
@@ -1640,6 +1665,40 @@ button, .button, input[type=button], input[type=submit] {
     </div>
   </div>
 
+  <!-- Delete block/branch modal -->
+  <div id="deleteBlockBranchModal" style="display:none">
+    <div class="modal-backdrop" onclick="if(event.target === this) closeDeleteBlockBranchModal()">
+      <div class="modal">
+        <h3>Удаление блока</h3>
+        <div style="margin-bottom:16px">
+          <p>К правому коннектору этого блока подсоединены другие блоки. Что вы хотите удалить?</p>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:flex-end">
+          <button class="btn" onclick="confirmDeleteBlockOnly()" style="background:linear-gradient(90deg,var(--accent),var(--accent-2));">Только блок</button>
+          <button class="btn" onclick="confirmDeleteBranch()" style="background:linear-gradient(90deg,var(--danger),#c0392b);">Всю ветку</button>
+          <button class="btn-ghost" onclick="closeDeleteBlockBranchModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Duplicate block/branch modal -->
+  <div id="duplicateBlockBranchModal" style="display:none">
+    <div class="modal-backdrop" onclick="if(event.target === this) closeDuplicateBlockBranchModal()">
+      <div class="modal">
+        <h3>Дублирование блока</h3>
+        <div style="margin-bottom:16px">
+          <p>К правому коннектору этого блока подсоединены другие блоки. Что вы хотите продублировать?</p>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:flex-end">
+          <button class="btn" onclick="confirmDuplicateBlockOnly()" style="background:linear-gradient(90deg,var(--accent),var(--accent-2));">Только блок</button>
+          <button class="btn" onclick="confirmDuplicateBranch()" style="background:linear-gradient(90deg,var(--accent),var(--accent-2));">Всю ветку</button>
+          <button class="btn-ghost" onclick="closeDuplicateBlockBranchModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
 /* ========== State ========== */
 let blocksConfig = { categories: [] };
@@ -1656,6 +1715,7 @@ let camera = { x: 0, y: 0, scale: 1 };    // camera translation
 let isPanning = false;
 let panStart = null;
 let panCameraStart = null;
+let selectionState = null;     // {startX, startY, currentX, currentY, areaEl, selectedBlockIds: Set, isActive: boolean}
 let contextBlockEl = null;
 let contextConnectionEl = null;
 
@@ -2020,7 +2080,11 @@ function toggleGlobalIgnore(){
     // выключаем глобальное игнорирование
     setGlobalIgnoreEnabled(false);
     // снимаем ignoreIssues со всех блоков
-    projectData.blocks.forEach(b => { b.ignoreIssues = false; });
+    projectData.blocks.forEach(b => { 
+      b.ignoreIssues = false;
+      const blockEl = mainCanvas.querySelector(`.block[data-block-id="${b.id}"]`);
+      if(blockEl) applyBlockIgnoreIssuesState(blockEl, b);
+    });
     updateIssues();
     // после обновления панели — снять блокировки с проблемных блоков и сообщить
     unlockLockedProblematicBlocksAndReport();
@@ -2057,7 +2121,11 @@ function confirmGlobalIgnore(){
   // включаем глобальное игнорирование
   setGlobalIgnoreEnabled(true);
   // проставляем всем блокам ignoreIssues=true
-  projectData.blocks.forEach(b => { b.ignoreIssues = true; });
+  projectData.blocks.forEach(b => { 
+    b.ignoreIssues = true;
+    const blockEl = mainCanvas.querySelector(`.block[data-block-id="${b.id}"]`);
+    if(blockEl) applyBlockIgnoreIssuesState(blockEl, b);
+  });
   closeGlobalIgnoreModal();
   updateIssues();
 }
@@ -2562,6 +2630,20 @@ function createInstance(blockData){
   lockIndicator.style.borderRadius = '4px';
   lockIndicator.style.pointerEvents = 'none';
 
+  // ignore issues indicator (top-right, left of lock indicator)
+  const ignoreIssuesIndicator = el('div', { className: 'block-ignore-issues-indicator', title: 'Игнорирование ошибок включено' }, '🐛');
+  ignoreIssuesIndicator.style.position = 'absolute';
+  ignoreIssuesIndicator.style.top = '6px';
+  ignoreIssuesIndicator.style.width = '18px';
+  ignoreIssuesIndicator.style.height = '18px';
+  ignoreIssuesIndicator.style.display = 'none';
+  ignoreIssuesIndicator.style.alignItems = 'center';
+  ignoreIssuesIndicator.style.justifyContent = 'center';
+  ignoreIssuesIndicator.style.fontSize = '12px';
+  ignoreIssuesIndicator.style.background = 'rgba(0,0,0,0.35)';
+  ignoreIssuesIndicator.style.borderRadius = '4px';
+  ignoreIssuesIndicator.style.pointerEvents = 'none';
+
   if(cfg && cfg.fields && cfg.fields.length){
     cfg.fields.forEach(f=>{
       // Определяем тип поля: по умолчанию однострочное, если не указано иное
@@ -2723,6 +2805,7 @@ function createInstance(blockData){
 
   wrapper.appendChild(indicator);
   wrapper.appendChild(lockIndicator);
+  wrapper.appendChild(ignoreIssuesIndicator);
   wrapper.appendChild(header);
   wrapper.appendChild(content);
 
@@ -2736,10 +2819,43 @@ function createInstance(blockData){
     if (blockData.locked) return;
     // if Ctrl key is pressed - do not allow move (for camera panning)
     if (ev.ctrlKey) return;
+    
+    // Проверяем, находится ли блок в выделении
+    const bid = wrapper.dataset.blockId;
+    const isInSelection = selectionState && selectionState.selectedBlockIds.has(bid);
+    
+    // Если блок в выделении, скрываем область выделения, но сохраняем список блоков
+    if(isInSelection && selectionState.areaEl) {
+      selectionState.areaEl.style.display = 'none';
+    }
+    
     // start dragging
     document.body.style.userSelect = 'none';
     const rect = wrapper.getBoundingClientRect();
-    dragState = { el: wrapper, startX: ev.clientX, startY: ev.clientY, left: parseFloat(wrapper.style.left || 0), top: parseFloat(wrapper.style.top || 0) };
+    const bd = projectData.blocks.find(b => b.id === bid);
+    
+    // Сохраняем начальные позиции всех выделенных блоков для перетаскивания
+    const selectedBlockInitialPositions = new Map();
+    if(isInSelection && selectionState) {
+      selectionState.selectedBlockIds.forEach(selectedBlockId => {
+        const selectedBlock = projectData.blocks.find(b => b.id === selectedBlockId);
+        if(selectedBlock && !selectedBlock.locked) {
+          selectedBlockInitialPositions.set(selectedBlockId, { x: selectedBlock.x, y: selectedBlock.y });
+        }
+      });
+    }
+    
+    dragState = { 
+      el: wrapper, 
+      startX: ev.clientX, 
+      startY: ev.clientY, 
+      left: parseFloat(wrapper.style.left || 0), 
+      top: parseFloat(wrapper.style.top || 0),
+      initialX: bd ? bd.x : parseFloat(wrapper.style.left || 0),
+      initialY: bd ? bd.y : parseFloat(wrapper.style.top || 0),
+      isDraggingSelection: isInSelection,
+      selectedBlockInitialPositions: selectedBlockInitialPositions
+    };
   });
 
   mainCanvas.appendChild(wrapper);
@@ -2766,7 +2882,92 @@ document.addEventListener('mousemove', (e)=>{
     dragState.el.style.left = nx + 'px'; dragState.el.style.top = ny + 'px';
     const bid = dragState.el.dataset.blockId;
     const bd = projectData.blocks.find(b => b.id === bid);
-    if(bd){ bd.x = nx; bd.y = ny; }
+    if(bd){ 
+      bd.x = nx; 
+      bd.y = ny;
+      
+      // Если перетаскиваем выделенные блоки, перемещаем их все вместе
+      if(dragState.isDraggingSelection && dragState.selectedBlockInitialPositions) {
+        const offsetX = nx - dragState.initialX;
+        const offsetY = ny - dragState.initialY;
+        
+        dragState.selectedBlockInitialPositions.forEach((initialPos, selectedBlockId) => {
+          // Пропускаем основной блок, он уже перемещен
+          if(selectedBlockId === bid) return;
+          
+          const selectedBlock = projectData.blocks.find(b => b.id === selectedBlockId);
+          if(selectedBlock && !selectedBlock.locked) {
+            selectedBlock.x = initialPos.x + offsetX;
+            selectedBlock.y = initialPos.y + offsetY;
+            
+            // Обновляем визуальное положение блока
+            const selectedBlockEl = mainCanvas.querySelector(`.block[data-block-id="${selectedBlockId}"]`);
+            if(selectedBlockEl) {
+              selectedBlockEl.style.left = selectedBlock.x + 'px';
+              selectedBlockEl.style.top = selectedBlock.y + 'px';
+            }
+          }
+        });
+      } else {
+        // Если это condition или loop блок И зажат Shift, перемещаем всю ветку на правом коннекторе
+        const cfg = findCfg(bd.template);
+        const isConditionOrLoop = cfg && (cfg.type === 'condition' || cfg.type === 'loop');
+        
+        if(isConditionOrLoop && e.shiftKey) {
+          // Вычисляем смещение от начальной позиции
+          const offsetX = nx - dragState.initialX;
+          const offsetY = ny - dragState.initialY;
+          
+          // Собираем все ID блоков в ветке на правом коннекторе
+          const branchIds = collectBranchBlockIds(bid, 'right');
+          
+          // Перемещаем все блоки ветки на то же смещение от их начальных позиций
+          for(const branchBlockId of branchIds) {
+            const branchBlock = projectData.blocks.find(b => b.id === branchBlockId);
+            if(branchBlock) {
+              // Если еще не сохранили начальную позицию, сохраняем
+              if(!dragState.branchInitialPositions) {
+                dragState.branchInitialPositions = new Map();
+              }
+              if(!dragState.branchInitialPositions.has(branchBlockId)) {
+                dragState.branchInitialPositions.set(branchBlockId, { x: branchBlock.x, y: branchBlock.y });
+              }
+              
+              const initialPos = dragState.branchInitialPositions.get(branchBlockId);
+              branchBlock.x = initialPos.x + offsetX;
+              branchBlock.y = initialPos.y + offsetY;
+              
+              // Обновляем визуальное положение блока
+              const branchEl = mainCanvas.querySelector(`.block[data-block-id="${branchBlockId}"]`);
+              if(branchEl) {
+                branchEl.style.left = branchBlock.x + 'px';
+                branchEl.style.top = branchBlock.y + 'px';
+              }
+            }
+          }
+        } else if(isConditionOrLoop && !e.shiftKey && dragState.branchInitialPositions) {
+          // Если Shift отпущен, возвращаем блоки ветки на исходные позиции
+          const branchIds = collectBranchBlockIds(bid, 'right');
+          for(const branchBlockId of branchIds) {
+            const branchBlock = projectData.blocks.find(b => b.id === branchBlockId);
+            if(branchBlock && dragState.branchInitialPositions.has(branchBlockId)) {
+              const initialPos = dragState.branchInitialPositions.get(branchBlockId);
+              branchBlock.x = initialPos.x;
+              branchBlock.y = initialPos.y;
+              
+              // Обновляем визуальное положение блока
+              const branchEl = mainCanvas.querySelector(`.block[data-block-id="${branchBlockId}"]`);
+              if(branchEl) {
+                branchEl.style.left = branchBlock.x + 'px';
+                branchEl.style.top = branchBlock.y + 'px';
+              }
+            }
+          }
+          // Очищаем сохраненные позиции
+          dragState.branchInitialPositions = null;
+        }
+      }
+    }
     updateConnections();
     return; // when dragging block don't pan or update connecting line separately here
   }
@@ -2797,6 +2998,11 @@ document.addEventListener('mousemove', (e)=>{
 
 // mouseup / end interactions
 document.addEventListener('mouseup', (e)=>{
+  // Если завершили перетаскивание выделенных блоков, очищаем выделение
+  if(dragState && dragState.isDraggingSelection) {
+    clearSelection();
+  }
+  
   // stop dragging
   dragState = null;
   // stop panning
@@ -2822,6 +3028,404 @@ document.getElementById('viewport').addEventListener('mouseleave', ()=>{
   panCameraStart = null;
   // Очистка подсветки коннекторов при выходе из viewport
   clearConnectorHighlighting();
+});
+
+/* ========== Selection area ========== */
+function clearSelection() {
+  if(selectionState && selectionState.areaEl) {
+    selectionState.areaEl.remove();
+  }
+  // Убираем подсветку с выделенных блоков
+  mainCanvas.querySelectorAll('.block-selected').forEach(el => {
+    el.classList.remove('block-selected');
+  });
+  selectionState = null;
+}
+
+function updateSelectionArea() {
+  if(!selectionState) return;
+  
+  const rect = mainCanvas.getBoundingClientRect();
+  const startX = Math.min(selectionState.startX, selectionState.currentX);
+  const startY = Math.min(selectionState.startY, selectionState.currentY);
+  const width = Math.abs(selectionState.currentX - selectionState.startX);
+  const height = Math.abs(selectionState.currentY - selectionState.startY);
+  
+  if(!selectionState.areaEl) {
+    selectionState.areaEl = document.createElement('div');
+    selectionState.areaEl.className = 'selection-area';
+    mainCanvas.appendChild(selectionState.areaEl);
+  }
+  
+  selectionState.areaEl.style.left = startX + 'px';
+  selectionState.areaEl.style.top = startY + 'px';
+  selectionState.areaEl.style.width = width + 'px';
+  selectionState.areaEl.style.height = height + 'px';
+  
+  // Проверяем блоки в выделенной области
+  const selectedBlockIds = new Set();
+  const rectLeft = startX;
+  const rectTop = startY;
+  const rectRight = startX + width;
+  const rectBottom = startY + height;
+  
+  mainCanvas.querySelectorAll('.block').forEach(blockEl => {
+    const blockRect = blockEl.getBoundingClientRect();
+    const canvasRect = mainCanvas.getBoundingClientRect();
+    const blockLeft = blockRect.left - canvasRect.left;
+    const blockTop = blockRect.top - canvasRect.top;
+    const blockRight = blockLeft + blockRect.width;
+    const blockBottom = blockTop + blockRect.height;
+    
+    // Проверяем, попадает ли блок в выделенную область
+    if(blockLeft < rectRight && blockRight > rectLeft && blockTop < rectBottom && blockBottom > rectTop) {
+      const blockId = blockEl.dataset.blockId;
+      if(blockId) {
+        selectedBlockIds.add(blockId);
+        blockEl.classList.add('block-selected');
+      }
+    } else {
+      blockEl.classList.remove('block-selected');
+    }
+  });
+  
+  selectionState.selectedBlockIds = selectedBlockIds;
+  
+  // Проверяем наличие ошибок/предупреждений в выделенных блоках
+  let hasIssues = false;
+  selectedBlockIds.forEach(blockId => {
+    const blockEl = mainCanvas.querySelector(`.block[data-block-id="${blockId}"]`);
+    if(blockEl && (blockEl.classList.contains('block-error') || blockEl.classList.contains('block-warning'))) {
+      hasIssues = true;
+    }
+  });
+  
+  // Обновляем цвет выделения
+  selectionState.areaEl.classList.remove('has-issues', 'no-issues');
+  if(selectedBlockIds.size > 0) {
+    selectionState.areaEl.classList.add(hasIssues ? 'has-issues' : 'no-issues');
+  }
+}
+
+// Начало выделения области
+document.getElementById('viewport').addEventListener('mousedown', (e)=>{
+  // Если клик на коннекторе или при панорамировании - не начинаем выделение
+  if(e.target.closest('.connector')) return;
+  if(e.ctrlKey) return; // Ctrl используется для панорамирования
+  if(e.button !== 0) return; // Только левая кнопка мыши
+  // Если уже идет перетаскивание блока - не начинаем выделение
+  if(dragState) return;
+  
+  // Если клик на блоке - отменяем выделение, но не начинаем новое
+  if(e.target.closest('.block')) {
+    clearSelection();
+    return;
+  }
+  
+  const rect = mainCanvas.getBoundingClientRect();
+  const startX = e.clientX - rect.left;
+  const startY = e.clientY - rect.top;
+  
+  // Очищаем предыдущее выделение перед началом нового
+  clearSelection();
+  
+  selectionState = {
+    startX,
+    startY,
+    currentX: startX,
+    currentY: startY,
+    areaEl: null,
+    selectedBlockIds: new Set(),
+    isActive: true // Флаг активного выделения
+  };
+  
+  e.preventDefault();
+  document.body.style.userSelect = 'none';
+});
+
+// Обновление выделения при движении мыши
+document.addEventListener('mousemove', (e)=>{
+  if(selectionState && selectionState.isActive && !dragState) {
+    const rect = mainCanvas.getBoundingClientRect();
+    selectionState.currentX = e.clientX - rect.left;
+    selectionState.currentY = e.clientY - rect.top;
+    updateSelectionArea();
+  }
+});
+
+// Завершение выделения
+document.addEventListener('mouseup', (e)=>{
+  if(selectionState && selectionState.isActive && e.button === 0) {
+    // Если область слишком маленькая, отменяем выделение
+    const width = Math.abs(selectionState.currentX - selectionState.startX);
+    const height = Math.abs(selectionState.currentY - selectionState.startY);
+    if(width < 5 && height < 5) {
+      clearSelection();
+    } else {
+      // Фиксируем выделение - оно остается видимым
+      // Деактивируем режим активного выделения, но оставляем визуализацию
+      selectionState.isActive = false;
+      // Обновляем область один раз для финального состояния
+      updateSelectionArea();
+    }
+    document.body.style.userSelect = '';
+  }
+});
+
+// Контекстное меню для выделенной области
+mainCanvas.addEventListener('contextmenu', (e)=>{
+  // Если клик на блоке - показываем контекстное меню блока (обрабатывается в document.addEventListener('contextmenu'))
+  if(e.target.closest('.block')) return;
+  
+  if(selectionState && selectionState.selectedBlockIds.size > 0) {
+    // Проверяем, что клик был в области выделения
+    const rect = mainCanvas.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+    
+    const startX = Math.min(selectionState.startX, selectionState.currentX);
+    const startY = Math.min(selectionState.startY, selectionState.currentY);
+    const width = Math.abs(selectionState.currentX - selectionState.startX);
+    const height = Math.abs(selectionState.currentY - selectionState.startY);
+    
+    if(clickX >= startX && clickX <= startX + width && clickY >= startY && clickY <= startY + height) {
+      e.preventDefault();
+      e.stopPropagation(); // Останавливаем всплытие, чтобы не показалось меню блока
+      showSelectionContextMenu(e);
+    }
+  }
+});
+
+function showSelectionContextMenu(e) {
+  const menu = document.getElementById('selectionContextMenu');
+  const selectedIds = getSelectedBlockIds();
+  
+  if(selectedIds.length === 0) return;
+  
+  // Проверяем статусы блоков
+  let allIgnoreIssues = true;
+  let allNotIgnoreIssues = true;
+  let allIgnored = true;
+  let allNotIgnored = true;
+  let hasHeader = false;
+  
+  selectedIds.forEach(blockId => {
+    const blockData = projectData.blocks.find(b => b.id === blockId);
+    if(blockData) {
+      if(blockData.type === 'header') hasHeader = true;
+      if(blockData.ignoreIssues !== true) allIgnoreIssues = false;
+      if(blockData.ignoreIssues === true) allNotIgnoreIssues = false;
+      if(blockData.ignored !== true) allIgnored = false;
+      if(blockData.ignored === true) allNotIgnored = false;
+    }
+  });
+  
+  // Обновляем пункт меню игнорирования ошибок
+  const toggleIgnoreIssuesItem = document.getElementById('toggleIgnoreIssuesMenuItem');
+  if(toggleIgnoreIssuesItem) {
+    if(allIgnoreIssues) {
+      toggleIgnoreIssuesItem.textContent = '🔴 Отключить игнорирование ошибок';
+      toggleIgnoreIssuesItem.style.opacity = '1';
+      toggleIgnoreIssuesItem.style.cursor = 'pointer';
+    } else if(allNotIgnoreIssues) {
+      toggleIgnoreIssuesItem.textContent = '🟢 Включить игнорирование ошибок';
+      toggleIgnoreIssuesItem.style.opacity = '1';
+      toggleIgnoreIssuesItem.style.cursor = 'pointer';
+    } else {
+      toggleIgnoreIssuesItem.textContent = '🟢 Включить игнорирование ошибок';
+      toggleIgnoreIssuesItem.style.opacity = '0.5';
+      toggleIgnoreIssuesItem.style.cursor = 'not-allowed';
+    }
+  }
+  
+  // Обновляем пункт меню игнорирования блоков
+  const toggleIgnoreItem = document.getElementById('toggleIgnoreMenuItem');
+  if(toggleIgnoreItem) {
+    if(hasHeader) {
+      toggleIgnoreItem.style.display = 'none';
+    } else {
+      toggleIgnoreItem.style.display = 'block';
+      if(allIgnored) {
+        toggleIgnoreItem.textContent = '✅ Отключить игнорирование';
+        toggleIgnoreItem.style.opacity = '1';
+        toggleIgnoreItem.style.cursor = 'pointer';
+      } else if(allNotIgnored) {
+        toggleIgnoreItem.textContent = '🚫 Игнорировать';
+        toggleIgnoreItem.style.opacity = '1';
+        toggleIgnoreItem.style.cursor = 'pointer';
+      } else {
+        toggleIgnoreItem.textContent = '🚫 Игнорировать';
+        toggleIgnoreItem.style.opacity = '0.5';
+        toggleIgnoreItem.style.cursor = 'not-allowed';
+      }
+    }
+  }
+  
+  menu.style.left = e.pageX + 'px';
+  menu.style.top = e.pageY + 'px';
+  menu.style.display = 'block';
+}
+
+// Функции для работы с выделенными блоками
+function getSelectedBlockIds() {
+  if(!selectionState) return [];
+  return Array.from(selectionState.selectedBlockIds);
+}
+
+function clearSelectedBlocks() {
+  const selectedIds = getSelectedBlockIds();
+  selectedIds.forEach(blockId => {
+    const blockData = projectData.blocks.find(b => b.id === blockId);
+    if(blockData && !blockData.locked) {
+      // Инициализируем fields если его нет
+      if (!blockData.fields) {
+        blockData.fields = {};
+      }
+      
+      // Очищаем все поля в blockData
+      const cfg = findCfg(blockData.template);
+      if (cfg && cfg.fields) {
+        cfg.fields.forEach(f => {
+          blockData.fields[f.name] = '';
+        });
+      }
+      
+      // Очищаем все поля ввода в блоке на странице
+      const blockEl = mainCanvas.querySelector(`.block[data-block-id="${blockId}"]`);
+      if (blockEl) {
+        const inputs = blockEl.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+          input.value = '';
+          
+          // Автоматически изменяем размер для textarea
+          if (input.tagName === 'TEXTAREA') {
+            input.style.height = 'auto';
+            const newHeight = Math.min(input.scrollHeight, 200);
+            input.style.height = newHeight + 'px';
+          }
+        });
+      }
+    }
+  });
+  updateConnections();
+  updateCounts();
+  updateIssues();
+  document.getElementById('selectionContextMenu').style.display = 'none';
+}
+
+function toggleIgnoreIssuesForSelected() {
+  const selectedIds = getSelectedBlockIds();
+  if(selectedIds.length === 0) return;
+  
+  // Проверяем, все ли блоки имеют одинаковый статус
+  let allIgnoreIssues = true;
+  let allNotIgnoreIssues = true;
+  
+  selectedIds.forEach(blockId => {
+    const blockData = projectData.blocks.find(b => b.id === blockId);
+    if(blockData) {
+      if(blockData.ignoreIssues !== true) allIgnoreIssues = false;
+      if(blockData.ignoreIssues === true) allNotIgnoreIssues = false;
+    }
+  });
+  
+  // Если статусы разные, не выполняем действие
+  if(!allIgnoreIssues && !allNotIgnoreIssues) return;
+  
+  // Определяем новое состояние
+  const newState = allIgnoreIssues ? false : true;
+  
+  selectedIds.forEach(blockId => {
+    const blockData = projectData.blocks.find(b => b.id === blockId);
+    if(blockData) {
+      blockData.ignoreIssues = newState;
+      const blockEl = mainCanvas.querySelector(`.block[data-block-id="${blockId}"]`);
+      if(blockEl) applyBlockIgnoreIssuesState(blockEl, blockData);
+    }
+  });
+  
+  updateIssues();
+  document.getElementById('selectionContextMenu').style.display = 'none';
+}
+
+function deleteSelectedBlocksConnections() {
+  const selectedIds = getSelectedBlockIds();
+  if(selectedIds.length === 0) return;
+  
+  // Удаляем все связи, исходящие из выбранных блоков через коннекторы 'bottom' (output) и 'right' (body)
+  const connectionsToDelete = [];
+  selectedIds.forEach(blockId => {
+    const outgoingConnections = projectData.connections.filter(c => 
+      c.from === blockId && (c.fromConnector === 'bottom' || c.fromConnector === 'right')
+    );
+    connectionsToDelete.push(...outgoingConnections);
+  });
+  
+  // Удаляем найденные связи из projectData.connections
+  connectionsToDelete.forEach(conn => {
+    const index = projectData.connections.findIndex(c => 
+      c.from === conn.from && 
+      c.to === conn.to && 
+      c.fromConnector === conn.fromConnector && 
+      c.toConnector === conn.toConnector
+    );
+    if(index !== -1) {
+      projectData.connections.splice(index, 1);
+    }
+  });
+  
+  // Обновляем визуализацию связей
+  updateConnections();
+  updateCounts();
+  document.getElementById('selectionContextMenu').style.display = 'none';
+}
+
+function toggleIgnoreSelectedBlocks() {
+  const selectedIds = getSelectedBlockIds();
+  if(selectedIds.length === 0) return;
+  
+  // Проверяем, все ли блоки имеют одинаковый статус
+  let allIgnored = true;
+  let allNotIgnored = true;
+  
+  selectedIds.forEach(blockId => {
+    const blockData = projectData.blocks.find(b => b.id === blockId);
+    if(blockData && blockData.type !== 'header') {
+      if(blockData.ignored !== true) allIgnored = false;
+      if(blockData.ignored === true) allNotIgnored = false;
+    }
+  });
+  
+  // Если статусы разные, не выполняем действие
+  if(!allIgnored && !allNotIgnored) return;
+  
+  // Определяем новое состояние
+  const newState = allIgnored ? false : true;
+  
+  selectedIds.forEach(blockId => {
+    const blockData = projectData.blocks.find(b => b.id === blockId);
+    if(blockData && blockData.type !== 'header') {
+      blockData.ignored = newState;
+      const blockEl = mainCanvas.querySelector(`.block[data-block-id="${blockId}"]`);
+      if(blockEl) {
+        if(newState) {
+          blockEl.classList.add('block-ignored');
+        } else {
+          blockEl.classList.remove('block-ignored');
+        }
+      }
+    }
+  });
+  
+  updateIssues();
+  document.getElementById('selectionContextMenu').style.display = 'none';
+}
+
+// Закрытие контекстного меню выделения при клике
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('#selectionContextMenu')) {
+    document.getElementById('selectionContextMenu').style.display = 'none';
+  }
 });
 
 /* ========== Connecting blocks (temp line & finalize) ========== */
@@ -3222,6 +3826,33 @@ async function duplicateContextBlock(){
   const id = contextBlockEl.dataset.blockId;
   const bd = projectData.blocks.find(b => b.id === id);
   if(!bd) return;
+  
+  const cfg = findCfg(bd.template);
+  
+  // Проверяем, является ли блок condition или loop
+  const isConditionOrLoop = cfg && (cfg.type === 'condition' || cfg.type === 'loop');
+  
+  if(isConditionOrLoop) {
+    // Проверяем, есть ли соединения на правом коннекторе
+    const rightConnections = projectData.connections.filter(c => c.from === id && c.fromConnector === 'right');
+    
+    if(rightConnections.length > 0) {
+      // Есть соединения - показываем модальное окно
+      pendingDuplicateBlockId = id;
+      openDuplicateBlockBranchModal();
+      document.getElementById('blockContextMenu').style.display='none';
+      return;
+    }
+  }
+  
+  // Нет соединений или не condition/loop - дублируем как обычно
+  await performDuplicateBlock(id);
+}
+
+async function performDuplicateBlock(blockId) {
+  const bd = projectData.blocks.find(b => b.id === blockId);
+  if(!bd) return;
+  
   try {
     const resp = await fetch('/api/block/duplicate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ block_data: bd })});
     const j = await resp.json();
@@ -3241,18 +3872,248 @@ async function duplicateContextBlock(){
   document.getElementById('blockContextMenu').style.display='none';
 }
 
+async function performDuplicateBranch(blockId) {
+  const bd = projectData.blocks.find(b => b.id === blockId);
+  if(!bd) return;
+  
+  // Собираем все ID блоков в ветке на правом коннекторе
+  const branchIds = collectBranchBlockIds(blockId, 'right');
+  
+  // Создаем карту старых ID -> новых ID для всех блоков ветки
+  const idMap = new Map();
+  
+  // Сначала дублируем основной блок
+  try {
+    const resp = await fetch('/api/block/duplicate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ block_data: bd })});
+    const j = await resp.json();
+    if(j.status === 'success' && j.new_block){
+      const newMainBlock = j.new_block;
+      idMap.set(blockId, newMainBlock.id);
+      
+      // Применяем глобальное игнорирование к новому блоку, если включено
+      if (isGlobalIgnoreEnabled()) {
+        newMainBlock.ignoreIssues = true;
+      }
+      projectData.blocks.push(newMainBlock);
+      createInstance(newMainBlock);
+    } else {
+      alert('Ошибка дублирования основного блока');
+      return;
+    }
+  } catch(err){ 
+    console.error(err); 
+    alert('Ошибка дублирования основного блока'); 
+    return;
+  }
+  
+  // Дублируем все блоки ветки
+  for(const branchBlockId of branchIds) {
+    const branchBlock = projectData.blocks.find(b => b.id === branchBlockId);
+    if(!branchBlock) continue;
+    
+    try {
+      const resp = await fetch('/api/block/duplicate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ block_data: branchBlock })});
+      const j = await resp.json();
+      if(j.status === 'success' && j.new_block){
+        const newBranchBlock = j.new_block;
+        idMap.set(branchBlockId, newBranchBlock.id);
+        
+        // Применяем глобальное игнорирование к новому блоку, если включено
+        if (isGlobalIgnoreEnabled()) {
+          newBranchBlock.ignoreIssues = true;
+        }
+        projectData.blocks.push(newBranchBlock);
+        createInstance(newBranchBlock);
+      }
+    } catch(err){ 
+      console.error(err); 
+      continue;
+    }
+  }
+  
+  // Создаем новые соединения для дублированной ветки
+  // Собираем все соединения, связанные с веткой
+  const allBranchBlockIds = [blockId, ...branchIds];
+  const connectionsToDuplicate = projectData.connections.filter(c => {
+    // Соединения внутри ветки (оба конца в ветке) или соединения от основного блока на правом коннекторе
+    const fromInBranch = allBranchBlockIds.includes(c.from);
+    const toInBranch = allBranchBlockIds.includes(c.to);
+    
+    // Включаем соединения внутри ветки
+    if(fromInBranch && toInBranch) {
+      return true;
+    }
+    
+    // Включаем соединения от основного блока на правом коннекторе к первому блоку ветки
+    if(c.from === blockId && c.fromConnector === 'right' && toInBranch) {
+      return true;
+    }
+    
+    return false;
+  });
+  
+  for(const conn of connectionsToDuplicate) {
+    const newFrom = idMap.get(conn.from);
+    const newTo = idMap.get(conn.to);
+    
+    if(newFrom && newTo) {
+      projectData.connections.push({
+        from: newFrom,
+        to: newTo,
+        fromConnector: conn.fromConnector,
+        toConnector: conn.toConnector,
+        color: conn.color || 'system'
+      });
+    }
+  }
+  
+  updateConnections();
+  updateCounts();
+  // Обновляем историю значений
+  loadValueHistory();
+  document.getElementById('blockContextMenu').style.display='none';
+}
+
+function openDuplicateBlockBranchModal() {
+  const modal = document.getElementById('duplicateBlockBranchModal');
+  if (modal) modal.style.display = 'block';
+}
+
+function closeDuplicateBlockBranchModal() {
+  const modal = document.getElementById('duplicateBlockBranchModal');
+  if (modal) modal.style.display = 'none';
+  pendingDuplicateBlockId = null;
+}
+
+async function confirmDuplicateBlockOnly() {
+  if(!pendingDuplicateBlockId) {
+    closeDuplicateBlockBranchModal();
+    return;
+  }
+  
+  const blockId = pendingDuplicateBlockId;
+  
+  // Дублируем только блок
+  await performDuplicateBlock(blockId);
+  closeDuplicateBlockBranchModal();
+}
+
+async function confirmDuplicateBranch() {
+  if(!pendingDuplicateBlockId) {
+    closeDuplicateBlockBranchModal();
+    return;
+  }
+  
+  const blockId = pendingDuplicateBlockId;
+  
+  // Дублируем всю ветку
+  await performDuplicateBranch(blockId);
+  closeDuplicateBlockBranchModal();
+}
+
+// Переменная для хранения ID блока, который будет удаляться
+let pendingDeleteBlockId = null;
+
+// Переменная для хранения ID блока, который будет дублироваться
+let pendingDuplicateBlockId = null;
+
 function deleteContextBlock(){
   if(!contextBlockEl) return;
   const id = contextBlockEl.dataset.blockId;
-  projectData.blocks = projectData.blocks.filter(b => b.id !== id);
-  projectData.connections = projectData.connections.filter(c => c.from !== id && c.to !== id);
-  const el = mainCanvas.querySelector(`.block[data-block-id="${id}"]`);
+  const blockData = projectData.blocks.find(b => b.id === id);
+  if(!blockData) return;
+  
+  const cfg = findCfg(blockData.template);
+  
+  // Проверяем, является ли блок condition или loop
+  const isConditionOrLoop = cfg && (cfg.type === 'condition' || cfg.type === 'loop');
+  
+  if(isConditionOrLoop) {
+    // Проверяем, есть ли соединения на правом коннекторе
+    const rightConnections = projectData.connections.filter(c => c.from === id && c.fromConnector === 'right');
+    
+    if(rightConnections.length > 0) {
+      // Есть соединения - показываем модальное окно
+      pendingDeleteBlockId = id;
+      openDeleteBlockBranchModal();
+      document.getElementById('blockContextMenu').style.display='none';
+      return;
+    }
+  }
+  
+  // Нет соединений или не condition/loop - удаляем как обычно
+  performDeleteBlock(id);
+}
+
+function performDeleteBlock(blockId) {
+  projectData.blocks = projectData.blocks.filter(b => b.id !== blockId);
+  projectData.connections = projectData.connections.filter(c => c.from !== blockId && c.to !== blockId);
+  const el = mainCanvas.querySelector(`.block[data-block-id="${blockId}"]`);
   if(el) el.remove();
   updateConnections();
   updateCounts();
   // Обновляем историю значений
   loadValueHistory();
   document.getElementById('blockContextMenu').style.display='none';
+}
+
+function performDeleteBranch(blockId) {
+  // Собираем все ID блоков в ветке на правом коннекторе
+  const branchIds = collectBranchBlockIds(blockId, 'right');
+  
+  // Удаляем все блоки ветки
+  branchIds.forEach(bid => {
+    projectData.blocks = projectData.blocks.filter(b => b.id !== bid);
+    projectData.connections = projectData.connections.filter(c => c.from !== bid && c.to !== bid);
+    const el = mainCanvas.querySelector(`.block[data-block-id="${bid}"]`);
+    if(el) el.remove();
+  });
+  
+  // Удаляем сам блок
+  performDeleteBlock(blockId);
+}
+
+function openDeleteBlockBranchModal() {
+  const modal = document.getElementById('deleteBlockBranchModal');
+  if (modal) modal.style.display = 'block';
+}
+
+function closeDeleteBlockBranchModal() {
+  const modal = document.getElementById('deleteBlockBranchModal');
+  if (modal) modal.style.display = 'none';
+  pendingDeleteBlockId = null;
+}
+
+function confirmDeleteBlockOnly() {
+  if(!pendingDeleteBlockId) {
+    closeDeleteBlockBranchModal();
+    return;
+  }
+  
+  const blockId = pendingDeleteBlockId;
+  const blockData = projectData.blocks.find(b => b.id === blockId);
+  
+  // Если ветка скрыта, показываем её
+  if(blockData && blockData.collapsedRightBranch) {
+    expandRightBranch(blockData);
+  }
+  
+  // Удаляем только блок (соединения на правом коннекторе будут разорваны автоматически)
+  performDeleteBlock(blockId);
+  closeDeleteBlockBranchModal();
+}
+
+function confirmDeleteBranch() {
+  if(!pendingDeleteBlockId) {
+    closeDeleteBlockBranchModal();
+    return;
+  }
+  
+  const blockId = pendingDeleteBlockId;
+  
+  // Удаляем всю ветку
+  performDeleteBranch(blockId);
+  closeDeleteBlockBranchModal();
 }
 
 function toggleFieldInputType(){
@@ -3451,13 +4312,15 @@ function toggleIgnoreIssuesForContextBlock(){
   const bd = projectData.blocks.find(b => b.id === id);
   if(!bd) return;
   bd.ignoreIssues = !bd.ignoreIssues;
+  // Пересчёт и перерисовка панельки проблем
+  updateIssues();
+  const blockEl = mainCanvas.querySelector(`.block[data-block-id="${id}"]`);
+  if (blockEl) applyBlockIgnoreIssuesState(blockEl, bd);
   // Обновляем пункт меню
   const item = document.getElementById('ignoreIssueMenuItem');
   if (item) {
     item.textContent = (bd.ignoreIssues ? '🔴 Отключить игнорирование ошибок для этого блока' : '🟢 Включить игнорирование ошибок для этого блока');
   }
-  // Пересчёт и перерисовка панельки проблем
-  updateIssues();
   document.getElementById('blockContextMenu').style.display='none';
 }
 
@@ -3497,6 +4360,36 @@ function applyBlockLockState(blockEl, blockData){
   blockEl.querySelectorAll('textarea').forEach(ta => {
     ta.style.resize = isLocked ? 'none' : '';
   });
+  // Обновляем позиционирование индикатора игнорирования ошибок
+  applyBlockIgnoreIssuesState(blockEl, blockData);
+}
+
+// Применяет визуальное состояние игнорирования ошибок
+function applyBlockIgnoreIssuesState(blockEl, blockData){
+  const ignoreIssuesEl = blockEl.querySelector('.block-ignore-issues-indicator');
+  const lockEl = blockEl.querySelector('.block-lock-indicator');
+  if (!ignoreIssuesEl) return;
+  
+  // Проверяем, включено ли глобальное игнорирование
+  const isGlobalIgnore = isGlobalIgnoreEnabled();
+  
+  // Показываем индикатор только если:
+  // 1. У блока включено игнорирование ошибок (ignoreIssues === true)
+  // 2. Глобальное игнорирование выключено
+  const shouldShow = !isGlobalIgnore && !!(blockData && blockData.ignoreIssues === true);
+  
+  if (shouldShow) {
+    ignoreIssuesEl.style.display = 'flex';
+    // Если lockIndicator виден, размещаем ignoreIssuesIndicator слева от него
+    const isLockVisible = lockEl && lockEl.style.display === 'flex';
+    if (isLockVisible) {
+      ignoreIssuesEl.style.right = '28px'; // 18px (ширина) + 6px (отступ) + 4px (промежуток)
+    } else {
+      ignoreIssuesEl.style.right = '6px';
+    }
+  } else {
+    ignoreIssuesEl.style.display = 'none';
+  }
 }
 
 // Проверка: есть ли у блока неигнорируемые проблемы (ошибки/предупреждения)
@@ -4482,6 +5375,12 @@ function updateIssues(){
 
   // Обновляем состояние глобальной кнопки в правой панели
   updateGlobalIgnoreButtonState();
+  
+  // Обновляем индикаторы игнорирования ошибок для всех блоков
+  projectData.blocks.forEach(b => {
+    const blockEl = mainCanvas.querySelector(`.block[data-block-id="${b.id}"]`);
+    if(blockEl) applyBlockIgnoreIssuesState(blockEl, b);
+  });
 }
 
 /* ========== Camera movement to block ========== */
@@ -5141,7 +6040,7 @@ document.addEventListener('keydown', function(e) {
 </script>
 </body>
   <!-- License badge -->
-<div id="licenseBadge" class="license-badge" onclick="openLicenseModal()">
+<div id="licenseBadge" class="license-badge">
   🛡 licensed by TurtCD <span id="versionBadge" style="opacity: 0.7;">v1.0.0</span>
 </div>
 

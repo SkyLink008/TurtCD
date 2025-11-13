@@ -426,6 +426,24 @@
     box-shadow: 0 0 0 3px rgba(6,182,212,0.08);
   }
 
+  /* License badge */
+  .license-badge {
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    z-index: 10060;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--white);
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 6px 10px;
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+    user-select: none;
+    pointer-events: none;
+  }
+
   .modal .mods-list {
     max-height: 320px;
     overflow: auto;
@@ -946,16 +964,15 @@
 
   <!-- Модальное окно лицензии -->
   <div id="licenseModal" style="display:none">
-    <div class="modal-backdrop" data-locked="true">
+    <div class="modal-backdrop" onclick="if(event.target === this) closeLicenseModal()">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="licenseModalTitle">
         <h3 id="licenseModalTitle">Лицензионное соглашение</h3>
-        <div class="license-hint" id="licenseHint">Прокрутите документ до конца, чтобы принять соглашение.</div>
+        <div id="licenseError" class="license-hint" style="display:none; color: var(--danger);"></div>
         <div id="licenseScroll" class="license-scroll">
           <pre id="licenseText" class="license-text">Загрузка лицензионного соглашения...</pre>
         </div>
-        <div id="licenseError" class="license-hint" style="display:none; color: var(--danger);"></div>
         <div class="modal-actions">
-          <button id="acceptLicenseBtn" class="btn" onclick="acceptLicenseAgreement()" disabled>Принять</button>
+          <button class="btn-ghost" onclick="closeLicenseModal()">Закрыть</button>
         </div>
       </div>
     </div>
@@ -984,55 +1001,40 @@ async function checkLicenseStatus() {
 }
 
 async function openLicenseModal() {
-  const modalWrapper = document.getElementById('licenseModal');
-  const scrollContainer = document.getElementById('licenseScroll');
+  const modal = document.getElementById('licenseModal');
   const licenseText = document.getElementById('licenseText');
-  const acceptBtn = document.getElementById('acceptLicenseBtn');
   const errorEl = document.getElementById('licenseError');
-  const hint = document.getElementById('licenseHint');
-
-  if (!modalWrapper || !scrollContainer || !licenseText || !acceptBtn) return;
-
-  licenseModalVisible = true;
-  licenseAcceptUnlocked = false;
-  acceptBtn.disabled = true;
-  acceptBtn.textContent = 'Принять';
+  
+  if (!modal || !licenseText) return;
+  
+  modal.style.display = 'block';
+  licenseText.textContent = 'Загрузка лицензионного соглашения...';
   if (errorEl) {
     errorEl.style.display = 'none';
     errorEl.textContent = '';
   }
-  if (hint) {
-    hint.style.display = 'block';
-  }
-
-  modalWrapper.style.display = 'block';
-  document.body.classList.add('license-modal-open');
-
-  licenseText.textContent = 'Загрузка лицензионного соглашения...';
 
   try {
     const response = await fetch('/api/license/text');
     const data = await response.json();
-    if (data.status === 'success' && typeof data.text === 'string') {
+    
+    if (data.status === 'success' && data.text) {
       licenseText.textContent = data.text;
     } else {
-      throw new Error(data.message || 'Неизвестная ошибка');
+      licenseText.textContent = 'Ошибка загрузки лицензионного соглашения.';
+      if (errorEl) {
+        errorEl.textContent = data.message || 'Не удалось загрузить лицензию';
+        errorEl.style.display = 'block';
+      }
     }
   } catch (error) {
-    console.error('Ошибка загрузки лицензионного соглашения:', error);
-    licenseText.textContent = '';
+    licenseText.textContent = 'Ошибка загрузки лицензионного соглашения.';
     if (errorEl) {
-      errorEl.textContent = 'Не удалось загрузить лицензионное соглашение: ' + error.message;
+      errorEl.textContent = 'Не удалось подключиться к серверу';
       errorEl.style.display = 'block';
     }
+    console.error('Ошибка загрузки лицензии:', error);
   }
-
-  scrollContainer.scrollTop = 0;
-  if (!licenseScrollListenerAttached) {
-    scrollContainer.addEventListener('scroll', handleLicenseScroll, { passive: true });
-    licenseScrollListenerAttached = true;
-  }
-  handleLicenseScroll();
 }
 
 function handleLicenseScroll() {
@@ -1085,12 +1087,25 @@ async function acceptLicenseAgreement() {
 }
 
 function closeLicenseModal() {
-  const modalWrapper = document.getElementById('licenseModal');
-  if (modalWrapper) {
-    modalWrapper.style.display = 'none';
+  const modal = document.getElementById('licenseModal');
+  if (modal) {
+    modal.style.display = 'none';
   }
-  document.body.classList.remove('license-modal-open');
-  licenseModalVisible = false;
+}
+
+async function loadVersion() {
+  try {
+    const response = await fetch('/api/version');
+    const data = await response.json();
+    if (data.status === 'success' && data.version) {
+      const versionBadge = document.getElementById('versionBadge');
+      if (versionBadge) {
+        versionBadge.textContent = `v${data.version}`;
+      }
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки версии:', error);
+  }
 }
 
 /* ========== Theme management ========== */
@@ -1566,6 +1581,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadTheme();
   loadProjects();
   checkLicenseStatus();
+  loadVersion(); // Загружаем версию
 
   // Закрытие модальных окон при клике вне их
   document.addEventListener('click', function(event) {
@@ -1593,7 +1609,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 <!-- License badge -->
-<div style="position: fixed; right: 12px; bottom: 10px; z-index: 10060; font-size: 12px; font-weight: 700; color: var(--white); background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); padding: 6px 10px; border-radius: 10px; backdrop-filter: blur(2px); user-select: none; pointer-events: none;">
-  🛡 licensed by TurtCD
+<div id="licenseBadge" class="license-badge">
+  🛡 licensed by TurtCD <span id="versionBadge" style="opacity: 0.7;">v1.0.0</span>
 </div>
 </html>
