@@ -972,7 +972,7 @@
           <pre id="licenseText" class="license-text">Загрузка лицензионного соглашения...</pre>
         </div>
         <div class="modal-actions">
-          <button class="btn-ghost" onclick="closeLicenseModal()">Закрыть</button>
+          <button id="acceptLicenseBtn" class="btn" onclick="acceptLicenseAgreement()" disabled>Принять</button>
         </div>
       </div>
     </div>
@@ -1004,6 +1004,8 @@ async function openLicenseModal() {
   const modal = document.getElementById('licenseModal');
   const licenseText = document.getElementById('licenseText');
   const errorEl = document.getElementById('licenseError');
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const scrollContainer = document.getElementById('licenseScroll');
   
   if (!modal || !licenseText) return;
   
@@ -1012,6 +1014,16 @@ async function openLicenseModal() {
   if (errorEl) {
     errorEl.style.display = 'none';
     errorEl.textContent = '';
+  }
+  licenseAcceptUnlocked = false;
+  if (acceptBtn) {
+    acceptBtn.disabled = true;
+  }
+  
+  // Добавляем обработчик скролла, если еще не добавлен
+  if (scrollContainer && !licenseScrollListenerAttached) {
+    scrollContainer.addEventListener('scroll', handleLicenseScroll);
+    licenseScrollListenerAttached = true;
   }
 
   try {

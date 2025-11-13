@@ -1282,6 +1282,16 @@ button, .button, input[type=button], input[type=submit] {
   margin-bottom: 12px;
 }
 
+#acceptLicenseBtn {
+  min-width: 140px;
+}
+
+#acceptLicenseBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
   /* License badge */
   .license-badge {
     position: fixed;
@@ -1307,6 +1317,7 @@ button, .button, input[type=button], input[type=submit] {
     background: rgba(255, 255, 255, 0.05);
     pointer-events: none;
     z-index: 1000;
+    border-radius: 8px;
   }
 
   .selection-area.has-issues {
@@ -5978,16 +5989,31 @@ async function loadVersion() {
   }
 }
 
+let licenseAcceptUnlocked = false;
+let licenseScrollListenerAttached = false;
+
 async function openLicenseModal() {
   const modal = document.getElementById('licenseModal');
   const licenseText = document.getElementById('licenseText');
   const errorEl = document.getElementById('licenseError');
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const scrollContainer = document.getElementById('licenseScroll');
   
   if (!modal || !licenseText) return;
   
   modal.style.display = 'block';
   licenseText.textContent = 'Загрузка лицензионного соглашения...';
   errorEl.style.display = 'none';
+  licenseAcceptUnlocked = false;
+  if (acceptBtn) {
+    acceptBtn.disabled = true;
+  }
+  
+  // Добавляем обработчик скролла, если еще не добавлен
+  if (scrollContainer && !licenseScrollListenerAttached) {
+    scrollContainer.addEventListener('scroll', handleLicenseScroll);
+    licenseScrollListenerAttached = true;
+  }
   
   try {
     const response = await fetch('/api/license/text');
@@ -6005,6 +6031,55 @@ async function openLicenseModal() {
     errorEl.textContent = 'Не удалось подключиться к серверу';
     errorEl.style.display = 'block';
     console.error('Ошибка загрузки лицензии:', error);
+  }
+}
+
+function handleLicenseScroll() {
+  if (licenseAcceptUnlocked) return;
+  const scrollContainer = document.getElementById('licenseScroll');
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const licenseText = document.getElementById('licenseText');
+  if (!scrollContainer || !acceptBtn || !licenseText) return;
+  if (!licenseText.textContent || licenseText.textContent.trim().length === 0) {
+    acceptBtn.disabled = true;
+    return;
+  }
+  const nearBottom = Math.ceil(scrollContainer.scrollTop + scrollContainer.clientHeight) >= scrollContainer.scrollHeight - 10;
+  if (nearBottom) {
+    licenseAcceptUnlocked = true;
+    acceptBtn.disabled = false;
+  }
+}
+
+async function acceptLicenseAgreement() {
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const errorEl = document.getElementById('licenseError');
+  if (!licenseAcceptUnlocked || !acceptBtn) return;
+
+  acceptBtn.disabled = true;
+  acceptBtn.textContent = 'Сохранение...';
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+
+  try {
+    const response = await fetch('/api/license/accept', { method: 'POST' });
+    const data = await response.json();
+    if (data.status === 'success') {
+      closeLicenseModal();
+      showNotification('success', 'Спасибо!', 'Лицензионное соглашение принято.');
+    } else {
+      throw new Error(data.message || 'Неизвестная ошибка');
+    }
+  } catch (error) {
+    console.error('Ошибка сохранения лицензии:', error);
+    if (errorEl) {
+      errorEl.textContent = 'Ошибка сохранения: ' + error.message;
+      errorEl.style.display = 'block';
+    }
+    acceptBtn.disabled = false;
+    acceptBtn.textContent = 'Принять';
   }
 }
 
@@ -6054,7 +6129,7 @@ document.addEventListener('keydown', function(e) {
           <pre id="licenseText" class="license-text">Загрузка лицензионного соглашения...</pre>
         </div>
         <div class="modal-actions">
-          <button class="btn-ghost" onclick="closeLicenseModal()">Закрыть</button>
+          <button id="acceptLicenseBtn" class="btn" onclick="acceptLicenseAgreement()" disabled>Принять</button>
         </div>
       </div>
     </div>
