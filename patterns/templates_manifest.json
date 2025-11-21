@@ -1,0 +1,20 @@
+[
+  {
+    "id": "blank",
+    "name": "Пустой проект",
+    "description": "Обычный пустой проект",
+    "filename": "blank.turtcd"
+  },
+  {
+    "id": "teleb-easy",
+    "name": "Telebot - простой пример",
+    "description": "Простой телеграмм бот, реагирующий на текстовые сообщения:\n - Привет\n - /start",
+    "filename": "teleb-easy.turtcd"
+  },
+  {
+    "id": "teleb-keyb",
+    "name": "Telebot - клавиатура",
+    "description": "Телеграмм бот с обработкой callback и созданием простой клавиатуры",
+    "filename": "teleb-keyb.turtcd"
+  }
+]

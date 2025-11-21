@@ -1,0 +1,593 @@
+{
+  "blocks": [
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {},
+      "fields": {},
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-jpuhkdno",
+      "ignoreIssues": false,
+      "template": "start",
+      "type": "header",
+      "width": 180,
+      "x": 433,
+      "y": 114
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 105
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Блоком ниже инициализируем telebot, укажите в блоке ниже ваш токен, получите его у BotFather"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-61u3ob6a",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 429,
+      "y": 228
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "token": "single-line"
+      },
+      "fields": {
+        "token": "telebot token"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-ak3ldxtm",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_5cc5d123",
+      "type": "action",
+      "width": 180,
+      "x": 423,
+      "y": 437
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 125
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Инициализируем callback слушателя, этот слушатель должен быть всегда выше всех других слушателей"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-0desvs29",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 431,
+      "y": 571
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {},
+      "fields": {},
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-gjmc8x8s",
+      "ignoreIssues": false,
+      "template": "block_5a25e02d",
+      "type": "loop",
+      "width": 180,
+      "x": 393,
+      "y": 812
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "callback": "single-line"
+      },
+      "fields": {
+        "callback": "info"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-hmncsyoo",
+      "ignoreIssues": false,
+      "template": "block_66a5d5a9",
+      "type": "condition",
+      "width": 180,
+      "x": 750,
+      "y": 1069
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 71
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Если callback пришел сравниваем его блоком ниже"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-sybj55l2",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 744,
+      "y": 885
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "comment": "single-line"
+      },
+      "fields": {
+        "comment": "Реагируем на callback"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-vamv4cd2",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 1024,
+      "y": 1152
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "message": 71
+      },
+      "fieldTypes": {
+        "message": "multi-line"
+      },
+      "fields": {
+        "message": "\"Здесь будет подробная справка о боте\""
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-jm307yk3",
+      "ignoreIssues": false,
+      "template": "block_01441389",
+      "type": "action",
+      "width": 180,
+      "x": 1021,
+      "y": 1292
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 52
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Создаем обычного слушателя"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-bpa5lsh0",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 429,
+      "y": 1227
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {},
+      "fields": {},
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-d392y3bh",
+      "ignoreIssues": false,
+      "template": "block_e77e3a15",
+      "type": "loop",
+      "width": 180,
+      "x": 444,
+      "y": 1415
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "content": "single-line"
+      },
+      "fields": {
+        "content": "\"/start\""
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-cfek91n8",
+      "ignoreIssues": false,
+      "template": "block_a79b4f57",
+      "type": "condition",
+      "width": 180,
+      "x": 709,
+      "y": 1523
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 89
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Создаем клавиатуру, которая будет объединять в себе кнопки"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-cynd6mgd",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 1074,
+      "y": 1606
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "name": "single-line"
+      },
+      "fields": {
+        "name": "keyb"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-0udneomu",
+      "ignoreIssues": false,
+      "template": "block_c58c3125",
+      "type": "action",
+      "width": 180,
+      "x": 1078,
+      "y": 1806
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 125
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Создаем кнопку которая будет отправлять callback info чтобы бот смог на него отреагировать"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-0517fffz",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 1074,
+      "y": 1952
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "data": "single-line",
+        "name": "single-line",
+        "text": "single-line"
+      },
+      "fields": {
+        "data": "info",
+        "name": "button_1",
+        "text": "\"Получить справку о боте\""
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-8u7dru4q",
+      "ignoreIssues": false,
+      "template": "block_1b7997ab",
+      "type": "action",
+      "width": 180,
+      "x": 1080,
+      "y": 2181
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 52
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Добавляем кнопку в клавиатуру"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-xdqldpc9",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 1076,
+      "y": 2409
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "bu_n": "single-line",
+        "ke_n": "single-line"
+      },
+      "fields": {
+        "bu_n": "button_1",
+        "ke_n": "keyb"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-d43el35l",
+      "ignoreIssues": false,
+      "template": "block_fcee9e1b",
+      "type": "action",
+      "width": 180,
+      "x": 1053,
+      "y": 2571
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 71
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Отправляем сообщение с созданной клавиатурой"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-ju247hc6",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 1076,
+      "y": 2758
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "keyb": "single-line",
+        "text": "single-line"
+      },
+      "fields": {
+        "keyb": "keyb",
+        "text": "\"Привет! Я простой бот, нажми на кнопку ниже чтобы получить подробную информацию о мне\""
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-ickwgbwf",
+      "ignoreIssues": false,
+      "template": "block_c1a187d3",
+      "type": "action",
+      "width": 180,
+      "x": 1034,
+      "y": 2940
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "comment": "single-line"
+      },
+      "fields": {
+        "comment": "Запускаем бота"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-7qofe9tw",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 433,
+      "y": 1553
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {},
+      "fields": {},
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-u1ooltrl",
+      "ignoreIssues": false,
+      "template": "block_4458c56b",
+      "type": "action",
+      "width": 180,
+      "x": 459,
+      "y": 1713
+    }
+  ],
+  "camera": {
+    "x": -4,
+    "y": 211,
+    "scale": 1
+  },
+  "connections": [
+    {
+      "color": "system",
+      "from": "b-jpuhkdno",
+      "fromConnector": "bottom",
+      "to": "b-61u3ob6a",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-61u3ob6a",
+      "fromConnector": "bottom",
+      "to": "b-ak3ldxtm",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-ak3ldxtm",
+      "fromConnector": "bottom",
+      "to": "b-0desvs29",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-0desvs29",
+      "fromConnector": "bottom",
+      "to": "b-gjmc8x8s",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-gjmc8x8s",
+      "fromConnector": "right",
+      "to": "b-sybj55l2",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-sybj55l2",
+      "fromConnector": "bottom",
+      "to": "b-hmncsyoo",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-hmncsyoo",
+      "fromConnector": "right",
+      "to": "b-vamv4cd2",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-vamv4cd2",
+      "fromConnector": "bottom",
+      "to": "b-jm307yk3",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-gjmc8x8s",
+      "fromConnector": "bottom",
+      "to": "b-bpa5lsh0",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-bpa5lsh0",
+      "fromConnector": "bottom",
+      "to": "b-d392y3bh",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-d392y3bh",
+      "fromConnector": "right",
+      "to": "b-cfek91n8",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-cfek91n8",
+      "fromConnector": "right",
+      "to": "b-cynd6mgd",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-cynd6mgd",
+      "fromConnector": "bottom",
+      "to": "b-0udneomu",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-0udneomu",
+      "fromConnector": "bottom",
+      "to": "b-0517fffz",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-0517fffz",
+      "fromConnector": "bottom",
+      "to": "b-8u7dru4q",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-8u7dru4q",
+      "fromConnector": "bottom",
+      "to": "b-xdqldpc9",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-xdqldpc9",
+      "fromConnector": "bottom",
+      "to": "b-d43el35l",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-d43el35l",
+      "fromConnector": "bottom",
+      "to": "b-ju247hc6",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-ju247hc6",
+      "fromConnector": "bottom",
+      "to": "b-ickwgbwf",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-d392y3bh",
+      "fromConnector": "bottom",
+      "to": "b-7qofe9tw",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-7qofe9tw",
+      "fromConnector": "bottom",
+      "to": "b-u1ooltrl",
+      "toConnector": "top"
+    }
+  ],
+  "createdAt": "2025-11-19T07:28:57.862509Z",
+  "globalIgnore": false,
+  "projectPath": "",
+  "variableTags": {
+    "button_1": "Обьект",
+    "call": "Ключ",
+    "info": "Ключ",
+    "keyb": "Обьект"
+  }
+}

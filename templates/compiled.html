@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Скомпилированный код</title>
+<style>
+  :root{
+    --bg:#0f1724;
+    --accent:#06b6d4;
+    --accent-2:#8b5cf6;
+    --card:#0b1226;
+    --white:#ffffff;
+    --success:#10b981;
+    --danger:#ef4444;
+  }
+  
+  /* Theme: Light mode color variables */
+  [data-theme="light"] {
+    --bg:#f8fafc;
+    --accent:#0ea5e9;
+    --accent-2:#6366f1;
+    --card:#ffffff;
+    --white:#1e293b;
+    --success:#059669;
+    --danger:#dc2626;
+  }
+  
+  [data-theme="light"] body {
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+    color: var(--white);
+  }
+  
+  [data-theme="light"] .toolbar {
+    background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] .code-box {
+    background: var(--card);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] #console {
+    background: #f8fafc;
+    color: #1e293b;
+    border: 2px solid rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] #console.error {
+    color: var(--danger);
+  }
+  
+  /* Connection lines for light theme */
+  [data-theme="light"] .connection-line { 
+    background: linear-gradient(90deg, #0ea5e9, #6366f1) !important; 
+  }
+  
+  [data-theme="light"] #inputField {
+    background: var(--card);
+    color: var(--white);
+    border: 2px solid rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] #inputField.focused {
+    border-color: var(--accent-2);
+    box-shadow: 0 0 12px rgba(99,102,241,0.3);
+  }
+  html,body{height:100%; margin:0; font-family:Inter, Roboto, Arial, sans-serif; background:linear-gradient(180deg,#071025 0%,#0b1220 100%); color:var(--white);}
+  .app{display:flex; flex-direction:column; height:100vh; padding:16px; gap:12px;}
+  .toolbar{display:flex; gap:12px; padding:14px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.03), transparent); box-shadow:0 6px 20px rgba(2,6,23,0.5);}
+  .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#022; padding:12px 18px; border-radius:12px; border:none; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 8px 24px rgba(14,165,233,0.08); transition:transform .12s;}
+  .btn:hover{transform:translateY(-3px);}
+  .btn-ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--white); padding:12px 16px; border-radius:12px; font-size:15px; cursor:pointer;}
+  .input-bar{display:flex; gap:8px;}
+  #inputField{flex:1; padding:10px; border-radius:8px; border:2px solid transparent; font-size:14px; outline:none;}
+  #inputField.focused{border-color:var(--accent-2); box-shadow:0 0 12px var(--accent-2);}
+  
+  /* Theme selector styles */
+  .theme-selector {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 6px;
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .theme-selector:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+  
+  #themeDropdown {
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+    min-width: 140px;
+    transition: all 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 32px;
+  }
+  
+  #themeDropdown:hover {
+    background-color: rgba(255,255,255,0.1);
+  }
+  
+  #themeDropdown:focus {
+    background-color: rgba(255,255,255,0.15);
+    box-shadow: 0 0 0 2px rgba(6,182,212,0.3);
+  }
+  
+  #themeDropdown option {
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  
+  [data-theme="light"] .theme-selector {
+    background: rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+  
+  /* Status indicator */
+  .program-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 6px 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  
+  .status-text {
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .program-status-indicator.status-running .status-dot {
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+  }
+  
+  .program-status-indicator.status-running .status-text {
+    color: #22c55e;
+  }
+  
+  .program-status-indicator.status-stopped .status-dot {
+    background: #ef4444;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  }
+  
+  .program-status-indicator.status-stopped .status-text {
+    color: #ef4444;
+  }
+  
+  [data-theme="light"] .theme-selector:hover {
+    background: rgba(0,0,0,0.12);
+    border-color: rgba(0,0,0,0.25);
+  }
+  
+  [data-theme="light"] #themeDropdown {
+    color: var(--white);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  }
+  
+  [data-theme="light"] #themeDropdown:hover {
+    background-color: rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] #themeDropdown option {
+    background: #ffffff;
+    color: #1e293b;
+  }
+  
+  [data-theme="halloween"] .theme-selector {
+    background: rgba(255,140,0,0.1);
+    border: 1px solid rgba(255,140,0,0.3);
+  }
+  
+  [data-theme="halloween"] .theme-selector:hover {
+    background: rgba(255,140,0,0.15);
+    border-color: rgba(255,140,0,0.5);
+  }
+  
+  [data-theme="halloween"] #themeDropdown {
+    color: var(--white);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF8C00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  }
+  
+  [data-theme="halloween"] #themeDropdown:hover {
+    background-color: rgba(255,140,0,0.2);
+  }
+  
+  [data-theme="halloween"] #themeDropdown option {
+    background: #2d1b0f;
+    color: #ffffff;
+  }
+  .code-box{flex:0 0 40%; border-radius:16px; background:var(--card); padding:12px; overflow:auto; max-height: 300px; position:relative;}
+  .code-box-copy-btn{position:absolute; top:8px; right:8px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:var(--white); padding:6px 10px; border-radius:6px; font-size:12px; cursor:pointer; transition:all 0.2s; z-index:10; display:flex; align-items:center; gap:4px;}
+  .code-box-copy-btn:hover{background:rgba(255,255,255,0.15); border-color:var(--accent); transform:translateY(-1px);}
+  .code-box-copy-btn:active{transform:translateY(0);}
+  pre code{font-size:16px; font-family:Consolas, monospace; border-radius:16px; display:block;}
+  [contenteditable="true"]{outline:none; white-space:pre; display:block;}
+  .code-box .token-keyword{color:#c792ea; font-weight:600;}
+  .code-box .token-builtin{color:#4fc1ff;}
+  .code-box .token-constant{color:#f78c6c; font-weight:600;}
+  .code-box .token-number{color:#b5cea8;}
+  .code-box .token-string{color:#ce9178;}
+  .code-box .token-comment{color:#6a9955; font-style:italic;}
+  #console{max-height:653px; border-radius:12px; background:#000; padding:12px; overflow:auto; font-family:Consolas, monospace; font-size:16px; white-space:pre-wrap; color:var(--success); border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 0 10px rgba(0,0,0,0.3);}
+  #console.error{color:var(--danger);}
+
+  /*===== In-app modal (themed) =====*/
+  .modal.hidden { display: none; }
+  .modal { position: fixed; inset: 0; z-index: 10050; display: flex; align-items: center; justify-content: center; }
+  .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(2px); }
+  .modal-card { position: relative; background: var(--card); color: var(--white); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 20px; width: min(520px, 92vw); box-shadow: 0 20px 60px rgba(2,6,23,0.6); }
+  [data-theme="light"] .modal-card { border: 1px solid rgba(0,0,0,0.08); }
+  .modal-title { font-weight: 800; font-size: 18px; margin-bottom: 8px; }
+  .modal-text { opacity: 0.9; line-height: 1.5; margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .modal-card .btn[disabled], .modal-card .btn-ghost[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+  /* License badge */
+  .license-badge {
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    z-index: 10060;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--white);
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 6px 10px;
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* License modal styles */
+  .license-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px;
+    background: rgba(0,0,0,0.25);
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.25);
+  }
+
+  .license-text {
+    white-space: pre-wrap;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--white);
+  }
+
+  .license-hint {
+    font-size: 13px;
+    color: var(--white);
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+
+  /* Help tour system styles */
+  .help-tour-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    pointer-events: none;
+  }
+
+  .help-tour-spotlight {
+    position: absolute;
+    border: 3px solid var(--accent);
+    border-radius: 12px;
+    background: transparent;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 30px rgba(6, 182, 212, 0.8);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 10001;
+  }
+
+  .help-tour-tooltip {
+    position: absolute;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 350px;
+    z-index: 10001;
+    pointer-events: auto;
+    animation: helpTooltipAppear 0.3s ease;
+  }
+
+  @keyframes helpTooltipAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .help-tour-tooltip h3 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .help-tour-tooltip p {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .help-tour-tooltip .help-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .help-tour-tooltip .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .help-tour-tooltip .btn-ghost {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .help-tour-progress {
+    position: absolute;
+    bottom: 12px;
+    left: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Highlight effect for tour elements */
+  .help-tour-highlighted {
+    position: relative;
+    z-index: 10002 !important;
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+    filter: brightness(1.1) contrast(1.1);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+  }
+
+/* Additional themes and context menu styles */
+
+/* Context menu base styles */
+.context-menu {
+  position: absolute;
+  z-index: 9999;
+  background: var(--panel);
+  border: 1px solid var(--accent-2);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  color: var(--white);
+  padding: 4px 0;
+  display: none;
+}
+.context-menu-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.context-menu-item:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+/* Theme: Hacker */
+[data-theme="hacker"] {
+  --bg: #000000;
+  --panel: #000000;
+  --accent: #7CFC00;
+  --accent-2: #3a7f00;
+  --card: #000000;
+  --muted: #9ae89a;
+  --white: #e6ffe6;
+}
+[data-theme="hacker"] body { background: #000; color: var(--white); }
+[data-theme="hacker"] #console {
+  background: #000 !important;
+  border: 2px solid #7CFC00 !important;
+  box-shadow: 0 0 10px rgba(124,252,0,0.3) !important;
+}
+[data-theme="hacker"] .block,
+[data-theme="hacker"] .block-header,
+[data-theme="hacker"] .block-content,
+[data-theme="hacker"] .block-item {
+  background: #000 !important;
+  color: #7CFC00 !important;
+  border-color: rgba(124,252,0,0.2) !important;
+}
+[data-theme="hacker"] .color-dot { background: #7CFC00 !important; }
+[data-theme="hacker"] .connection-line { background: linear-gradient(90deg, #7CFC00, #3a7f00) !important; }
+[data-theme="hacker"] .theme-option.active { background: #7CFC00; color: #000; }
+[data-theme="hacker"] .context-menu { background: #000; color: #7CFC00; border-color: #3a7f00; }
+[data-theme="hacker"] .context-menu-item:hover { background: #7CFC00; color: #000; }
+
+/* Theme: Sky */
+[data-theme="nebo"] {
+  --bg: #f8ffff;
+  --panel: #ffffff;
+  --accent: #40E0D0;
+  --accent-2: #a7f1ec;
+  --card: #ffffff;
+  --muted: #6b94a1;
+  --white: #003333;
+}
+[data-theme="nebo"] body {
+  background: linear-gradient(180deg, #f9feff 0%, #eefcff 100%);
+  color: var(--white);
+}
+[data-theme="nebo"] #console {
+  background: #000 !important;
+  border: 2px solid #40E0D0 !important;
+  box-shadow: 0 0 10px rgba(64,224,208,0.3) !important;
+}
+[data-theme="nebo"] .block,
+[data-theme="nebo"] .block-header,
+[data-theme="nebo"] .block-content,
+[data-theme="nebo"] .block-item {
+  background: #ffffff !important;
+  color: #003333 !important;
+  border-color: rgba(64,224,208,0.15) !important;
+}
+[data-theme="nebo"] .block-group-title,
+[data-theme="nebo"] .block-category-title,
+[data-theme="nebo"] .block-name {
+  color: #000000 !important;
+}
+[data-theme="nebo"] .color-dot { background: #40E0D0 !important; }
+[data-theme="nebo"] .connection-line { background: linear-gradient(90deg, #40E0D0, #a7f1ec) !important; }
+[data-theme="nebo"] .theme-option.active { background: #40E0D0; color: #003; }
+[data-theme="nebo"] .context-menu { background: #fff; color: #000; border-color: #40E0D0; }
+[data-theme="nebo"] .context-menu-item:hover { background: #40E0D0; color: #000; }
+
+/* Theme: Monochrome */
+[data-theme="mono"] {
+  --bg: #0f0f0f;
+  --panel: #111111;
+  --accent: #ffffff;
+  --accent-2: #bfbfbf;
+  --card: #0b0b0b;
+  --muted: #9a9a9a;
+  --white: #ffffff;
+}
+[data-theme="mono"] body { background: #0b0b0b; color: var(--white); }
+[data-theme="mono"] #console {
+  background: #000 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2) !important;
+}
+[data-theme="mono"] .block,
+[data-theme="mono"] .block-header,
+[data-theme="mono"] .block-content,
+[data-theme="mono"] .block-item {
+  background: #111 !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+[data-theme="mono"] .color-dot { background: #fff !important; }
+[data-theme="mono"] .connection-line { background: linear-gradient(90deg, #ffffff, #bfbfbf) !important; }
+[data-theme="mono"] .theme-option.active { background: #fff; color: #000; }
+
+/* Theme: Halloween */
+[data-theme="halloween"] {
+  --bg: #1a0f0a;
+  --panel: #2d1b0f;
+  --accent: #FF8C00;
+  --accent-2: #ff6b00;
+  --card: #1a0f0a;
+  --muted: #cc8c66;
+  --white: #ffffff;
+}
+[data-theme="halloween"] body { background: #1a0f0a; color: var(--white); }
+[data-theme="halloween"] .code-box { background: #2d1b0f !important; border: 1px solid #FF8C00 !important; }
+[data-theme="halloween"] #console { 
+  background: #1a0f0a !important; 
+  border: 2px solid #FF8C00 !important; 
+  box-shadow: 0 0 15px rgba(255,140,0,0.4) !important;
+}
+[data-theme="halloween"] .toolbar { background: linear-gradient(180deg, rgba(255,140,0,0.1), transparent) !important; }
+[data-theme="halloween"] .modal-card { background: #2d1b0f !important; border: 1px solid #FF8C00 !important; }
+[data-theme="halloween"] .btn { background: linear-gradient(90deg, #FF8C00, #ff6b00) !important; }
+[data-theme="halloween"] .btn-stop { background: linear-gradient(90deg, #ff6b00, #e55a00) !important; }
+[data-theme="halloween"] .btn-exe { background: linear-gradient(90deg, #ff6b00, #FF8C00) !important; }
+[data-theme="halloween"] #inputField { border-color: #FF8C00 !important; }
+[data-theme="halloween"] #inputField.focused { border-color: #ff6b00 !important; box-shadow: 0 0 12px rgba(255,140,0,0.3) !important; }
+
+
+/* Fixed themes and context menu */
+
+/* Context menu with light theme style */
+.context-menu {
+  position: absolute;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  color: #000;
+  padding: 4px 0;
+  display: none;
+}
+.context-menu-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.context-menu-item:hover {
+  background: #f0f0f0;
+  color: #000;
+}
+
+/* Rounded block styles */
+.block,
+.block-header,
+.block-content,
+.block-item {
+  border-radius: 10px !important;
+}
+
+/* Theme: Hacker block styles */
+[data-theme="hacker"] .block,
+[data-theme="hacker"] .block-header,
+[data-theme="hacker"] .block-content,
+[data-theme="hacker"] .block-item {
+  border-radius: 10px !important;
+}
+
+/* Theme: Sky block styles */
+[data-theme="nebo"] .block,
+[data-theme="nebo"] .block-header,
+[data-theme="nebo"] .block-content,
+[data-theme="nebo"] .block-item {
+  border-radius: 10px !important;
+}
+[data-theme="nebo"] .block-group-title,
+[data-theme="nebo"] .block-category-title,
+[data-theme="nebo"] .block-name {
+  color: #000000 !important;
+}
+
+/* Theme: Monochrome block styles */
+[data-theme="mono"] .block,
+[data-theme="mono"] .block-header,
+[data-theme="mono"] .block-content,
+[data-theme="mono"] .block-item {
+  border-radius: 10px !important;
+}
+
+/* Theme: Pink-Violet */
+[data-theme="pinkviolet"] {
+  --bg: #2a133d;
+  --panel: #3b2562;
+  --accent: #ff91e9;
+  --accent-2: #ad5fff;
+  --card: #41275a;
+  --muted: #c97ad9;
+  --white: #fff1fa;
+}
+[data-theme="pinkviolet"] body { background: linear-gradient(180deg, #2a133d 0%, #41275a 100%); color: var(--white); }
+[data-theme="pinkviolet"] .block,
+[data-theme="pinkviolet"] .block-header,
+[data-theme="pinkviolet"] .block-content,
+[data-theme="pinkviolet"] .block-item {
+  background: #3b2562 !important;
+  color: #fff1fa !important;
+  border-color: #ad5fff !important;
+}
+[data-theme="pinkviolet"] .color-dot { background: #ff91e9 !important; }
+
+/* Theme: Red */
+[data-theme="red"] {
+  --bg: #0f0f0f;
+  --panel: #111111;
+  --accent: #ff2121;
+  --accent-2: #ee5959;
+  --card: #0b0b0b;
+  --muted: #ee5959;
+  --white: #ff2121;
+}
+[data-theme="red"] body { background: #0b0b0b; color: var(--white); }
+[data-theme="red"] .block,
+[data-theme="red"] .block-header,
+[data-theme="red"] .block-content,
+[data-theme="red"] .block-item {
+  background: #111 !important;
+  color: #ff2121 !important;
+  border: 1px solid #ff2121 !important;
+}
+[data-theme="red"] .color-dot { background: #ff2121 !important; }
+
+
+/* Additional button styles */
+.btn-stop {
+  background: linear-gradient(90deg, var(--danger), #b91c1c);
+  color: #fff;
+}
+
+.btn-exe {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  color: #fff;
+}
+
+/* Hover effect */
+.btn-stop:hover,
+.btn-exe:hover {
+  transform: translateY(-3px) scale(1.03);
+}
+
+/* Additional interface fixes */
+
+/* Reduce toolbar and button height */
+.toolbar {
+  padding: 8px 12px !important;
+}
+.btn, .btn-ghost {
+  padding: 8px 14px !important;
+  font-size: 14px !important;
+}
+
+/* "Compile to EXE" button text color */
+.btn-exe {
+  color: #000 !important;
+}
+
+/* Remove blue bar at bottom - solid background now */
+html, body {
+  background: var(--bg) !important;
+}
+  
+  /* Increased icon size on play/pause button */
+  #toggleRunBtn { font-size: 22px !important; }
+</style>
+</head>
+<body>
+<div class="app">
+<div class="toolbar">
+<button class="btn" id="toggleRunBtn" onclick="toggleRun()">▶️</button>
+<div id="programStatusIndicator" class="program-status-indicator status-stopped" title="Статус выполнения программы" style="margin-left:8px;">
+  <div class="status-dot"></div>
+  <span class="status-text">Остановлено</span>
+  </div>
+<button class="btn btn-exe" onclick="openExeCompileModal()">🔧 Скомпилировать в EXE</button>
+<button class="btn-ghost" onclick="copyCode()">📋 Копировать</button>
+<button class="btn-ghost" onclick="downloadCode()">💾 Скачать</button>
+<button class="btn-ghost" onclick="goBackToProject()">🔙 Вернуться к проекту</button>
+<button class="btn-ghost" onclick="startHelpTour()">❓ Помощь</button>
+<div style="flex:1"></div>
+<div class="theme-selector">
+<select id="themeDropdown" onchange="setTheme(this.value)">
+  <option value="dark">🌙 Тёмная</option>
+  <option value="light">☀️ Светлая</option>
+  <option value="hacker">🖥️ Хакер</option>
+  <option value="nebo">☁️ Небо</option>
+  <option value="mono">⬛ Моно</option>
+  <option value="halloween">🎃 Хэллоуин</option>
+  <option value="pinkviolet">💖 Розово-фиолетовая</option>
+  <option value="red">🔴 Красная</option>
+</select>
+</div>
+</div>
+<div class="input-bar">
+<input id="inputField" onkeydown="if(event.key==='Enter'){sendInput();}" placeholder="Введите текст и нажмите Enter"/>
+<button class="btn" onclick="sendInput()">Отправить</button>
+</div>
+<div style="display:flex; gap:12px; flex:1; min-height:0; overflow:hidden;">
+<div class="code-box" id="codeBox" style="margin-top:16px;">
+<button class="code-box-copy-btn" onclick="copyCodeFromBox()" title="Копировать код">
+<span>📋</span>
+<span>Копировать</span>
+</button>
+<pre><code class="language-python" contenteditable="true" id="code"></code></pre>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; margin-top:16px; min-height:0;">
+<div style="font-weight:700; font-size:15px; margin-bottom:10px; opacity:0.95; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-shrink:0;">
+<div style="display:flex; align-items:center; gap:8px;">
+<span style="color:var(--accent);">▶</span>
+<span style="background:linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Консоль</span>
+</div>
+<button class="code-box-copy-btn" onclick="copyConsoleOutput()" title="Копировать вывод консоли" style="position:static; padding:6px 12px; font-size:13px;">
+<span>📋</span>
+<span>Копировать</span>
+</button>
+</div>
+<div id="console" style="flex:1; max-height:653px; min-height:0;"></div>
+</div>
+</div>
+</div>
+<!-- Save .py modal -->
+<div aria-hidden="true" class="modal hidden" id="savePyModal">
+<div class="modal-backdrop"></div>
+<div class="modal-card" onkeydown="if(event.key==='Enter' && event.target.id==='savePyName'){event.preventDefault();confirmSavePy();}">
+<div class="modal-title">Сохранить как .py</div>
+<div class="modal-text">Укажите имя файла для сохранения Python-кода.</div>
+<input class="input" id="savePyName" placeholder="program.py" style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:var(--white);"/>
+<div class="modal-actions">
+<button class="btn" onclick="confirmSavePy()">Сохранить</button>
+<button class="btn-ghost" onclick="closeSavePyModal()">Отмена</button>
+</div>
+</div>
+</div>
+<!-- EXE Compile modal -->
+<div aria-hidden="true" class="modal hidden" id="exeCompileModal">
+<div class="modal-backdrop"></div>
+<div class="modal-card" style="max-width: 500px;" onkeydown="if(event.key==='Enter' && (event.target.id==='exeName' || event.target.id==='exeIcon' || event.target.id==='hideConsole')){event.preventDefault();startExeCompilation();}">
+<div class="modal-title">Компиляция в EXE</div>
+<div class="modal-text">
+<div style="margin-bottom: 12px;">
+<label style="display: block; margin-bottom: 4px; font-weight: 500;">Имя EXE файла:</label>
+<input class="input" id="exeName" placeholder="program.exe" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:var(--white);"/>
+</div>
+<div style="margin-bottom: 12px;">
+<label style="display: block; margin-bottom: 4px; font-weight: 500;">Иконка (опционально):</label>
+<input accept=".ico" class="input" id="exeIcon" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:var(--white);" type="file"/>
+</div>
+<div style="margin-bottom: 12px;">
+<label style="display: flex; align-items: center; gap: 8px;">
+<input checked="" id="hideConsole" type="checkbox"/>
+<span>Скрыть консольное окно</span>
+</label>
+</div>
+</div>
+<div class="modal-actions">
+<button class="btn" onclick="startExeCompilation()">Начать сборку</button>
+<button class="btn-ghost" onclick="closeExeCompileModal()">Отмена</button>
+</div>
+</div>
+</div>
+<!-- EXE Compile Progress modal -->
+<div aria-hidden="true" class="modal hidden" id="exeProgressModal">
+<div class="modal-backdrop"></div>
+<div class="modal-card">
+<div class="modal-title">Сборка EXE файла</div>
+<div class="modal-text">
+<div style="margin-bottom: 12px;">Идет процесс компиляции...</div>
+<div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 4px; margin-bottom: 8px;">
+<div id="progressBar" style="background: linear-gradient(90deg, #8b5cf6, #7c3aed); height: 20px; border-radius: 4px; width: 0%; transition: width 0.3s ease;"></div>
+</div>
+<div id="progressText" style="text-align: center; font-size: 14px; opacity: 0.8;">0%</div>
+<div id="progressStatus" style="text-align: center; font-size: 12px; opacity: 0.6; margin-top: 4px;">Подготовка...</div>
+</div>
+<div class="modal-actions">
+<button class="btn-ghost" onclick="cancelExeCompilation()">❌ Отменить</button>
+</div>
+</div>
+</div>
+<!-- EXE Compile Success modal -->
+<div aria-hidden="true" class="modal hidden" id="exeSuccessModal">
+<div class="modal-backdrop"></div>
+<div class="modal-card" onkeydown="if(event.key==='Enter' && !event.target.matches('input,textarea,button')){event.preventDefault();closeExeSuccessModal();}">
+<div class="modal-title">✅ Компиляция завершена!</div>
+<div class="modal-text">
+<div style="margin-bottom: 12px;">EXE файл успешно создан и сохранен в папку <code>compiled</code> проекта.</div>
+<div style="margin-bottom: 12px; font-size: 14px; opacity: 0.8;">Хотите открыть папку с готовым файлом?</div>
+</div>
+<div class="modal-actions">
+<button class="btn" onclick="openCompiledFolder()">📁 Открыть папку</button>
+<button class="btn-ghost" onclick="closeExeSuccessModal()">Закрыть</button>
+</div>
+</div>
+</div>
+<!-- Themed blocking modal shown when leaving with running code -->
+<div aria-hidden="true" class="modal hidden" id="leaveModal">
+<div class="modal-backdrop"></div>
+<div class="modal-card">
+<div class="modal-title">Выполнение не остановлено</div>
+<div class="modal-text">Перед выходом в редактор необходимо остановить выполняющуюся программу.</div>
+<div class="modal-actions">
+<button class="btn" id="modalStopBtn">⏹ Остановить программу</button>
+<button class="btn-ghost" disabled="" id="modalLeaveBtn">🔙 Вернуться в редактор</button>
+<button class="btn-ghost" id="modalCancelBtn">Отмена</button>
+</div>
+</div>
+</div>
+
+<!-- Empty project warning modal -->
+<div aria-hidden="true" class="modal hidden" id="emptyProjectModal">
+<div class="modal-backdrop"></div>
+<div class="modal-card">
+<div class="modal-title">⚠️ Проект пуст</div>
+<div class="modal-text">
+<p>Ваш проект не содержит исполняемого кода или содержит только комментарии.</p>
+<p style="color: var(--muted); font-size: 14px; margin-top: 8px;">
+<strong>Невозможно выполнить операцию:</strong> запуск, сборка в .exe или сохранение в .py
+</p>
+</div>
+<div class="modal-actions">
+<button class="btn-ghost" onclick="closeEmptyProjectModal()">Понятно</button>
+</div>
+</div>
+</div>
+
+
+<!-- Copy success modal -->
+<div aria-hidden="true" class="modal hidden" id="copySuccessModal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-card">
+    <div class="modal-title">✅ Код скопирован</div>
+    <div class="modal-text">
+      <p>Код успешно скопирован в буфер обмена!</p>
+      <p style="color: var(--muted); font-size: 14px; margin-top: 8px;">
+        Теперь вы можете вставить его в любой текстовый редактор.
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeCopySuccessModal()">Понятно</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+const PY_KEYWORDS = new Set([
+  "and","as","assert","async","await","break","class","continue","def","del",
+  "elif","else","except","False","finally","for","from","global","if","import",
+  "in","is","lambda","None","nonlocal","not","or","pass","raise","return","True",
+  "try","while","with","yield"
+]);
+
+const PY_BUILTINS = new Set([
+  "abs","all","any","ascii","bin","bool","bytearray","bytes","callable","chr",
+  "classmethod","compile","complex","dict","dir","divmod","enumerate","eval",
+  "filter","float","format","frozenset","getattr","globals","hasattr","hash",
+  "help","hex","id","input","int","isinstance","issubclass","iter","len","list",
+  "locals","map","max","memoryview","min","next","object","oct","open","ord",
+  "pow","print","property","range","repr","reversed","round","set","setattr",
+  "slice","sorted","staticmethod","str","sum","super","tuple","type","vars","zip"
+]);
+
+function escapeHtml(str){
+  return str.replace(/[&<>"']/g, (ch)=>{
+    switch(ch){
+      case "&": return "&amp;";
+      case "<": return "&lt;";
+      case ">": return "&gt;";
+      case "\"": return "&quot;";
+      case "'": return "&#39;";
+      default: return ch;
+    }
+  });
+}
+
+function wrapToken(cls, text){
+  return `<span class="${cls}">${escapeHtml(text)}</span>`;
+}
+
+function isIdentifierStart(ch){
+  return /[A-Za-z_]/.test(ch);
+}
+
+function isIdentifierPart(ch){
+  return /[A-Za-z0-9_]/.test(ch);
+}
+
+function isDigit(ch){
+  return /[0-9]/.test(ch);
+}
+
+function tryReadPythonString(source, start){
+  const len = source.length;
+  let i = start;
+  let prefix = "";
+  while(i < len && /[rRbBuUfF]/.test(source[i])){
+    prefix += source[i];
+    i++;
+  }
+  if(i >= len) return null;
+  const quoteChar = source[i];
+  if(quoteChar !== "\"" && quoteChar !== "'"){
+    if(start === i) return null;
+    return null;
+  }
+  let quoteLen = 1;
+  if(i + 2 < len && source[i + 1] === quoteChar && source[i + 2] === quoteChar){
+    quoteLen = 3;
+  }
+  let j = i + quoteLen;
+  while(j < len){
+    const ch = source[j];
+    if(ch === "\\"){
+      j += 2;
+      continue;
+    }
+    if(ch === quoteChar){
+      if(quoteLen === 3){
+        if(source.slice(j, j + 3) === quoteChar.repeat(3)){
+          j += 3;
+          break;
+        }
+        j++;
+      } else {
+        j++;
+        break;
+      }
+    } else {
+      j++;
+    }
+  }
+  if(j > len) j = len;
+  const token = source.slice(start, j);
+  return { token, end: j };
+}
+
+function applyPythonHighlight(code){
+  let html = "";
+  const length = code.length;
+  let i = 0;
+  while(i < length){
+    const remaining = code.slice(i);
+    const stringToken = tryReadPythonString(code, i);
+    if(stringToken){
+      html += wrapToken("token-string", stringToken.token);
+      i = stringToken.end;
+      continue;
+    }
+    const ch = code[i];
+    if(ch === "#"){
+      const newlineIdx = code.indexOf("\n", i + 1);
+      const end = newlineIdx === -1 ? length : newlineIdx;
+      html += wrapToken("token-comment", code.slice(i, end));
+      i = end;
+      continue;
+    }
+    if(isDigit(ch) || (ch === "." && isDigit(code[i + 1] || ""))){
+      let j = i + 1;
+      while(j < length && /[0-9._xXa-fA-F]/.test(code[j])) j++;
+      html += wrapToken("token-number", code.slice(i, j));
+      i = j;
+      continue;
+    }
+    if(isIdentifierStart(ch)){
+      let j = i + 1;
+      while(j < length && isIdentifierPart(code[j])) j++;
+      const word = code.slice(i, j);
+      if(PY_KEYWORDS.has(word)){
+        html += wrapToken("token-keyword", word);
+      } else if(PY_BUILTINS.has(word)){
+        html += wrapToken("token-builtin", word);
+      } else if(word === "True" || word === "False" || word === "None"){
+        html += wrapToken("token-constant", word);
+      } else {
+        html += escapeHtml(word);
+      }
+      i = j;
+      continue;
+    }
+    html += escapeHtml(ch);
+    i++;
+  }
+  return html;
+}
+
+function saveCaretPosition(el){
+  const selection = window.getSelection();
+  if(!selection || selection.rangeCount === 0) return null;
+  const range = selection.getRangeAt(0);
+  if(!el.contains(range.startContainer)) return null;
+  const preRange = range.cloneRange();
+  preRange.selectNodeContents(el);
+  preRange.setEnd(range.startContainer, range.startOffset);
+  const start = preRange.toString().length;
+  return { start, end: start + range.toString().length };
+}
+
+function restoreCaretPosition(el, saved){
+  if(!saved) return;
+  const selection = window.getSelection();
+  if(!selection) return;
+  let range = document.createRange();
+  range.setStart(el, 0);
+  range.collapse(true);
+  let charIndex = 0;
+  let foundStart = false;
+  let stop = false;
+  const nodeStack = [el];
+  while(!stop && nodeStack.length){
+    const node = nodeStack.pop();
+    if(node.nodeType === 3){
+      const nextCharIndex = charIndex + node.length;
+      if(!foundStart && saved.start >= charIndex && saved.start <= nextCharIndex){
+        range.setStart(node, saved.start - charIndex);
+        foundStart = true;
+      }
+      if(foundStart && saved.end >= charIndex && saved.end <= nextCharIndex){
+        range.setEnd(node, saved.end - charIndex);
+        stop = true;
+      }
+      charIndex = nextCharIndex;
+    } else {
+      for(let i = node.childNodes.length - 1; i >= 0; i--){
+        nodeStack.push(node.childNodes[i]);
+      }
+    }
+  }
+  if(!stop){
+    range.setEnd(range.startContainer, range.startOffset);
+  }
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+const codeEl = document.getElementById("code");
+let code = localStorage.getItem("compiled_code") || "# пусто";
+codeEl.textContent = code;
+renderHighlightedCode({ preserveSelection: false });
+
+function renderHighlightedCode(options = {}){
+  if(!codeEl) return;
+  const preserveSelection = options.preserveSelection !== false;
+  const caret = preserveSelection ? saveCaretPosition(codeEl) : null;
+  const raw = codeEl.textContent;
+  codeEl.innerHTML = applyPythonHighlight(raw);
+  if(preserveSelection){
+    restoreCaretPosition(codeEl, caret);
+  }
+}
+
+let sessionId = null;
+let pollTimer = null;
+let isCompilationCancelled = false;
+let compilationReader = null;
+
+function getEditedCode(){
+  return codeEl.textContent;
+}
+
+function copyCode(){
+  navigator.clipboard.writeText(getEditedCode());
+  showCopySuccessModal();
+}
+function copyConsoleOutput(){
+  const consoleEl = document.getElementById('console');
+  if(consoleEl){
+    const text = consoleEl.textContent || consoleEl.innerText;
+    const btn = event?.target?.closest('.code-box-copy-btn') || document.querySelector('.code-box-copy-btn[onclick*="copyConsoleOutput"]');
+    navigator.clipboard.writeText(text).then(() => {
+      if(btn){
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<span>✅</span><span>Скопировано!</span>';
+        btn.style.background = 'rgba(16,185,129,0.2)';
+        btn.style.borderColor = 'var(--success)';
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.style.background = '';
+          btn.style.borderColor = '';
+        }, 2000);
+      }
+    }).catch(err => {
+      console.error('Ошибка копирования:', err);
+      if(btn){
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<span>❌</span><span>Ошибка</span>';
+        btn.style.background = 'rgba(239,68,68,0.2)';
+        btn.style.borderColor = 'var(--danger)';
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.style.background = '';
+          btn.style.borderColor = '';
+        }, 2000);
+      }
+    });
+  }
+}
+
+function copyCodeFromBox(){
+  const codeEl = document.getElementById('code');
+  if(codeEl){
+    navigator.clipboard.writeText(codeEl.textContent).then(() => {
+      const btn = document.querySelector('.code-box-copy-btn');
+      if(btn){
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span>✅</span><span>Скопировано!</span>';
+        btn.style.background = 'rgba(16,185,129,0.2)';
+        btn.style.borderColor = 'var(--success)';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.background = '';
+          btn.style.borderColor = '';
+        }, 2000);
+      }
+    }).catch(err => {
+      console.error('Ошибка копирования:', err);
+      alert('Не удалось скопировать код');
+    });
+  }
+}
+
+function downloadCode(){
+  openSavePyModal();
+}
+
+async function goBackToProject(){
+  // If session is active, show internal modal
+  if (sessionId) {
+    openLeaveModal();
+    return;
+  }
+  window.location.href = "/editor";
+}
+
+function openLeaveModal(){
+  const modal = document.getElementById('leaveModal');
+  const leaveBtn = document.getElementById('modalLeaveBtn');
+  const stopBtn = document.getElementById('modalStopBtn');
+  const cancelBtn = document.getElementById('modalCancelBtn');
+
+  // Initial state - leaving is disabled
+  leaveBtn.disabled = true;
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden', 'false');
+
+  // Event handlers
+  const onCancel = () => closeLeaveModal();
+  const onStop = async () => {
+    try {
+      await stopCode();
+      // After successful stop, allow leaving
+      leaveBtn.disabled = false;
+      leaveBtn.focus();
+    } catch (e) {}
+  };
+  const onLeave = () => {
+    if (!leaveBtn.disabled) {
+      closeLeaveModal();
+      window.location.href = "/editor";
+    }
+  };
+
+  cancelBtn.addEventListener('click', onCancel, { once: true });
+  stopBtn.addEventListener('click', onStop, { once: true });
+  leaveBtn.addEventListener('click', onLeave, { once: true });
+}
+
+function closeLeaveModal(){
+  const modal = document.getElementById('leaveModal');
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+// ---- Save .py modal logic ----
+function openSavePyModal(){
+  const modal = document.getElementById('savePyModal');
+  const input = document.getElementById('savePyName');
+  // Get project name from localStorage
+  const currentProject = localStorage.getItem('currentProject') || 'program';
+  const projectName = currentProject.replace('.turtcd', '');
+  input.value = projectName + '.py';
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden','false');
+  setTimeout(()=> input.focus(), 0);
+}
+
+function closeSavePyModal(){
+  const modal = document.getElementById('savePyModal');
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden','true');
+}
+
+// EXE Compilation functions
+function openExeCompileModal(){
+  const modal = document.getElementById('exeCompileModal');
+  // Get project name from localStorage and set in input field
+  const currentProject = localStorage.getItem('currentProject') || 'program';
+  const projectName = currentProject.replace('.turtcd', '');
+  const exeNameInput = document.getElementById('exeName');
+  if (exeNameInput) {
+    exeNameInput.value = projectName + '.exe';
+  }
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden','false');
+}
+
+function closeExeCompileModal(){
+  const modal = document.getElementById('exeCompileModal');
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden','true');
+}
+
+function closeExeProgressModal(){
+  const modal = document.getElementById('exeProgressModal');
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden','true');
+}
+
+function cancelExeCompilation(){
+  isCompilationCancelled = true;
+  
+  // Close reader if active
+  if (compilationReader) {
+    try {
+      compilationReader.cancel();
+    } catch (e) {
+      console.log('Reader already closed');
+    }
+  }
+  
+  // Update status
+  updateProgress(0, 'Компиляция отменена');
+  
+  // Close modal after short delay
+  setTimeout(() => {
+    closeExeProgressModal();
+    isCompilationCancelled = false;
+    compilationReader = null;
+  }, 1000);
+}
+
+function closeExeSuccessModal(){
+  const modal = document.getElementById('exeSuccessModal');
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden','true');
+}
+
+function openCompiledFolder(){
+  // Try to open the compiled folder
+  fetch('/api/project/open-compiled-folder', { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        closeExeSuccessModal();
+      } else {
+        alert('Не удалось открыть папку: ' + (data.message || 'Неизвестная ошибка'));
+      }
+    })
+    .catch(error => {
+      alert('Ошибка: ' + error.message);
+    });
+}
+
+async function startExeCompilation(){
+  const exeName = document.getElementById('exeName').value.trim() || 'program.exe';
+  const hideConsole = document.getElementById('hideConsole').checked;
+  const iconFile = document.getElementById('exeIcon').files[0];
+  const code = getEditedCode();
+  
+  // Check for empty code
+  if (isCodeEmpty(code)) {
+    showEmptyProjectModal();
+    return;
+  }
+  
+  // Reset cancellation flag
+  isCompilationCancelled = false;
+  
+  // Close settings modal and open progress modal
+  closeExeCompileModal();
+  const progressModal = document.getElementById('exeProgressModal');
+  progressModal.classList.remove('hidden');
+  progressModal.setAttribute('aria-hidden','false');
+  
+  try {
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('code', code);
+    formData.append('exe_name', exeName);
+    formData.append('hide_console', hideConsole);
+    if (iconFile) {
+      formData.append('icon', iconFile);
+    }
+    
+    // Start compilation with progress tracking
+    const response = await fetch('/api/project/compile-exe', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) {
+      throw new Error('Ошибка сервера: ' + response.status);
+    }
+    
+    compilationReader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    
+    while (true) {
+      // Check if compilation was cancelled
+      if (isCompilationCancelled) {
+        try {
+          compilationReader.cancel();
+        } catch (e) {
+          console.log('Reader already closed');
+        }
+        return;
+      }
+      
+      const { done, value } = await compilationReader.read();
+      if (done) break;
+      
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || ''; // Keep incomplete line in buffer
+      
+      for (const line of lines) {
+        if (line.trim().startsWith('data: ')) {
+          try {
+            const jsonStr = line.substring(6); // Remove 'data: ' prefix
+            const data = JSON.parse(jsonStr);
+            if (data.progress !== undefined) {
+              updateProgress(data.progress, data.status || '');
+            }
+            if (data.status === 'completed') {
+              closeExeProgressModal();
+              // Show success modal instead of alert
+              const successModal = document.getElementById('exeSuccessModal');
+              successModal.classList.remove('hidden');
+              successModal.setAttribute('aria-hidden','false');
+              return;
+            }
+            if (data.status === 'error') {
+              closeExeProgressModal();
+              alert('Ошибка компиляции: ' + (data.message || 'Неизвестная ошибка'));
+              return;
+            }
+          } catch (e) {
+            console.log('Failed to parse:', line);
+          }
+        }
+      }
+    }
+  } catch (error) {
+    if (!isCompilationCancelled) {
+      closeExeProgressModal();
+      alert('Ошибка: ' + error.message);
+    }
+  }
+}
+
+function updateProgress(percent, status) {
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const progressStatus = document.getElementById('progressStatus');
+  
+  if (progressBar) {
+    progressBar.style.width = percent + '%';
+  }
+  if (progressText) {
+    progressText.textContent = Math.round(percent) + '%';
+  }
+  if (progressStatus) {
+    progressStatus.textContent = status;
+  }
+}
+
+async function confirmSavePy(){
+  let name = (document.getElementById('savePyName').value || 'program.py').trim();
+  if(!name.toLowerCase().endsWith('.py')) name += '.py';
+  const data = getEditedCode();
+  
+  // Check for empty code
+  if (isCodeEmpty(data)) {
+    showEmptyProjectModal();
+    return;
+  }
+  
+  // Try File System Access API first
+  try{
+    if(window.showSaveFilePicker){
+      const handle = await window.showSaveFilePicker({
+        suggestedName: name,
+        types: [{ description: 'Python', accept: { 'text/x-python': ['.py'], 'text/plain': ['.py'] } }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(new Blob([data], {type:'text/x-python'}));
+      await writable.close();
+      closeSavePyModal();
+      return;
+    }
+  }catch(e){ console.warn('FS Access API error', e); }
+
+  // Fallback to download
+  const blob = new Blob([data], {type:'text/x-python'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  closeSavePyModal();
+}
+
+async function startCode(){
+  code = getEditedCode();
+  
+  // Check for empty code
+  if (isCodeEmpty(code)) {
+    showEmptyProjectModal();
+    return;
+  }
+  
+  // Re-highlight code before running
+  renderHighlightedCode({ preserveSelection: false });
+
+  const safeMode = localStorage.getItem('safeMode') || 'restricted';
+  const currentProject = localStorage.getItem('currentProject') || '';
+  const resp = await fetch("/api/project/start", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({code, safeMode, projectName: currentProject})
+  });
+  const j = await resp.json();
+  if(j.status !== "success"){ alert("Ошибка запуска: " + j.message); return; }
+  sessionId = j.session_id;
+  document.getElementById("console").textContent = "";
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(readOutput, 200);
+  updateProgramStatus(true);
+  const toggleBtn = document.getElementById('toggleRunBtn');
+  if (toggleBtn) toggleBtn.textContent = '⏸️'; // on start
+}
+
+async function readOutput(){
+  if(!sessionId) return;
+  const resp = await fetch(`/api/project/read/${sessionId}`);
+  const j = await resp.json();
+  if(j.status === "success" && j.output){
+    const consoleEl = document.getElementById("console");
+    let text = j.output.replace("__EXIT__","");
+    consoleEl.textContent += text;
+    consoleEl.scrollTop = consoleEl.scrollHeight;
+    if(text.includes(">")){
+      const inputField = document.getElementById("inputField");
+      inputField.classList.add("focused");
+      inputField.focus();
+    }
+    if(j.output.includes("__EXIT__")){
+      clearInterval(pollTimer);
+      sessionId = null;
+      updateProgramStatus(false);
+      const toggleBtn = document.getElementById('toggleRunBtn');
+      if (toggleBtn) toggleBtn.textContent = '▶️'; // on stop
+    }
+  }
+}
+
+async function sendInput(){
+  if(!sessionId) return;
+  const field = document.getElementById("inputField");
+  const text = field.value;
+  field.value = "";
+  field.classList.remove("focused");
+
+  const consoleEl = document.getElementById("console");
+  consoleEl.textContent += text + "\n";
+  consoleEl.scrollTop = consoleEl.scrollHeight;
+
+  await fetch(`/api/project/write/${sessionId}`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({text})
+  });
+}
+
+async function stopCode(){
+  if(!sessionId) return;
+  await fetch(`/api/project/stop/${sessionId}`, {method:"POST"});
+  clearInterval(pollTimer);
+  sessionId = null;
+  document.getElementById("console").textContent += "\n[Программа остановлена]\n";
+  updateProgramStatus(false);
+  const toggleBtn = document.getElementById('toggleRunBtn');
+  if (toggleBtn) toggleBtn.textContent = '▶️'; // on stop
+}
+
+function updateProgramStatus(isRunning){
+  const indicator = document.getElementById('programStatusIndicator');
+  if (!indicator) return;
+  if (isRunning) {
+    indicator.classList.remove('status-stopped');
+    indicator.classList.add('status-running');
+    indicator.querySelector('.status-text').textContent = 'Запущено';
+  } else {
+    indicator.classList.remove('status-running');
+    indicator.classList.add('status-stopped');
+    indicator.querySelector('.status-text').textContent = 'Остановлено';
+  }
+}
+
+function toggleRun(){
+  if (sessionId) {
+    stopCode();
+  } else {
+    startCode();
+  }
+}
+
+// Auto-highlight on edit
+codeEl.addEventListener("input", () => {
+  renderHighlightedCode();
+});
+
+/* ========== Theme management ========== */
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('turtcd-theme', theme);
+  
+  // Update theme dropdown
+  const dropdown = document.getElementById('themeDropdown');
+  if (dropdown) {
+    dropdown.value = theme;
+  }
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('turtcd-theme') || 'dark';
+  setTheme(savedTheme);
+}
+
+// Load and apply compiled code display setting
+function updateCompiledCodeDisplay() {
+  const showCompiledCode = localStorage.getItem('showCompiledCode') !== 'false';
+  const codeBox = document.getElementById('codeBox');
+  const consoleEl = document.getElementById('console');
+  
+  if(codeBox && consoleEl) {
+    if(showCompiledCode) {
+      codeBox.style.display = '';
+      codeBox.style.flex = '0 0 40%';
+      consoleEl.style.flex = '1';
+    } else {
+      codeBox.style.display = 'none';
+      consoleEl.style.flex = '1';
+    }
+  }
+}
+
+// Load theme on page load
+loadTheme();
+// Apply compiled code display setting on load
+updateCompiledCodeDisplay();
+
+/* ========== Help Tour System ========== */
+let helpTour = {
+  isActive: false,
+  currentStep: 0,
+  steps: [],
+  overlay: null,
+  spotlight: null,
+  tooltip: null
+};
+
+// Help tour steps for compiled code window
+const compiledSteps = [
+  {
+    target: '#toggleRunBtn',
+    title: 'Управление выполнением',
+    content: 'Кнопка запуска/остановки позволяет запускать и останавливать выполнение программы одной кнопкой.',
+    position: 'bottom'
+  },
+  {
+    target: '.toolbar .btn[onclick="openExeCompileModal()"]',
+    title: 'Компиляция в EXE',
+    content: 'Эта кнопка позволяет создать исполняемый .exe файл из вашего Python кода. Вы можете настроить имя файла, иконку и другие параметры.',
+    position: 'bottom'
+  },
+  {
+    target: '.toolbar .btn-ghost',
+    title: 'Работа с кодом',
+    content: 'Кнопка "Копировать" копирует код в буфер обмена. "Скачать" сохраняет код как .py файл. "Вернуться к проекту" возвращает в редактор блоков.',
+    position: 'bottom'
+  },
+  {
+    target: '.toolbar .btn-ghost[onclick="startHelpTour()"]',
+    title: 'Справка',
+    content: 'Эта кнопка запускает экскурс по интерфейсу. Вы можете использовать её для получения подсказок в любой момент.',
+    position: 'bottom'
+  },
+  {
+    target: '.theme-selector',
+    title: 'Переключатель тем',
+    content: 'Здесь вы можете переключаться между тёмной и светлой темой интерфейса для комфортной работы.',
+    position: 'bottom'
+  },
+  {
+    target: '.input-bar',
+    title: 'Ввод данных',
+    content: 'Это поле для ввода данных в программу. Если ваша программа запрашивает ввод (input()), используйте это поле.',
+    position: 'top'
+  },
+  {
+    target: '.code-box',
+    title: 'Редактор кода',
+    content: 'Здесь отображается скомпилированный Python код. Вы можете редактировать его напрямую, если нужно внести изменения.',
+    position: 'top'
+  },
+  {
+    target: '#console',
+    title: 'Консоль вывода',
+    content: 'Здесь отображается результат выполнения программы: вывод print(), ошибки и запросы на ввод данных.',
+    position: 'top'
+  }
+];
+
+function startHelpTour() {
+  if (helpTour.isActive) {
+    return;
+  }
+
+  helpTour.isActive = true;
+  helpTour.currentStep = 0;
+  helpTour.steps = compiledSteps;
+
+  createHelpOverlay();
+  showHelpStep(0);
+}
+
+function createHelpOverlay() {
+  // Create overlay
+  helpTour.overlay = document.createElement('div');
+  helpTour.overlay.className = 'help-tour-overlay';
+  document.body.appendChild(helpTour.overlay);
+
+  // Create spotlight
+  helpTour.spotlight = document.createElement('div');
+  helpTour.spotlight.className = 'help-tour-spotlight';
+  helpTour.overlay.appendChild(helpTour.spotlight);
+
+  // Create tooltip
+  helpTour.tooltip = document.createElement('div');
+  helpTour.tooltip.className = 'help-tour-tooltip';
+  helpTour.overlay.appendChild(helpTour.tooltip);
+}
+
+function showHelpStep(stepIndex) {
+  if (stepIndex >= helpTour.steps.length) {
+    endHelpTour();
+    return;
+  }
+
+  // Remove highlight from previous element
+  document.querySelectorAll('.help-tour-highlighted').forEach(el => {
+    el.classList.remove('help-tour-highlighted');
+  });
+
+  const step = helpTour.steps[stepIndex];
+  const targetElement = document.querySelector(step.target);
+
+  if (!targetElement) {
+    // If element not found, skip this step
+    showHelpStep(stepIndex + 1);
+    return;
+  }
+
+  // Add highlight to current element
+  targetElement.classList.add('help-tour-highlighted');
+
+  // Position spotlight
+  const rect = targetElement.getBoundingClientRect();
+  helpTour.spotlight.style.left = (rect.left - 8) + 'px';
+  helpTour.spotlight.style.top = (rect.top - 8) + 'px';
+  helpTour.spotlight.style.width = (rect.width + 16) + 'px';
+  helpTour.spotlight.style.height = (rect.height + 16) + 'px';
+
+  // Position tooltip
+  positionTooltip(step, rect);
+
+  // Update tooltip content
+  helpTour.tooltip.innerHTML = `
+    <h3>${step.title}</h3>
+    <p>${step.content}</p>
+    <div class="help-actions">
+      ${stepIndex > 0 ? '<button class="btn-ghost" onclick="previousHelpStep()">← Назад</button>' : ''}
+      <button class="btn-ghost" onclick="endHelpTour()">Пропустить</button>
+      <button class="btn" onclick="nextHelpStep()">${stepIndex === helpTour.steps.length - 1 ? 'Завершить' : 'Далее →'}</button>
+    </div>
+    <div class="help-tour-progress">${stepIndex + 1} из ${helpTour.steps.length}</div>
+  `;
+
+  helpTour.currentStep = stepIndex;
+}
+
+function positionTooltip(step, targetRect) {
+  const tooltip = helpTour.tooltip;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const tooltipWidth = 350;
+  const tooltipHeight = 200;
+  const margin = 20;
+
+  let left, top;
+
+  switch (step.position) {
+    case 'top':
+      left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+      top = targetRect.top - tooltipHeight - margin;
+      break;
+    case 'bottom':
+      left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+      top = targetRect.bottom + margin;
+      break;
+    case 'left':
+      left = targetRect.left - tooltipWidth - margin;
+      top = targetRect.top + (targetRect.height / 2) - (tooltipHeight / 2);
+      break;
+    case 'right':
+      left = targetRect.right + margin;
+      top = targetRect.top + (targetRect.height / 2) - (tooltipHeight / 2);
+      break;
+    default:
+      left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+      top = targetRect.bottom + margin;
+  }
+
+  // Check viewport boundaries
+  if (left < margin) left = margin;
+  if (left + tooltipWidth > viewportWidth - margin) left = viewportWidth - tooltipWidth - margin;
+  if (top < margin) top = targetRect.bottom + margin;
+  if (top + tooltipHeight > viewportHeight - margin) top = targetRect.top - tooltipHeight - margin;
+
+  tooltip.style.left = Math.max(0, left) + 'px';
+  tooltip.style.top = Math.max(0, top) + 'px';
+}
+
+function nextHelpStep() {
+  showHelpStep(helpTour.currentStep + 1);
+}
+
+function previousHelpStep() {
+  if (helpTour.currentStep > 0) {
+    showHelpStep(helpTour.currentStep - 1);
+  }
+}
+
+function endHelpTour() {
+  // Remove highlight from all elements
+  document.querySelectorAll('.help-tour-highlighted').forEach(el => {
+    el.classList.remove('help-tour-highlighted');
+  });
+
+  if (helpTour.overlay) {
+    helpTour.overlay.remove();
+  }
+  helpTour.isActive = false;
+  helpTour.currentStep = 0;
+  helpTour.overlay = null;
+  helpTour.spotlight = null;
+  helpTour.tooltip = null;
+}
+
+// Keyboard navigation for help tour
+document.addEventListener('keydown', function(e) {
+  if (!helpTour.isActive) return;
+
+  switch (e.key) {
+    case 'Escape':
+      endHelpTour();
+      break;
+    case 'ArrowRight':
+    case ' ':
+      e.preventDefault();
+      nextHelpStep();
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      previousHelpStep();
+      break;
+  }
+});
+
+/* ========== Empty project checks ========== */
+function isCodeEmpty(code) {
+  if (!code || code.trim() === '') {
+    return true;
+  }
+  
+  // Remove comments and empty lines
+  const lines = code.split('\n').map(line => line.trim()).filter(line => 
+    line !== '' && !line.startsWith('#') && !line.startsWith('"""') && !line.startsWith("'''")
+  );
+  
+  return lines.length === 0;
+}
+
+function showEmptyProjectModal() {
+  const modal = document.getElementById('emptyProjectModal');
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeEmptyProjectModal() {
+  const modal = document.getElementById('emptyProjectModal');
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+function showCopySuccessModal() {
+  const modal = document.getElementById('copySuccessModal');
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeCopySuccessModal() {
+  const modal = document.getElementById('copySuccessModal');
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+async function loadVersion() {
+  try {
+    const response = await fetch('/api/version');
+    const data = await response.json();
+    if (data.status === 'success' && data.version) {
+      const versionBadge = document.getElementById('versionBadge');
+      if (versionBadge) {
+        versionBadge.textContent = `v${data.version}`;
+      }
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки версии:', error);
+  }
+}
+
+async function openLicenseModal() {
+  const modal = document.getElementById('licenseModal');
+  const licenseText = document.getElementById('licenseText');
+  const errorEl = document.getElementById('licenseError');
+  
+  if (!modal || !licenseText) return;
+  
+  modal.classList.remove('hidden');
+  licenseText.textContent = 'Загрузка лицензионного соглашения...';
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+  
+  try {
+    const response = await fetch('/api/license/text');
+    const data = await response.json();
+    
+    if (data.status === 'success' && data.text) {
+      licenseText.textContent = data.text;
+    } else {
+      licenseText.textContent = 'Ошибка загрузки лицензионного соглашения.';
+      if (errorEl) {
+        errorEl.textContent = data.message || 'Не удалось загрузить лицензию';
+        errorEl.style.display = 'block';
+      }
+    }
+  } catch (error) {
+    licenseText.textContent = 'Ошибка загрузки лицензионного соглашения.';
+    if (errorEl) {
+      errorEl.textContent = 'Не удалось подключиться к серверу';
+      errorEl.style.display = 'block';
+    }
+    console.error('Ошибка загрузки лицензии:', error);
+  }
+}
+
+function closeLicenseModal() {
+  const modal = document.getElementById('licenseModal');
+  if (modal) {
+    modal.classList.add('hidden');
+  }
+}
+
+// Close license modal on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const licenseModal = document.getElementById('licenseModal');
+    if (licenseModal && !licenseModal.classList.contains('hidden')) {
+      closeLicenseModal();
+    }
+  }
+});
+
+// Load version on page load
+loadVersion();
+
+</script>
+</body>
+<!-- License badge -->
+<div id="licenseBadge" class="license-badge">
+  🛡 licensed by TurtCD <span id="versionBadge" style="opacity: 0.7;">v1.0.0</span>
+</div>
+
+  <!-- License modal -->
+  <div id="licenseModal" class="modal hidden">
+    <div class="modal-backdrop" onclick="if(event.target === this) closeLicenseModal()">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="licenseModalTitle">
+        <h3 id="licenseModalTitle" class="modal-title">Лицензионное соглашение</h3>
+        <div id="licenseError" class="license-hint" style="display:none; color: var(--danger);"></div>
+        <div id="licenseScroll" class="license-scroll">
+          <pre id="licenseText" class="license-text">Загрузка лицензионного соглашения...</pre>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-ghost" onclick="closeLicenseModal()">Закрыть</button>
+        </div>
+      </div>
+    </div>
+</div>
+</html>

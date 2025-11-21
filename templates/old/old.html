@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TurtCD — визуальный редактор</title>
+<style>
+body {
+    font-family: monospace !important;
+    font-size: 18px !important;
+}
+button, .button, input[type=button], input[type=submit] {
+    font-family: monospace !important;
+    font-size: 16px !important;
+}
+  :root{
+    --bg:#0f1724;
+    --panel:#0b1220;
+    --accent:#06b6d4;
+    --accent-2:#8b5cf6;
+    --card:#0b1226;
+    --muted:#94a3b8;
+    --white:#ffffff;
+    --success:#10b981;
+    --danger:#ef4444;
+    --panel-width:300px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%; margin:0; font-family:Inter, Roboto, Arial, sans-serif; background:linear-gradient(180deg,#071025 0%,#0b1220 100%); color:var(--white); -webkit-font-smoothing:antialiased}
+  .app { display:flex; height:100vh; gap:16px; padding:16px; }
+  .left {
+    width:var(--panel-width);
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border-radius:12px; padding:14px; box-shadow:0 8px 30px rgba(2,6,23,0.6); overflow:auto;
+  }
+  .left h2 { margin:0 0 12px; font-size:18px; letter-spacing:0.2px; color:var(--white); }
+  .category-header { display:flex; justify-content:space-between; align-items:center; padding:8px; cursor:pointer; border-radius:8px; margin-top:8px; transition:all .18s; background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent); }
+  .category-header:hover { transform:translateY(-3px); box-shadow:0 6px 18px rgba(2,6,23,0.45); }
+  .category-title { font-weight:600; color:#e6eef6; }
+  .collapse-indicator { opacity:0.7; font-size:12px; }
+  .block-list { display:grid; gap:8px; margin-top:8px; padding-bottom:12px; }
+  .block-item { display:flex; gap:8px; align-items:center; padding:10px; border-radius:10px; cursor:grab; user-select:none;
+    background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03);
+    transition:transform .12s, box-shadow .12s; }
+  .block-item:hover { transform:translateY(-4px); box-shadow:0 10px 30px rgba(2,6,23,0.55); }
+  .color-dot { width:14px; height:14px; border-radius:50%; box-shadow:0 2px 6px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.12); }
+  .block-name { font-size:13px; color:#e6eef6; font-weight:600; }
+
+  .center {
+    flex:1; position:relative; overflow:hidden; border-radius:12px; box-shadow:0 10px 40px rgba(2,6,23,0.6);
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.0));
+    display:flex; flex-direction:column;
+  }
+  .toolbar { display:flex; gap:10px; padding:12px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent); }
+  .btn { background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#022; padding:8px 12px; border-radius:10px; border:none; font-weight:700; cursor:pointer; box-shadow:0 8px 24px rgba(14,165,233,0.08); transition:transform .12s; }
+  .btn:hover { transform:translateY(-3px); }
+  .btn-ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--white); padding:8px 10px; border-radius:10px; cursor:pointer; }
+
+  .workspace { position:relative; flex:1; overflow:hidden; display:flex; }
+  #viewport { position:relative; flex:1; overflow:hidden; }
+  #mainCanvas { position:absolute; left:0; top:0; width:16000px; height:16000px; transform:translate(0px,0px) scale(1);
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size:30px 30px; transition:transform .08s linear; }
+  .block { position:absolute; min-width:140px; border-radius:12px; color:var(--white); background:var(--card); box-shadow: 0 12px 30px rgba(2,6,23,0.6); overflow:hidden; transform-origin:left top; transition:box-shadow .12s, transform .08s; }
+  .block:hover { box-shadow:0 20px 60px rgba(2,6,23,0.75); transform:translateY(-4px); }
+  .block-header { padding:12px; font-weight:800; letter-spacing:0.2px; font-size:14px; background:linear-gradient(90deg, rgba(0,0,0,0.18), rgba(255,255,255,0.02)); cursor:move; -webkit-user-select:none; -moz-user-select:none; user-select:none; }
+  .block-content { padding:10px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00)); min-height:36px; display:flex; flex-direction:column; gap:8px; }
+  .field-input { padding:8px; border-radius:8px; border:1px solid rgba(0,0,0,0.15); font-size:13px; background:rgba(255,255,255,0.96); color:#0b1220 }
+
+  /* только для служебных элементов запрещаем выделение текста */
+  .connector, .connection-line, .connection-point { -webkit-user-select:none; -moz-user-select:none; user-select:none; }
+  .temp-line { pointer-events:none; }
+
+  .connector { position:absolute; width:20px; height:20px; border-radius:50%; background:#fff; border:2px solid rgba(0,0,0,0.5); z-index:60; }
+  .connector-top{ top:-10px; left:50%; transform:translateX(-50%); }
+  .connector-bottom{ bottom:-10px; left:50%; transform:translateX(-50%); }
+  .connector-right{ top:50%; right:-10px; transform:translateY(-50%); }
+  .connector-left{ top:50%; left:-10px; transform:translateY(-50%); }
+
+  .connection-line{ position:absolute; height:4px; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transform-origin:0 0; z-index:40; border-radius:6px; box-shadow:0 6px 16px rgba(11,20,40,0.3); }
+  .connection-point{ position:absolute; width:12px; height:12px; border-radius:50%; background:var(--success); z-index:45; box-shadow:0 6px 16px rgba(16,185,129,0.12); cursor:context-menu; }
+
+  .right-panel { width:300px; background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent); border-radius:12px; padding:12px; box-shadow:0 8px 40px rgba(2,6,23,0.6); }
+  .panel-title { font-weight:800; margin-bottom:10px }
+  .small { font-size:13px; color:var(--muted) }
+
+  /* modals */
+  .modal-backdrop { position:fixed; left:0; top:0; right:0; bottom:0; background:rgba(2,6,23,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; }
+  .modal { background:#071025; padding:18px; border-radius:12px; width:480px; box-shadow:0 20px 60px rgba(2,6,23,0.8); color:var(--white) }
+  .modal h3 { margin-top:0 }
+  .input { width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:var(--white) }
+
+  /* responsive */
+  @media (max-width:1100px){ .left{display:none} .right-panel{display:none} }
+</style>
+</head>
+<body>
+  <div class="app">
+
+    <!-- Left palette -->
+    <div class="left">
+      <h2>Палитра блоков</h2>
+      <div id="categoriesList"></div>
+
+      <div style="height:8px"></div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn" onclick="exportProject()">⬇ Экспорт (.turtcd)</button>
+        <button class="btn-ghost" onclick="openSaveModal()">💾 Сохранить</button>
+      </div>
+
+      <div style="height:12px"></div>
+      <input id="importFile" type="file" accept=".turtcd,application/json" style="display:none" onchange="importFromFile(event)"/>
+      <button class="btn-ghost" onclick="document.getElementById('importFile').click()">⬆ Импорт (.turtcd)</button>
+
+      <div style="height:12px"></div>
+      <div class="small">Подсказки: Перетаскивай блоки из палитры на поле. Ctrl + ЛКМ — перемещение камеры. ПКМ на блок — меню.</div>
+    </div>
+
+    <!-- Center area -->
+    <div class="center">
+      <div class="toolbar">
+        <button class="btn" onclick="compileProject()">▶ Скомпилировать</button>
+        <button class="btn-ghost" onclick="showServerProjects()">📂 Загрузить с сервера</button>
+        <div style="flex:1"></div>
+        <div class="small">Масштаб 100% • Камера: перемещение Ctrl+ЛКМ • Drag&Drop из палитры</div>
+      </div>
+
+      <div class="workspace" id="workspace">
+        <div id="viewport" style="flex:1; position:relative; overflow:hidden">
+          <div id="mainCanvas"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right info panel -->
+    <div class="right-panel">
+      <div class="panel-title">Информация</div>
+      <div><strong>Блоки:</strong> <span id="blocksCount">0</span></div>
+      <div><strong>Связи:</strong> <span id="connsCount">0</span></div>
+      <div style="height:12px"></div>
+      <div class="small">Используй «Сохранить» для хранения проекта на сервере, «Экспорт» — скачать локально .turtcd</div>
+    </div>
+  </div>
+
+  <!-- Context menu -->
+  <div id="blockContextMenu" style="position:absolute; display:none; z-index:20000;">
+    <div style="background:#071025; padding:8px; border-radius:8px; box-shadow:0 8px 28px rgba(2,6,23,0.6); min-width:160px;">
+      <div class="menu-item" style="padding:8px; cursor:pointer;" onclick="duplicateContextBlock()">📄 Дублировать</div>
+      <div class="menu-item" style="padding:8px; cursor:pointer; color:var(--danger);" onclick="deleteContextBlock()">🗑️ Удалить</div>
+    </div>
+  </div>
+
+  <!-- Save modal -->
+  <div id="saveModal" style="display:none">
+    <div class="modal-backdrop">
+      <div class="modal">
+        <h3>Сохранить проект</h3>
+        <div style="margin-bottom:8px">Имя файла (без расширения):</div>
+        <input id="saveFilename" class="input" placeholder="мой_проект">
+        <div style="height:12px"></div>
+        <div style="display:flex; gap:8px; justify-content:flex-end">
+          <button class="btn" onclick="saveToServer()">Сохранить</button>
+          <button class="btn-ghost" onclick="closeSaveModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Server list modal -->
+  <div id="serverModal" style="display:none">
+    <div class="modal-backdrop">
+      <div class="modal">
+        <h3>Проекты на сервере</h3>
+        <div id="serverList" style="max-height:280px; overflow:auto; margin-top:8px"></div>
+        <div style="height:12px"></div>
+        <div style="display:flex; gap:8px; justify-content:flex-end">
+          <button class="btn-ghost" onclick="closeServerModal()">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ========== State ========== */
+let blocksConfig = { categories: [] };
+let projectData = { blocks: [], connections: [] };
+
+let dragState = null;           // dragging a block element
+let connecting = null;          // creating connection {blockEl, connEl, startX, startY, tempLine}
+let camera = { x: 0, y: 0, scale: 1 };    // camera translation
+let isPanning = false;
+let panStart = null;
+let panCameraStart = null;
+let contextBlockEl = null;
+
+/* ========== Utils ========== */
+function genId(){ return 'b-' + Math.random().toString(36).slice(2,10); }
+function el(tag, attrs={}, ...children){
+  const e=document.createElement(tag);
+  for(const k in attrs){
+    if(k === 'className') e.className = attrs[k];
+    else if(k === 'onclick') e.setAttribute('onclick', attrs[k]);
+    else e[k]=attrs[k];
+  }
+  children.flat().forEach(c=> typeof c === 'string'? e.appendChild(document.createTextNode(c)) : e.appendChild(c));
+  return e;
+}
+function updateCamera(){ mainCanvas.style.transform = `translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`; }
+
+/* ========== Load blocks config (from server) & render palette ========== */
+async function loadBlocksConfig(){
+  try {
+    const r = await fetch('/api/blocks');
+    blocksConfig = await r.json();
+  } catch(err){
+    console.error('Не удалось загрузить /api/blocks', err);
+    // fallback example config so UI is usable
+    blocksConfig = {
+      categories: [
+        { name: 'Основные', collapsed: false, blocks: [
+          { id: 'start', name: 'Start', color: '#0ea5a4', type: 'header', width: 220, height: 60, fields: [] },
+          { id: 'print', name: 'Print', color: '#8b5cf6', type: 'classic', width: 160, height: 80, fields: [{ name: 'text', label: 'Text' }] },
+        ] }
+      ]
+    };
+  }
+  renderPalette();
+}
+function renderPalette(){
+  const root = document.getElementById('categoriesList');
+  root.innerHTML = '';
+  blocksConfig.categories.forEach(cat=>{
+    const header = el('div',{className:'category-header'}, el('div',{className:'category-title'}, cat.name), el('div',{className:'collapse-indicator'}, cat.collapsed ? '▶' : '▼'));
+    const list = el('div',{className:'block-list'});
+    if(cat.collapsed) list.style.display='none';
+    header.addEventListener('click', ()=>{
+      list.style.display = list.style.display === 'none' ? 'block' : 'none';
+      const ind = header.querySelector('.collapse-indicator');
+      ind.textContent = list.style.display === 'none' ? '▶' : '▼';
+    });
+    cat.blocks.forEach(b=>{
+      const item = el('div',{className:'block-item', draggable:true});
+      item.dataset.templateId = b.id;
+      const dot = el('span',{className:'color-dot'});
+      dot.style.background = b.color || '#7f8c8d';
+      const name = el('div',{className:'block-name'}, b.name);
+      item.appendChild(dot); item.appendChild(name);
+      // click create (center-ish)
+      item.addEventListener('click', ()=> createFromTemplate(b.id, 200 - camera.x, 200 - camera.y));
+      // dragstart - use text/plain for compatibility
+      item.addEventListener('dragstart', (ev)=> {
+        ev.dataTransfer.setData('text/plain', b.id);
+        ev.dataTransfer.effectAllowed = 'copy';
+      });
+      list.appendChild(item);
+    });
+    root.appendChild(header);
+    root.appendChild(list);
+  });
+}
+
+/* ========== Canvas & block creation ========== */
+const mainCanvas = document.getElementById('mainCanvas');
+
+function createFromTemplate(templateId, x, y){
+  const cfg = findCfg(templateId); if(!cfg) return;
+  const id = genId();
+  const block = {
+    id, template: cfg.id, type: cfg.type,
+    x: Math.round(x), y: Math.round(y),
+    width: cfg.width || 160, height: cfg.height || 80,
+    fields: {}
+  };
+  if(cfg.fields) cfg.fields.forEach(f => block.fields[f.name] = '');
+  projectData.blocks.push(block);
+  createInstance(block);
+  updateCounts();
+  updateConnections();
+}
+function findCfg(templateId){
+  for(const cat of blocksConfig.categories) for(const b of cat.blocks) if(b.id===templateId) return b;
+  return null;
+}
+
+function createInstance(blockData){
+  const cfg = findCfg(blockData.template);
+  const wrapper = el('div', { className: 'block' });
+  wrapper.style.left = blockData.x + 'px';
+  wrapper.style.top = blockData.y + 'px';
+  wrapper.style.background = cfg?.color || '#2a4f6b';
+  wrapper.dataset.blockId = blockData.id;
+  wrapper.dataset.blockType = blockData.type || (cfg && cfg.type) || 'classic';
+
+  const header = el('div', { className: 'block-header' }, cfg?.name || ('Block ' + blockData.template));
+  const content = el('div', { className: 'block-content' });
+
+  if(cfg && cfg.fields && cfg.fields.length){
+    cfg.fields.forEach(f=>{
+      const input = el('input', { className: 'field-input', placeholder: f.placeholder || f.label || f.name, value: blockData.fields[f.name] || '' });
+      input.addEventListener('input', (e)=> { blockData.fields[f.name] = e.target.value; });
+      content.appendChild(input);
+    });
+  } else {
+    content.appendChild(el('div',{className:'small'}, cfg?.type || ''));
+  }
+
+  // connectors
+  if(!cfg || cfg.type !== 'header') wrapper.appendChild(Object.assign(document.createElement('div'), { className: 'connector connector-top' }));
+  wrapper.appendChild(Object.assign(document.createElement('div'), { className: 'connector connector-bottom' }));
+  if(cfg && (cfg.type === 'condition' || cfg.type === 'loop')) wrapper.appendChild(Object.assign(document.createElement('div'), { className: 'connector connector-right' }));
+
+  wrapper.appendChild(header);
+  wrapper.appendChild(content);
+
+  // drag move block (start only when click NOT on input and NOT on connector)
+  wrapper.addEventListener('mousedown', (ev)=>{
+    // if user clicked on input or contenteditable or on connector - don't start move
+    const target = ev.target;
+    if(target.closest('input,textarea,[contenteditable="true"]')) return;
+    if(target.closest('.connector')) return;
+    // start dragging
+    document.body.style.userSelect = 'none';
+    const rect = wrapper.getBoundingClientRect();
+    dragState = { el: wrapper, startX: ev.clientX, startY: ev.clientY, left: parseFloat(wrapper.style.left || 0), top: parseFloat(wrapper.style.top || 0) };
+  });
+
+  mainCanvas.appendChild(wrapper);
+}
+
+/* ========== Drag move handler & camera ========== */
+document.addEventListener('mousemove', (e)=>{
+  // dragging a block
+  if(dragState){
+    const dx = e.clientX - dragState.startX, dy = e.clientY - dragState.startY;
+    const nx = dragState.left + dx, ny = dragState.top + dy;
+    dragState.el.style.left = nx + 'px'; dragState.el.style.top = ny + 'px';
+    const bid = dragState.el.dataset.blockId;
+    const bd = projectData.blocks.find(b => b.id === bid);
+    if(bd){ bd.x = nx; bd.y = ny; }
+    updateConnections();
+    return; // when dragging block don't pan or update connecting line separately here
+  }
+
+  // panning camera
+  if(isPanning){
+    const dx = e.clientX - panStart.x, dy = e.clientY - panStart.y;
+    camera.x = panCameraStart.x + dx; camera.y = panCameraStart.y + dy;
+    updateCamera();
+    updateConnections();
+    return;
+  }
+
+  // updating connecting temp-line
+  if(connecting){
+    const rect = mainCanvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const dx = mx - connecting.startX, dy = my - connecting.startY;
+    const len = Math.sqrt(dx*dx + dy*dy);
+    const ang = Math.atan2(dy,dx);
+    connecting.tempLine.style.width = Math.max(len,2) + 'px';
+    connecting.tempLine.style.transform = `rotate(${ang}rad)`;
+  }
+});
+
+// mouseup / end interactions
+document.addEventListener('mouseup', (e)=>{
+  // stop dragging
+  dragState = null;
+  // stop panning
+  isPanning = false;
+  panStart = null;
+  panCameraStart = null;
+
+  // cleanup connecting if not finished (if there is a connecting temporary line and mouseup outside connector)
+  if(connecting && connecting.tempLine){
+    connecting.tempLine.remove();
+    connecting = null;
+  }
+  // restore selection
+  document.body.style.userSelect = '';
+});
+
+// when leaving viewport, cancel panning
+document.getElementById('viewport').addEventListener('mouseleave', ()=>{
+  isPanning = false;
+  panStart = null;
+  panCameraStart = null;
+});
+
+/* ========== Connecting blocks (temp line & finalize) ========== */
+mainCanvas.addEventListener('mousedown', (e)=>{
+  const conn = e.target.closest('.connector');
+  if(!conn) return;
+  e.preventDefault();
+  // disable text selection while creating connection
+  document.body.style.userSelect = 'none';
+  const blockEl = conn.closest('.block');
+  const crect = conn.getBoundingClientRect(), canv = mainCanvas.getBoundingClientRect();
+  const startX = crect.left + crect.width/2 - canv.left;
+  const startY = crect.top + crect.height/2 - canv.top;
+  const tempLine = document.createElement('div');
+  tempLine.className = 'connection-line temp-line';
+  tempLine.style.left = startX + 'px';
+  tempLine.style.top = startY + 'px';
+  tempLine.style.width = '0px';
+  tempLine.style.transform = 'rotate(0rad)';
+  mainCanvas.appendChild(tempLine);
+  connecting = { blockEl, connEl: conn, startX, startY, tempLine };
+});
+mainCanvas.addEventListener('mouseup', (e)=>{
+  if(!connecting) return;
+  const targetConn = e.target.closest('.connector');
+  if(targetConn){
+    const toBlock = targetConn.closest('.block');
+    if(toBlock && toBlock !== connecting.blockEl){
+      const fromId = connecting.blockEl.dataset.blockId, toId = toBlock.dataset.blockId;
+      const fromC = connectorType(connecting.connEl), toC = connectorType(targetConn);
+      if(allowedConnect(fromC, toC)){
+        projectData.connections.push({ from: fromId, to: toId, fromConnector: fromC, toConnector: toC });
+        updateConnections();
+      }
+    }
+  }
+  // cleanup temp
+  if(connecting?.tempLine) connecting.tempLine.remove();
+  connecting = null;
+  // restore selection
+  document.body.style.userSelect = '';
+});
+
+/* connector helpers */
+function connectorType(el){
+  if(el.classList.contains('connector-top')) return 'top';
+  if(el.classList.contains('connector-bottom')) return 'bottom';
+  if(el.classList.contains('connector-right')) return 'right';
+  if(el.classList.contains('connector-left')) return 'left';
+  return '';
+}
+function allowedConnect(from, to){ return (['bottom','right'].includes(from) && ['top','left'].includes(to)); }
+
+/* ========== Render connections ========== */
+function updateConnections(){
+  // remove old visuals (except temp-line)
+  mainCanvas.querySelectorAll('.connection-line:not(.temp-line), .connection-point').forEach(n=>n.remove());
+  // iterate
+  projectData.connections.forEach(c=>{
+    const fromEl = mainCanvas.querySelector(`.block[data-block-id="${c.from}"]`);
+    const toEl = mainCanvas.querySelector(`.block[data-block-id="${c.to}"]`);
+    if(!fromEl || !toEl) return;
+    const fromConn = fromEl.querySelector(`.connector-${c.fromConnector}`);
+    const toConn = toEl.querySelector(`.connector-${c.toConnector}`);
+    if(!fromConn || !toConn) return;
+    const p1 = connectorCenterInCanvas(fromConn);
+    const p2 = connectorCenterInCanvas(toConn);
+    const dx = p2.x - p1.x, dy = p2.y - p1.y;
+    const len = Math.sqrt(dx*dx + dy*dy), ang = Math.atan2(dy,dx);
+    const line = document.createElement('div'); line.className = 'connection-line';
+    line.style.left = p1.x + 'px'; line.style.top = p1.y + 'px';
+    line.style.width = Math.max(len,2) + 'px'; line.style.transform = `rotate(${ang}rad)`;
+    // attach dataset for identification
+    line.dataset.key = `${c.from}->${c.to}:${c.fromConnector}->${c.toConnector}`;
+    mainCanvas.appendChild(line);
+    // mid point clickable for deletion
+    const mx = p1.x + dx/2, my = p1.y + dy/2;
+    const point = document.createElement('div'); point.className = 'connection-point';
+    point.style.left = (mx - 6) + 'px'; point.style.top = (my - 6) + 'px';
+    point.dataset.key = line.dataset.key;
+    point.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); // remove connection
+      const key = ev.currentTarget.dataset.key;
+      projectData.connections = projectData.connections.filter(cc => `${cc.from}->${cc.to}:${cc.fromConnector}->${cc.toConnector}` !== key);
+      updateConnections();
+      updateCounts();
+    });
+    mainCanvas.appendChild(point);
+  });
+  updateCounts();
+}
+function connectorCenterInCanvas(connEl){
+  const r = connEl.getBoundingClientRect(), c = mainCanvas.getBoundingClientRect();
+  return { x: r.left + r.width/2 - c.left, y: r.top + r.height/2 - c.top };
+}
+
+/* ========== Camera pan (Ctrl + LMB) ========== */
+document.getElementById('viewport').addEventListener('mousedown', (e)=>{
+  // start panning with Ctrl + LMB
+  if(e.button===0 && e.ctrlKey){
+    isPanning = true;
+    panStart = { x: e.clientX, y: e.clientY };
+    panCameraStart = { x: camera.x, y: camera.y };
+    e.preventDefault();
+  }
+});
+window.addEventListener('keyup', (e)=>{ if(e.key === 'Control') { isPanning = false; panStart = null; panCameraStart = null; } });
+
+/* ========== Drag & Drop from palette into canvas ========== */
+mainCanvas.addEventListener('dragover', (e)=> e.preventDefault());
+mainCanvas.addEventListener('drop', (e)=>{
+  e.preventDefault();
+  // read template id (support both text/plain and legacy templateId)
+  const templateId = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('templateId');
+  if(!templateId) return;
+  // position adjusted with camera transform (camera.x, camera.y)
+  const viewportRect = document.getElementById('viewport').getBoundingClientRect();
+  const vx = e.clientX - viewportRect.left;
+  const vy = e.clientY - viewportRect.top;
+  const x = vx - camera.x;
+  const y = vy - camera.y;
+  createFromTemplate(templateId, x, y);
+  updateConnections();
+});
+
+/* ========== Context menu actions ========== */
+document.addEventListener('contextmenu', (e)=>{
+  const block = e.target.closest('.block');
+  const menu = document.getElementById('blockContextMenu');
+  if(block){
+    e.preventDefault();
+    contextBlockEl = block;
+    menu.style.left = e.pageX + 'px';
+    menu.style.top = e.pageY + 'px';
+    menu.style.display = 'block';
+  } else {
+    menu.style.display = 'none';
+    contextBlockEl = null;
+  }
+});
+document.addEventListener('click', ()=> { document.getElementById('blockContextMenu').style.display='none'; });
+
+async function duplicateContextBlock(){
+  if(!contextBlockEl) return;
+  const id = contextBlockEl.dataset.blockId;
+  const bd = projectData.blocks.find(b => b.id === id);
+  if(!bd) return;
+  try {
+    const resp = await fetch('/api/block/duplicate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ block_data: bd })});
+    const j = await resp.json();
+    if(j.status === 'success' && j.new_block){
+      projectData.blocks.push(j.new_block);
+      createInstance(j.new_block);
+      updateConnections();
+      updateCounts();
+    } else alert('Ошибка дублирования');
+  } catch(err){ console.error(err); alert('Ошибка дублирования'); }
+  document.getElementById('blockContextMenu').style.display='none';
+}
+
+function deleteContextBlock(){
+  if(!contextBlockEl) return;
+  const id = contextBlockEl.dataset.blockId;
+  projectData.blocks = projectData.blocks.filter(b => b.id !== id);
+  projectData.connections = projectData.connections.filter(c => c.from !== id && c.to !== id);
+  const el = mainCanvas.querySelector(`.block[data-block-id="${id}"]`);
+  if(el) el.remove();
+  updateConnections();
+  updateCounts();
+  document.getElementById('blockContextMenu').style.display='none';
+}
+
+/* ========== Export / Import / Save to server / Load from server ========== */
+function exportProject(){
+  const data = JSON.stringify(projectData, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const fname = 'project.turtcd';
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function importFromFile(ev){
+  const f = ev.target.files && ev.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if(parsed && parsed.blocks){
+        loadProjectFromObject(parsed);
+      } else alert('Неверный формат файла');
+    } catch(err){ alert('Ошибка чтения файла: ' + err.message); }
+  };
+  reader.readAsText(f);
+  // reset
+  ev.target.value = '';
+}
+
+function loadProjectFromObject(obj){
+  // clear canvas
+  mainCanvas.querySelectorAll('.block').forEach(n=>n.remove());
+  projectData = obj;
+  // create instances
+  projectData.blocks.forEach(b => createInstance(b));
+  updateConnections();
+  updateCounts();
+}
+
+/* Server save modal */
+function openSaveModal(){ document.getElementById('saveModal').style.display = 'block'; }
+function closeSaveModal(){ document.getElementById('saveModal').style.display = 'none'; }
+async function saveToServer(){
+  const filename = document.getElementById('saveFilename').value.trim();
+  if(!filename){ alert('Введите имя файла'); return; }
+  try {
+    const resp = await fetch('/api/project/save-file', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ filename: filename + '.turtcd', project_data: projectData })});
+    const j = await resp.json();
+    if(j.status === 'success') { alert('Сохранено: ' + j.filename); closeSaveModal(); }
+    else alert('Ошибка сохранения: ' + (j.message || 'unknown'));
+  } catch(err){ alert('Ошибка сохранения: ' + err.message); }
+}
+
+/* Server list */
+async function showServerProjects(){
+  try {
+    const r = await fetch('/api/project/list');
+    const j = await r.json();
+    if(j.status !== 'success'){ alert('Ошибка получения списка'); return; }
+    const listDiv = document.getElementById('serverList');
+    listDiv.innerHTML = '';
+    if(j.projects.length === 0) listDiv.appendChild(el('div', {}, 'Нет сохранённых проектов'));
+    j.projects.forEach(fn => {
+      const row = el('div', {}, fn);
+      row.style.display = 'flex'; row.style.justifyContent = 'space-between'; row.style.alignItems = 'center'; row.style.padding = '6px 0';
+      const btn = document.createElement('button');
+      btn.className = 'btn-ghost';
+      btn.textContent = 'Загрузить';
+      btn.addEventListener('click', ()=> loadProjectFromServer(fn));
+      row.appendChild(btn);
+      listDiv.appendChild(row);
+    });
+    document.getElementById('serverModal').style.display = 'block';
+  } catch(err){ alert('Ошибка: ' + err.message); }
+}
+function closeServerModal(){ document.getElementById('serverModal').style.display = 'none'; }
+async function loadProjectFromServer(filename){
+  try {
+    const resp = await fetch('/api/project/load-file', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ filename })});
+    const j = await resp.json();
+    if(j.status === 'success' && j.project_data){
+      loadProjectFromObject(j.project_data);
+      closeServerModal();
+    } else alert('Ошибка загрузки: ' + (j.message || 'unknown'));
+  } catch(err){ alert('Ошибка загрузки: ' + err.message); }
+}
+
+
+
+/* ========== Compile ========== */
+async function compileProject(){
+  try {
+    const resp = await fetch('/api/project/compile', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ project_data: projectData })
+    });
+    const j = await resp.json();
+    if(j.status === 'success'){
+      localStorage.setItem("compiled_code", j.code || "# пусто");
+      window.open("/compiled.html", "_blank");
+    } else alert('Ошибка компиляции: ' + (j.message || 'unknown'));
+  } catch(err){ alert('Ошибка компиляции: ' + err.message); }
+}
+
+
+
+
+/* ========== Small helpers ========== */
+function updateCounts(){ document.getElementById('blocksCount').textContent = projectData.blocks.length; document.getElementById('connsCount').textContent = projectData.connections.length; }
+
+/* ========== Init ========== */
+(async function init(){
+  await loadBlocksConfig();
+  // apply camera transform
+  updateCamera();
+  updateCounts();
+})();
+</script>
+</body>
+</html>

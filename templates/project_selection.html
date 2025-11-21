@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TurtCD — Главное меню</title>
+<style>
+  :root{
+    --bg:#0f1724;
+    --panel:#0b1220;
+    --accent:#06b6d4;
+    --accent-2:#8b5cf6;
+    --card:#0b1226;
+    --muted:#94a3b8;
+    --white:#ffffff;
+    --success:#10b981;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+  }
+
+  /* Theme: Dark mode color variables */
+  [data-theme="dark"] {
+    --bg:#0f1724;
+    --panel:#0b1220;
+    --accent:#06b6d4;
+    --accent-2:#8b5cf6;
+    --card:#0b1226;
+    --muted:#94a3b8;
+    --white:#ffffff;
+    --success:#10b981;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+  }
+
+  [data-theme="light"] {
+    --bg:#f1f5f9;
+    --panel:#ffffff;
+    --accent:#0ea5e9;
+    --accent-2:#6366f1;
+    --card:#ffffff;
+    --muted:#64748b;
+    --white:#1e293b;
+    --success:#059669;
+    --danger:#dc2626;
+    --warning:#d97706;
+  }
+
+  /* Body styles with fixed background for theme consistency */
+  body {
+    margin:0;
+    font-family:Inter, Roboto, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    color: var(--white);
+    min-height: 100vh;
+    background: linear-gradient(180deg,#071025 0%,#0b1220 100%);
+    background-attachment: fixed;
+    transition: background 0.25s ease, color 0.25s ease;
+    font-family: monospace !important;
+    font-size: 18px !important;
+  }
+
+  button, .button, input[type=button], input[type=submit] {
+    font-family: monospace !important;
+    font-size: 16px !important;
+  }
+
+  [data-theme="dark"] body {
+    background: linear-gradient(180deg,#071025 0%,#0b1220 100%);
+    color: var(--white);
+  }
+
+  [data-theme="light"] body {
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+    color: var(--white);
+  }
+
+  *{box-sizing:border-box}
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* Transparent background, body controls the background */
+    background: transparent;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 20px rgba(2,6,23,0.5);
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+
+  .btn {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #022;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(14,165,233,0.08);
+    transition: transform 0.12s;
+    font-size: 14px;
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.05);
+  }
+
+  .btn-new {
+    background: linear-gradient(90deg, var(--success), #059669);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(16,185,129,0.08);
+    transition: transform 0.12s;
+    font-size: 14px;
+  }
+
+  .btn-new:hover {
+    transform: translateY(-3px);
+  }
+
+  .btn-warning {
+    background: linear-gradient(90deg, var(--warning), #d97706);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(245,158,11,0.08);
+    transition: transform 0.12s;
+    font-size: 14px;
+  }
+
+  .btn-warning:hover {
+    transform: translateY(-3px);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    flex: 1;
+  }
+
+  .project-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.6);
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+  }
+
+  .project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(2,6,23,0.75);
+  }
+
+  .project-card.new-project {
+    border: 2px dashed rgba(255,255,255,0.3);
+    background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.05));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 200px;
+  }
+
+  .project-card.new-project:hover {
+    border-color: var(--success);
+    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.1));
+  }
+
+  .project-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--white);
+  }
+
+  .project-version {
+    display: inline-block;
+    background: rgba(6,182,212,0.2);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+
+  .project-info {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .project-description {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 60px;
+  }
+
+  .project-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .project-actions .btn {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .project-actions .btn-ghost {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .project-actions .btn-warning {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .new-project-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .new-project-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--success);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state h3 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    color: var(--white);
+  }
+
+  .empty-state p {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  /* Notification styles */
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    z-index: 10001;
+    min-width: 300px;
+    max-width: 400px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .notification.show {
+    transform: translateX(0);
+  }
+
+  .notification.success {
+    border-left: 4px solid var(--success);
+  }
+
+  .notification.error {
+    border-left: 4px solid var(--danger);
+  }
+
+  .notification-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .notification-icon {
+    font-size: 20px;
+  }
+
+  .notification-title {
+    font-weight: 600;
+    color: var(--white);
+    font-size: 16px;
+  }
+
+  .notification-message {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .notification-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .notification-close:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--white);
+  }
+
+  /* Modal window styles */
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 24px;
+    min-width: 450px;
+    max-width: 96%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .modal h3 {
+    margin: 0 0 16px 0;
+    font-size: 20px;
+    color: var(--white);
+  }
+
+  .modal input[type="text"], .modal input[type="search"], .modal textarea, .modal select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: var(--white);
+    font-size: 14px;
+    margin-bottom: 16px;
+    font-family: inherit;
+    resize: vertical;
+  }
+
+  .modal select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    cursor: pointer;
+  }
+
+  .modal select option {
+    color: var(--white);
+    background: var(--card);
+  }
+
+  .modal input:focus, .modal textarea:focus, .modal select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(6,182,212,0.08);
+  }
+
+  .template-select-group {
+    margin-bottom: 16px;
+  }
+
+  .template-select-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  .template-description {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+    background: rgba(255,255,255,0.02);
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+    white-space: pre-line;
+  }
+
+  /* License badge styles */
+  .license-badge {
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    z-index: 10060;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--white);
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 6px 10px;
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .modal .mods-list {
+    max-height: 320px;
+    overflow: auto;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 8px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .mod-row {
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:center;
+    padding:8px;
+    border-radius:8px;
+    margin-bottom:6px;
+    background: rgba(0,0,0,0.03);
+  }
+
+  .mod-row .mod-name {
+    font-weight:600;
+    color:var(--white);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 60%;
+  }
+
+  .mod-row .mod-actions {
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+
+  .mod-empty {
+    text-align:center;
+    padding:28px 8px;
+    color:var(--muted);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top:8px;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+  }
+
+  /* License agreement modal styles */
+  body.license-modal-open {
+    overflow: hidden;
+  }
+
+  .license-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px;
+    background: rgba(0,0,0,0.25);
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.25);
+  }
+
+  .license-text {
+    white-space: pre-wrap;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--white);
+  }
+
+  .license-hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  #acceptLicenseBtn {
+    min-width: 140px;
+  }
+
+  #acceptLicenseBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* Mobile responsive styles */
+  @media (max-width: 600px) {
+    .header h1 { font-size: 20px; }
+    .btn, .btn-ghost { padding: 8px 12px; font-size: 13px; }
+    .project-card { padding: 16px; }
+    .modal { min-width: 90%; }
+  }
+
+/* Additional themes and context menu styles */
+
+/* Context menu base styles */
+.context-menu {
+  position: absolute;
+  z-index: 9999;
+  background: var(--panel);
+  border: 1px solid var(--accent-2);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  color: #ffffff;
+  padding: 4px 0;
+  display: none;
+}
+.context-menu-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+  color: #ffffff;
+}
+.context-menu-item:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+/* Theme: Hacker */
+[data-theme="hacker"] {
+  --bg: #000000;
+  --panel: #000000;
+  --accent: #7CFC00;
+  --accent-2: #3a7f00;
+  --card: #000000;
+  --muted: #9ae89a;
+  --white: #e6ffe6;
+}
+[data-theme="hacker"] body { background: #000; color: var(--white); }
+[data-theme="hacker"] .block,
+[data-theme="hacker"] .block-header,
+[data-theme="hacker"] .block-content,
+[data-theme="hacker"] .block-item {
+  background: #000 !important;
+  color: #7CFC00 !important;
+  border-color: rgba(124,252,0,0.2) !important;
+}
+[data-theme="hacker"] .color-dot { background: #7CFC00 !important; }
+[data-theme="hacker"] .connection-line { background: linear-gradient(90deg, #7CFC00, #3a7f00) !important; }
+[data-theme="hacker"] .context-menu { background: #000; color: #ffffff; border-color: #3a7f00; }
+[data-theme="hacker"] .context-menu-item { color: #ffffff; }
+[data-theme="hacker"] .context-menu-item:hover { background: #7CFC00; color: #000; }
+
+/* Theme: Sky */
+[data-theme="nebo"] {
+  --bg: #f8ffff;
+  --panel: #ffffff;
+  --accent: #40E0D0;
+  --accent-2: #a7f1ec;
+  --card: #ffffff;
+  --muted: #6b94a1;
+  --white: #003333;
+}
+[data-theme="nebo"] body {
+  background: linear-gradient(180deg, #f9feff 0%, #eefcff 100%);
+  color: var(--white);
+}
+[data-theme="nebo"] .block,
+[data-theme="nebo"] .block-header,
+[data-theme="nebo"] .block-content,
+[data-theme="nebo"] .block-item {
+  background: #ffffff !important;
+  color: #003333 !important;
+  border-color: rgba(64,224,208,0.15) !important;
+}
+[data-theme="nebo"] .block-group-title,
+[data-theme="nebo"] .block-category-title,
+[data-theme="nebo"] .block-name {
+  color: #000000 !important;
+}
+[data-theme="nebo"] .color-dot { background: #40E0D0 !important; }
+[data-theme="nebo"] .connection-line { background: linear-gradient(90deg, #40E0D0, #a7f1ec) !important; }
+[data-theme="nebo"] .context-menu { background: #fff; color: #ffffff; border-color: #40E0D0; }
+[data-theme="nebo"] .context-menu-item { color: #ffffff; }
+[data-theme="nebo"] .context-menu-item:hover { background: #40E0D0; color: #000; }
+
+/* Theme: Monochrome */
+[data-theme="mono"] {
+  --bg: #0f0f0f;
+  --panel: #111111;
+  --accent: #ffffff;
+  --accent-2: #bfbfbf;
+  --card: #0b0b0b;
+  --muted: #9a9a9a;
+  --white: #ffffff;
+}
+[data-theme="mono"] body { background: #0b0b0b; color: var(--white); }
+[data-theme="mono"] .block,
+[data-theme="mono"] .block-header,
+[data-theme="mono"] .block-content,
+[data-theme="mono"] .block-item {
+  background: #111 !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+[data-theme="mono"] .color-dot { background: #fff !important; }
+[data-theme="mono"] .context-menu { background: #111; color: #ffffff; border-color: #bfbfbf; }
+[data-theme="mono"] .context-menu-item { color: #ffffff; }
+[data-theme="mono"] .context-menu-item:hover { background: #fff; color: #000; }
+
+/* Theme: Halloween */
+[data-theme="halloween"] {
+  --bg: #1a0f0a;
+  --panel: #2d1b0f;
+  --accent: #FF8C00;
+  --accent-2: #ff6b00;
+  --card: #1a0f0a;
+  --muted: #cc8c66;
+  --white: #ffffff;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+}
+[data-theme="halloween"] body { 
+  background: linear-gradient(180deg,#1a0f0a 0%,#2d1b0f 100%);
+  color: var(--white);
+}
+[data-theme="halloween"] .header {
+  background: linear-gradient(180deg, rgba(255,140,0,0.1), transparent);
+  box-shadow: 0 6px 20px rgba(255,140,0,0.3);
+}
+[data-theme="halloween"] .project-card {
+  background: #2d1b0f;
+  border: 1px solid rgba(255,140,0,0.3);
+  box-shadow: 0 12px 30px rgba(255,140,0,0.2);
+}
+[data-theme="halloween"] .project-card:hover {
+  border-color: #FF8C00;
+  box-shadow: 0 20px 60px rgba(255,140,0,0.4);
+}
+[data-theme="halloween"] .btn {
+  background: linear-gradient(90deg, #FF8C00, #ff6b00);
+  color: #000;
+}
+[data-theme="halloween"] .btn-new {
+  background: linear-gradient(90deg, #ff6b00, #e55a00);
+}
+[data-theme="halloween"] .btn-warning {
+  background: linear-gradient(90deg, #e55a00, #cc4a00);
+}
+[data-theme="halloween"] .btn-ghost {
+  border: 1px solid rgba(255,140,0,0.3);
+  color: var(--white);
+}
+[data-theme="halloween"] .btn-ghost:hover {
+  background: rgba(255,140,0,0.2);
+  border-color: #FF8C00;
+}
+[data-theme="halloween"] .modal {
+  background: #2d1b0f;
+  border: 1px solid #FF8C00;
+}
+[data-theme="halloween"] .modal input[type="text"], 
+[data-theme="halloween"] .modal input[type="search"], 
+[data-theme="halloween"] .modal textarea {
+  border: 1px solid rgba(255,140,0,0.3);
+  background: rgba(255,140,0,0.1);
+}
+[data-theme="halloween"] .modal input:focus, 
+[data-theme="halloween"] .modal textarea:focus {
+  border-color: #FF8C00;
+  box-shadow: 0 0 0 3px rgba(255,140,0,0.2);
+}
+[data-theme="halloween"] .mods-list {
+  border: 1px solid rgba(255,140,0,0.2);
+  background: rgba(255,140,0,0.05);
+}
+[data-theme="halloween"] .mod-row {
+  background: rgba(255,140,0,0.1);
+  border: 1px solid rgba(255,140,0,0.2);
+}
+[data-theme="halloween"] .notification {
+  background: #2d1b0f;
+  border: 1px solid #FF8C00;
+}
+[data-theme="halloween"] .notification.success {
+  border-left: 4px solid #ff6b00;
+}
+[data-theme="halloween"] .notification.error {
+  border-left: 4px solid #e55a00;
+}
+
+
+/* Fixed themes and context menu */
+
+/* Context menu with white text for all themes */
+.context-menu {
+  position: absolute;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  color: #ffffff;
+  padding: 4px 0;
+  display: none;
+}
+.context-menu-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+  color: #ffffff;
+}
+.context-menu-item:hover {
+  background: #f0f0f0;
+  color: #000;
+}
+
+/* Rounded block styles */
+.block,
+.block-header,
+.block-content,
+.block-item {
+  border-radius: 10px !important;
+}
+
+/* Theme: Hacker block styles */
+[data-theme="hacker"] .block,
+[data-theme="hacker"] .block-header,
+[data-theme="hacker"] .block-content,
+[data-theme="hacker"] .block-item {
+  border-radius: 10px !important;
+  border: 1px solid #7CFC00 !important;
+}
+
+/* Theme: Sky block styles */
+[data-theme="nebo"] .block,
+[data-theme="nebo"] .block-header,
+[data-theme="nebo"] .block-content,
+[data-theme="nebo"] .block-item {
+  border-radius: 10px !important;
+}
+[data-theme="nebo"] .block-group-title,
+[data-theme="nebo"] .block-category-title,
+[data-theme="nebo"] .block-name {
+  color: #000000 !important;
+}
+
+/* Theme: Monochrome block styles */
+[data-theme="mono"] .block,
+[data-theme="mono"] .block-header,
+[data-theme="mono"] .block-content,
+[data-theme="mono"] .block-item {
+  border-radius: 10px !important;
+  border: 1px solid #ffffff !important;
+}
+
+/* Theme: Pink-Violet */
+[data-theme="pinkviolet"] {
+  --bg: #2a133d;
+  --panel: #3b2562;
+  --accent: #ff91e9;
+  --accent-2: #ad5fff;
+  --card: #41275a;
+  --muted: #c97ad9;
+  --white: #fff1fa;
+}
+[data-theme="pinkviolet"] body { background: linear-gradient(180deg, #2a133d 0%, #41275a 100%); color: var(--white); }
+[data-theme="pinkviolet"] .block,
+[data-theme="pinkviolet"] .block-header,
+[data-theme="pinkviolet"] .block-content,
+[data-theme="pinkviolet"] .block-item {
+  background: #3b2562 !important;
+  color: #fff1fa !important;
+  border-color: #ad5fff !important;
+}
+[data-theme="pinkviolet"] .color-dot { background: #ff91e9 !important; }
+[data-theme="pinkviolet"] .context-menu { background: #3b2562; color: #fff1fa; border-color: #ad5fff; }
+[data-theme="pinkviolet"] .context-menu-item { color: #fff1fa; }
+[data-theme="pinkviolet"] .context-menu-item:hover { background: #ff91e9; color: #2a133d; }
+
+/* Theme: Red */
+[data-theme="red"] {
+  --bg: #0f0f0f;
+  --panel: #111111;
+  --accent: #ff2121;
+  --accent-2: #ee5959;
+  --card: #0b0b0b;
+  --muted: #ee5959;
+  --white: #ff2121;
+}
+[data-theme="red"] body { background: #0b0b0b; color: var(--white); }
+[data-theme="red"] .block,
+[data-theme="red"] .block-header,
+[data-theme="red"] .block-content,
+[data-theme="red"] .block-item {
+  background: #111 !important;
+  color: #ff2121 !important;
+  border: 1px solid #ff2121 !important;
+}
+[data-theme="red"] .color-dot { background: #ff2121 !important; }
+[data-theme="red"] .context-menu { background: #111; color: #ff2121; border-color: #ff2121; }
+[data-theme="red"] .context-menu-item { color: #ff2121; }
+[data-theme="red"] .context-menu-item:hover { background: #ff2121; color: #000; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🐢 TurtCD</h1>
+      <div class="header-actions">
+      </div>
+    </div>
+
+    <div id="projectsContainer">
+      <div class="loading">Загрузка проектов...</div>
+    </div>
+  </div>
+
+  <!-- Create project modal -->
+  <div id="createProjectModal" style="display:none">
+    <div class="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createProjectTitle" onkeydown="if(event.key==='Enter' && (event.target.id==='newProjectName' || event.target.id==='projectPath' || event.target.id==='templateSelect')){event.preventDefault();createNewProject();}">
+        <h3 id="createProjectTitle">Создать новый проект</h3>
+        <input id="newProjectName" type="text" placeholder="Название проекта" maxlength="50">
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px; color: var(--white); font-weight: 600;">Путь проекта:</label>
+          <input id="projectPath" type="text" placeholder="Выберите папку для проекта" readonly style="margin-bottom: 8px;">
+          <button class="btn-ghost" onclick="selectProjectPath()" style="width: 100%;">📁 Выбрать папку</button>
+        </div>
+        <div class="template-select-group">
+          <label for="templateSelect">Шаблон проекта:</label>
+          <select id="templateSelect" onchange="handleTemplateChange(event)">
+            <option value="blank">Пустой проект</option>
+          </select>
+          <div id="templateDescription" class="template-description">Обычный пустой проект</div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" onclick="createNewProject()">Создать</button>
+          <button class="btn-ghost" onclick="closeCreateModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit project modal -->
+  <div id="editProjectModal" style="display:none">
+    <div class="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editProjectTitle" onkeydown="if(event.key==='Enter' && (event.target.id==='editProjectName' || event.target.id==='editProjectPath')){event.preventDefault();saveProjectEdit();}">
+        <h3 id="editProjectTitle">Редактировать проект</h3>
+        <input id="editProjectName" type="text" placeholder="Название проекта" maxlength="50">
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px; color: var(--white); font-weight: 600;">Путь проекта:</label>
+          <input id="editProjectPath" type="text" placeholder="Выберите папку для проекта" readonly style="margin-bottom: 8px;">
+          <button class="btn-ghost" onclick="selectEditProjectPath()" style="width: 100%;">📁 Выбрать папку</button>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" onclick="saveProjectEdit()">Сохранить</button>
+          <button class="btn-ghost" onclick="closeEditModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete project modal -->
+  <div id="deleteProjectModal" style="display:none">
+    <div class="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteProjectTitle">
+        <h3 id="deleteProjectTitle">Удалить проект</h3>
+        <p>Вы уверены, что хотите удалить проект "<span id="deleteProjectName"></span>"? Это действие нельзя отменить.</p>
+        <div class="modal-actions">
+          <button class="btn" style="background: linear-gradient(90deg, var(--danger), #dc2626);" onclick="confirmDelete()">Удалить</button>
+          <button class="btn-ghost" onclick="closeDeleteModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Duplicate project modal -->
+  <div id="duplicateProjectModal" style="display:none">
+    <div class="modal-backdrop" onclick="if(event.target === this) closeDuplicateModal()">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="duplicateProjectTitle" onkeydown="if(event.key==='Enter' && event.target.id==='duplicateProjectName'){event.preventDefault();confirmDuplicate();}">
+        <h3 id="duplicateProjectTitle">Дублировать проект</h3>
+        <p style="color: var(--muted); margin-bottom: 16px;">Введите название для копии проекта:</p>
+        <input id="duplicateProjectName" type="text" placeholder="Название копии проекта" maxlength="50">
+        <div class="modal-actions">
+          <button class="btn" onclick="confirmDuplicate()">Создать копию</button>
+          <button class="btn-ghost" onclick="closeDuplicateModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mods settings modal -->
+  <div id="modsSettingsModal" style="display:none">
+    <div class="modal-backdrop" onclick="if(event.target === this) closeModsSettings()">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modsSettingsTitle">
+        <h3 id="modsSettingsTitle">Настройки модификаций</h3>
+
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <input id="modsSearch" type="search" placeholder="Поиск модификаций..." oninput="renderModsList()" style="flex:1;">
+          <button class="btn" onclick="selectModFile()" title="Выгрузить модификацию">⬆️ Выгрузить</button>
+        </div>
+
+        <div id="modsList" class="mods-list" aria-live="polite">
+          <div class="mod-empty">Загрузка списка модификаций...</div>
+        </div>
+
+        <div style="font-size:13px; color:var(--muted); margin-bottom:8px;">
+          Все модификации хранятся в папке <code>mods</code> и имеют формат <code>.json</code>. Удаление модификации удалит её из папки.
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-ghost" onclick="closeModsSettings()">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file inputs for folder selection and mod upload -->
+  <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" onchange="handleFolderSelection(event)">
+  <input type="file" id="editFolderInput" webkitdirectory directory multiple style="display: none;" onchange="handleEditFolderSelection(event)">
+  <input type="file" id="modUploadInput" accept=".json" style="display: none;" onchange="uploadModFile(event)">
+
+  <!-- License agreement modal -->
+  <div id="licenseModal" style="display:none">
+    <div class="modal-backdrop" onclick="if(event.target === this) closeLicenseModal()">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="licenseModalTitle">
+        <h3 id="licenseModalTitle">Лицензионное соглашение</h3>
+        <div id="licenseError" class="license-hint" style="display:none; color: var(--danger);"></div>
+        <div id="licenseScroll" class="license-scroll">
+          <pre id="licenseText" class="license-text">Загрузка лицензионного соглашения...</pre>
+        </div>
+        <div class="modal-actions">
+          <button id="acceptLicenseBtn" class="btn" onclick="acceptLicenseAgreement()" disabled>Принять</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+let projects = [];
+let currentDeleteProject = null;
+let currentEditProject = null;
+let licenseAcceptUnlocked = false;
+let licenseScrollListenerAttached = false;
+let licenseModalVisible = false;
+let projectTemplates = [];
+let templatesLoaded = false;
+let selectedTemplateId = 'blank';
+const defaultTemplateMeta = {
+  id: 'blank',
+  name: 'Пустой проект',
+  description: 'Обычный пустой проект'
+};
+
+/* License agreement management */
+async function checkLicenseStatus() {
+  try {
+    const response = await fetch('/api/license/status');
+    const data = await response.json();
+    if (!data.accepted) {
+      await openLicenseModal();
+    }
+  } catch (error) {
+    console.error('Ошибка проверки статуса лицензии:', error);
+    await openLicenseModal();
+  }
+}
+
+async function openLicenseModal() {
+  const modal = document.getElementById('licenseModal');
+  const licenseText = document.getElementById('licenseText');
+  const errorEl = document.getElementById('licenseError');
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const scrollContainer = document.getElementById('licenseScroll');
+  
+  if (!modal || !licenseText) return;
+  
+  modal.style.display = 'block';
+  licenseText.textContent = 'Загрузка лицензионного соглашения...';
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+  licenseAcceptUnlocked = false;
+  if (acceptBtn) {
+    acceptBtn.disabled = true;
+  }
+  
+  // Add scroll listener if not already attached
+  if (scrollContainer && !licenseScrollListenerAttached) {
+    scrollContainer.addEventListener('scroll', handleLicenseScroll);
+    licenseScrollListenerAttached = true;
+  }
+
+  try {
+    const response = await fetch('/api/license/text');
+    const data = await response.json();
+    
+    if (data.status === 'success' && data.text) {
+      licenseText.textContent = data.text;
+    } else {
+      licenseText.textContent = 'Ошибка загрузки лицензионного соглашения.';
+      if (errorEl) {
+        errorEl.textContent = data.message || 'Не удалось загрузить лицензию';
+        errorEl.style.display = 'block';
+      }
+    }
+  } catch (error) {
+    licenseText.textContent = 'Ошибка загрузки лицензионного соглашения.';
+    if (errorEl) {
+      errorEl.textContent = 'Не удалось подключиться к серверу';
+      errorEl.style.display = 'block';
+    }
+    console.error('Ошибка загрузки лицензии:', error);
+  }
+}
+
+function handleLicenseScroll() {
+  if (licenseAcceptUnlocked) return;
+  const scrollContainer = document.getElementById('licenseScroll');
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const licenseText = document.getElementById('licenseText');
+  if (!scrollContainer || !acceptBtn || !licenseText) return;
+  if (!licenseText.textContent || licenseText.textContent.trim().length === 0) {
+    acceptBtn.disabled = true;
+    return;
+  }
+  const nearBottom = Math.ceil(scrollContainer.scrollTop + scrollContainer.clientHeight) >= scrollContainer.scrollHeight - 10;
+  if (nearBottom) {
+    licenseAcceptUnlocked = true;
+    acceptBtn.disabled = false;
+  }
+}
+
+async function acceptLicenseAgreement() {
+  const acceptBtn = document.getElementById('acceptLicenseBtn');
+  const errorEl = document.getElementById('licenseError');
+  if (!licenseAcceptUnlocked || !acceptBtn) return;
+
+  acceptBtn.disabled = true;
+  acceptBtn.textContent = 'Сохранение...';
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+
+  try {
+    const response = await fetch('/api/license/accept', { method: 'POST' });
+    const data = await response.json();
+    if (data.status === 'success') {
+      closeLicenseModal();
+      showNotification('success', 'Спасибо!', 'Лицензионное соглашение принято.');
+    } else {
+      throw new Error(data.message || 'Неизвестная ошибка');
+    }
+  } catch (error) {
+    console.error('Ошибка сохранения лицензии:', error);
+    if (errorEl) {
+      errorEl.textContent = 'Ошибка сохранения: ' + error.message;
+      errorEl.style.display = 'block';
+    }
+    acceptBtn.disabled = false;
+    acceptBtn.textContent = 'Принять';
+  }
+}
+
+function closeLicenseModal() {
+  const modal = document.getElementById('licenseModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+async function loadVersion() {
+  try {
+    const response = await fetch('/api/version');
+    const data = await response.json();
+    if (data.status === 'success' && data.version) {
+      const versionBadge = document.getElementById('versionBadge');
+      if (versionBadge) {
+        versionBadge.textContent = `v${data.version}`;
+      }
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки версии:', error);
+  }
+}
+
+/* Theme management */
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('turtcd-theme', theme);
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('turtcd-theme') || 'dark';
+  setTheme(savedTheme);
+}
+
+
+/* Template management */
+async function loadTemplates(forceReload = false) {
+  if (templatesLoaded && !forceReload && projectTemplates.length > 0) {
+    return projectTemplates;
+  }
+
+  try {
+    const response = await fetch('/api/templates');
+    const data = await response.json();
+    if (data.status === 'success') {
+      projectTemplates = Array.isArray(data.templates) ? data.templates : [];
+    } else {
+      throw new Error(data.message || 'Не удалось загрузить шаблоны');
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки шаблонов:', error);
+    projectTemplates = [];
+    showNotification('error', 'Ошибка', 'Не удалось загрузить шаблоны проектов. Будет доступен только пустой шаблон.');
+  }
+
+  const hasDefault = projectTemplates.some(t => t.id === defaultTemplateMeta.id);
+  if (!hasDefault) {
+    projectTemplates.unshift({ ...defaultTemplateMeta });
+  }
+  templatesLoaded = true;
+  renderTemplateSelect();
+  return projectTemplates;
+}
+
+function renderTemplateSelect() {
+  const selectEl = document.getElementById('templateSelect');
+  if (!selectEl) return;
+
+  const templatesToRender = projectTemplates.length > 0 ? projectTemplates : [{ ...defaultTemplateMeta }];
+  if (!templatesToRender.some(t => t.id === selectedTemplateId)) {
+    selectedTemplateId = templatesToRender[0].id;
+  }
+
+  selectEl.innerHTML = templatesToRender.map(template => `
+    <option value="${template.id}">${escapeHtml(template.name || 'Без названия')}</option>
+  `).join('');
+  selectEl.value = selectedTemplateId;
+  updateTemplateDescription(getTemplateById(selectedTemplateId));
+}
+
+function getTemplateById(id) {
+  if (!id || id === defaultTemplateMeta.id) {
+    return defaultTemplateMeta;
+  }
+  return projectTemplates.find(t => t.id === id) || defaultTemplateMeta;
+}
+
+function handleTemplateChange(event) {
+  selectedTemplateId = event.target.value || defaultTemplateMeta.id;
+  updateTemplateDescription(getTemplateById(selectedTemplateId));
+}
+
+function updateTemplateDescription(template) {
+  const descriptionEl = document.getElementById('templateDescription');
+  if (!descriptionEl) return;
+  descriptionEl.textContent = template.description || 'Описание отсутствует';
+}
+
+
+/* Project management */
+async function loadProjects() {
+  try {
+    const response = await fetch('/api/project/list');
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      // Sort projects by creation date (oldest first)
+      projects = (data.projects || []).sort((a, b) => {
+        const dateA = new Date(a.createdAt || a.lastModified || 0);
+        const dateB = new Date(b.createdAt || b.lastModified || 0);
+        return dateA - dateB;
+      });
+      renderProjects();
+    } else {
+      console.error('Ошибка загрузки проектов:', data.message);
+      projects = [];
+      renderProjects();
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки проектов:', error);
+    projects = [];
+    renderProjects();
+  }
+}
+
+function renderProjects() {
+  const container = document.getElementById('projectsContainer');
+
+  if (projects.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <h3>Нет проектов</h3>
+        <p>Создайте свой первый проект, чтобы начать работу</p>
+        <button class="btn-new" onclick="openCreateModal()">+ Создать проект</button>
+      </div>
+    `;
+    return;
+  }
+
+  const projectsHTML = projects.map(project => {
+    const projectName = project.filename ? project.filename.replace('.turtcd', '') : project.replace('.turtcd', '');
+    const createdDate = project.createdAt ? 
+      new Date(project.createdAt).toLocaleDateString('ru-RU') : 
+      new Date().toLocaleDateString('ru-RU');
+    const encodedFilename = encodeURIComponent(project.filename || project);
+    
+    return `
+      <div class="project-card" onclick="openProject('${encodedFilename}')" onkeydown="if(event.key==='Enter'){event.preventDefault();openProject('${encodedFilename}');}" tabindex="0">
+        <div class="project-name">
+          ${escapeHtml(projectName)}
+        </div>
+        <div class="project-info">Создан: ${createdDate}</div>
+        <div class="project-actions" onclick="event.stopPropagation()">
+          <button class="btn" onclick="openProject('${encodedFilename}')">Открыть</button>
+          <button class="btn-ghost" onclick="editProject('${encodedFilename}')">✏️</button>
+          <button class="btn-ghost" onclick="duplicateProject('${encodedFilename}')">⎘</button>
+          <button class="btn-ghost" onclick="deleteProject('${encodedFilename}')">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="projects-grid">
+      ${projectsHTML}
+      <div class="project-card new-project" onclick="openCreateModal()" onkeydown="if(event.key==='Enter'){event.preventDefault();openCreateModal();}" tabindex="0">
+        <div class="new-project-icon">+</div>
+        <div class="new-project-text">Создать новый проект</div>
+      </div>
+    </div>
+  `;
+}
+
+function openProject(encodedFilename) {
+  const filename = decodeURIComponent(encodedFilename);
+  // Save selected project to localStorage
+  localStorage.setItem('currentProject', filename);
+  // Navigate to editor
+  window.location.href = '/editor';
+}
+
+async function openCreateModal() {
+  try {
+    await loadTemplates();
+  } catch (error) {
+    console.error('Не удалось обновить список шаблонов:', error);
+  }
+  renderTemplateSelect();
+  document.getElementById('createProjectModal').style.display = 'block';
+  setTimeout(() => document.getElementById('newProjectName').focus(), 50);
+}
+
+function closeCreateModal() {
+  document.getElementById('createProjectModal').style.display = 'none';
+  document.getElementById('newProjectName').value = '';
+  document.getElementById('projectPath').value = '';
+  selectedTemplateId = defaultTemplateMeta.id;
+  const templateSelect = document.getElementById('templateSelect');
+  if (templateSelect) {
+    templateSelect.value = selectedTemplateId;
+  }
+  updateTemplateDescription(getTemplateById(selectedTemplateId));
+}
+
+function selectProjectPath() {
+  document.getElementById('folderInput').click();
+}
+
+function handleFolderSelection(event) {
+  const files = event.target.files;
+  if (files.length > 0) {
+    // Get selected folder path
+    const path = files[0].webkitRelativePath.split('/')[0];
+    document.getElementById('projectPath').value = path;
+  }
+}
+
+async function createNewProject() {
+  const name = document.getElementById('newProjectName').value.trim();
+  const path = document.getElementById('projectPath').value.trim();
+  const templateId = selectedTemplateId || defaultTemplateMeta.id;
+
+  if (!name) {
+    showNotification('error', 'Ошибка', 'Введите название проекта');
+    return;
+  }
+
+  try {
+    const payload = {
+      filename: name + '.turtcd',
+      template_id: templateId,
+      project_path: path || ''
+    };
+
+    if (templateId === defaultTemplateMeta.id) {
+      payload.project_data = {
+        blocks: [],
+        connections: [],
+        projectPath: path || '',
+        createdAt: new Date().toISOString(),
+      };
+    }
+
+    const response = await fetch('/api/project/save-file', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      showNotification('success', 'Успех', 'Проект успешно создан!');
+      closeCreateModal();
+      // Force refresh project list
+      setTimeout(() => {
+        loadProjects();
+      }, 500);
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка создания проекта: ' + (data.message || 'Неизвестная ошибка'));
+    }
+  } catch (error) {
+    showNotification('error', 'Ошибка', 'Ошибка создания проекта: ' + error.message);
+  }
+}
+
+function editProject(encodedFilename) {
+  const filename = decodeURIComponent(encodedFilename);
+  const project = projects.find(p => (p.filename || p) === filename);
+  if (!project) return;
+
+  currentEditProject = filename;
+
+  document.getElementById('editProjectName').value = project.filename ? project.filename.replace('.turtcd', '') : project.replace('.turtcd', '');
+  document.getElementById('editProjectPath').value = project.projectPath || '';
+
+  document.getElementById('editProjectModal').style.display = 'block';
+}
+
+function selectEditProjectPath() {
+  document.getElementById('editFolderInput').click();
+}
+
+function handleEditFolderSelection(event) {
+  const files = event.target.files;
+  if (files.length > 0) {
+    const path = files[0].webkitRelativePath.split('/')[0];
+    document.getElementById('editProjectPath').value = path;
+  }
+}
+
+async function saveProjectEdit() {
+  const newName = document.getElementById('editProjectName').value.trim();
+  const path = document.getElementById('editProjectPath').value.trim();
+
+  if (!newName) {
+    showNotification('error', 'Ошибка', 'Введите название проекта');
+    return;
+  }
+
+  try {
+    const requestData = {
+      oldFilename: currentEditProject,
+      newFilename: newName + '.turtcd',
+      projectPath: path
+    };
+    
+    console.log('Sending update request:', requestData);
+    
+    const response = await fetch('/api/project/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestData)
+    });
+
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      showNotification('success', 'Успех', 'Проект успешно обновлен!');
+      closeEditModal();
+      loadProjects();
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка обновления проекта: ' + (data.message || 'Неизвестная ошибка'));
+    }
+  } catch (error) {
+    showNotification('error', 'Ошибка', 'Ошибка обновления проекта: ' + error.message);
+  }
+}
+
+function closeEditModal() {
+  document.getElementById('editProjectModal').style.display = 'none';
+  currentEditProject = null;
+}
+
+let currentDuplicateProject = null;
+
+function duplicateProject(encodedFilename) {
+  const filename = decodeURIComponent(encodedFilename);
+  const project = projects.find(p => (p.filename || p) === filename);
+  if (!project) return;
+
+  currentDuplicateProject = filename;
+  
+  // Set default name
+  const defaultName = (project.filename ? project.filename.replace('.turtcd', '') : project.replace('.turtcd', '')) + ' (копия)';
+  document.getElementById('duplicateProjectName').value = defaultName;
+  
+  // Show modal
+  document.getElementById('duplicateProjectModal').style.display = 'block';
+  
+  // Focus on input field
+  setTimeout(() => {
+    document.getElementById('duplicateProjectName').focus();
+    document.getElementById('duplicateProjectName').select();
+  }, 50);
+}
+
+function closeDuplicateModal() {
+  document.getElementById('duplicateProjectModal').style.display = 'none';
+  currentDuplicateProject = null;
+}
+
+function confirmDuplicate() {
+  const newName = document.getElementById('duplicateProjectName').value.trim();
+  
+  if (!newName) {
+    showNotification('error', 'Ошибка', 'Введите название для копии проекта');
+    return;
+  }
+
+  if (!currentDuplicateProject) return;
+
+  fetch('/api/project/duplicate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      sourceFilename: currentDuplicateProject,
+      targetFilename: newName + '.turtcd'
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      showNotification('success', 'Успех', 'Проект успешно скопирован!');
+      closeDuplicateModal();
+      loadProjects();
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка копирования проекта: ' + (data.message || 'Неизвестная ошибка'));
+    }
+  })
+  .catch(error => {
+    showNotification('error', 'Ошибка', 'Ошибка копирования проекта: ' + error.message);
+  });
+}
+
+function deleteProject(encodedFilename) {
+  const filename = decodeURIComponent(encodedFilename);
+  const project = projects.find(p => (p.filename || p) === filename);
+  if (!project) return;
+
+  currentDeleteProject = filename;
+  document.getElementById('deleteProjectName').textContent = project.filename ? project.filename.replace('.turtcd', '') : project.replace('.turtcd', '');
+  document.getElementById('deleteProjectModal').style.display = 'block';
+}
+
+function confirmDelete() {
+  if (!currentDeleteProject) return;
+
+  fetch('/api/project/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ filename: currentDeleteProject })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      showNotification('success', 'Успех', 'Проект успешно удален!');
+      closeDeleteModal();
+      loadProjects();
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка удаления проекта: ' + (data.message || 'Неизвестная ошибка'));
+    }
+  })
+  .catch(error => {
+    showNotification('error', 'Ошибка', 'Ошибка удаления проекта: ' + error.message);
+  });
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteProjectModal').style.display = 'none';
+  currentDeleteProject = null;
+}
+
+/* Mods management */
+function openModsSettings() {
+  document.getElementById('modsSettingsModal').style.display = 'block';
+  loadModsList();
+}
+
+function closeModsSettings() {
+  document.getElementById('modsSettingsModal').style.display = 'none';
+}
+
+function selectModFile() {
+  document.getElementById('modUploadInput').click();
+}
+
+function uploadModFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const modData = JSON.parse(e.target.result);
+      const modName = file.name.replace('.json', '');
+
+      // Save modification
+      fetch('/api/mods/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: modName + '.json',
+          mod_data: modData
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          showNotification('success', 'Успех', 'Модификация успешно загружена!');
+          loadModsList();
+        } else {
+          showNotification('error', 'Ошибка', 'Ошибка загрузки модификации: ' + (data.message || 'Неизвестная ошибка'));
+        }
+      })
+      .catch(error => {
+        showNotification('error', 'Ошибка', 'Ошибка загрузки модификации: ' + error.message);
+      });
+    } catch (error) {
+      showNotification('error', 'Ошибка', 'Неверный формат файла модификации');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function loadModsList() {
+  fetch('/api/mods/list')
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        renderModsList(data.mods || []);
+      } else {
+        document.getElementById('modsList').innerHTML = '<div class="mod-empty">Ошибка загрузки списка модификаций</div>';
+      }
+    })
+    .catch(error => {
+      document.getElementById('modsList').innerHTML = '<div class="mod-empty">Ошибка загрузки списка модификаций</div>';
+    });
+}
+
+function renderModsList(mods) {
+  const searchTerm = document.getElementById('modsSearch').value.toLowerCase();
+  const filteredMods = mods.filter(mod => mod.toLowerCase().includes(searchTerm));
+
+  const modsList = document.getElementById('modsList');
+  if (filteredMods.length === 0) {
+    modsList.innerHTML = '<div class="mod-empty">Модификации не найдены</div>';
+    return;
+  }
+
+  modsList.innerHTML = filteredMods.map(mod => {
+    const modName = mod.replace('.json', '');
+    return `
+      <div class="mod-row">
+        <div class="mod-name" title="${escapeHtml(modName)}">${escapeHtml(modName)}</div>
+        <div class="mod-actions">
+          <button class="btn-ghost" onclick="deleteMod('${encodeURIComponent(mod)}')" title="Удалить">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function deleteMod(encodedModName) {
+  const modName = decodeURIComponent(encodedModName);
+  if (!confirm(`Вы уверены, что хотите удалить модификацию "${modName.replace('.json', '')}"?`)) return;
+
+  fetch('/api/mods/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ filename: modName })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      showNotification('success', 'Успех', 'Модификация успешно удалена!');
+      loadModsList();
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка удаления модификации: ' + (data.message || 'Неизвестная ошибка'));
+    }
+  })
+  .catch(error => {
+    showNotification('error', 'Ошибка', 'Ошибка удаления модификации: ' + error.message);
+  });
+}
+
+/* Utility functions */
+function showNotification(type, title, message) {
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.innerHTML = `
+    <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+    <div class="notification-header">
+      <div class="notification-icon">${type === 'success' ? '✅' : '❌'}</div>
+      <div class="notification-title">${escapeHtml(title)}</div>
+    </div>
+    <div class="notification-message">${escapeHtml(message)}</div>
+  `;
+
+  document.body.appendChild(notification);
+  setTimeout(() => notification.classList.add('show'), 10);
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => notification.remove(), 300);
+  }, 5000);
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+/* Handle Enter key on project cards */
+let hoveredProjectCard = null;
+document.addEventListener('mouseover', function(e) {
+  const card = e.target.closest('.project-card');
+  if(card && !card.classList.contains('new-project')) {
+    hoveredProjectCard = card;
+  } else if(!card || card.classList.contains('new-project')) {
+    hoveredProjectCard = null;
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if(e.key === 'Enter' && hoveredProjectCard) {
+    e.preventDefault();
+    const onclick = hoveredProjectCard.getAttribute('onclick');
+    if(onclick) {
+      const match = onclick.match(/openProject\('([^']+)'\)/);
+      if(match) {
+        openProject(match[1]);
+      }
+    }
+  }
+});
+
+/* Initialization */
+document.addEventListener('DOMContentLoaded', function() {
+  loadTheme();
+  loadProjects();
+  loadTemplates();
+  checkLicenseStatus();
+  loadVersion();
+
+  // Close modals when clicking outside
+  document.addEventListener('click', function(event) {
+    // Find closest modal-backdrop
+    const backdrop = event.target.closest('.modal-backdrop');
+    if (backdrop && event.target === backdrop && backdrop.dataset.locked !== 'true') {
+      // Find parent modal container and hide it
+      const modalContainer = backdrop.parentElement;
+      if (modalContainer) {
+        modalContainer.style.display = 'none';
+      }
+    }
+  });
+
+  // Close modals on Escape key
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      const modals = document.querySelectorAll('.modal-backdrop');
+      modals.forEach(backdrop => {
+        if (backdrop.dataset.locked === 'true') return;
+        // Find parent modal container and hide it
+        const modalContainer = backdrop.parentElement;
+        if (modalContainer) {
+          modalContainer.style.display = 'none';
+        }
+      });
+    }
+    
+    // Handle Enter key in duplicate modal
+    if (event.key === 'Enter' && document.getElementById('duplicateProjectModal').style.display === 'block') {
+      confirmDuplicate();
+    }
+  });
+});
+</script>
+</body>
+<!-- License badge element -->
+<div id="licenseBadge" class="license-badge">
+  🛡 licensed by TurtCD <span id="versionBadge" style="opacity: 0.7;">v1.0.0</span>
+</div>
+</html>
