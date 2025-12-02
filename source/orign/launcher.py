@@ -11,9 +11,17 @@ import threading
 import time
 import webbrowser
 import tkinter as tk
-from tkinter import ttk, scrolledtext
+from tkinter import ttk, scrolledtext, messagebox
 from pathlib import Path
 import json
+import hashlib
+import uuid
+import platform
+from typing import Optional, Tuple
+
+# Константы
+GITHUB_LINK = "https://github.com/your-username/your-repo"
+HIDDEN_FILE = ".currentuserid"
 
 class TurtCDLauncher:
     def __init__(self, root):
@@ -22,12 +30,13 @@ class TurtCDLauncher:
         self.root.geometry("450x380")
         self.root.resizable(False, False)
         
-        # Центрируем окно
-        self.center_window()
-        
         # Переменные
         self.python_process = None
         self.is_running = False
+        self.is_legitimate = True  # Флаг легитимности ПО
+        self.current_machine_id = None
+        self.verification_message = ""  # Сообщение о проверке
+        
         # Определяем путь к директории скрипта (работает и в exe, и в .py)
         if getattr(sys, 'frozen', False):
             # Если запущено как exe (PyInstaller)
@@ -36,14 +45,261 @@ class TurtCDLauncher:
             # Если запущено как .py скрипт
             self.script_dir = Path(__file__).parent.absolute()
         
+        # Проверяем достоверность ПО (но не выводим в консоль пока)
+        self.check_legitimacy()
+        
+        # Центрируем окно
+        self.center_window()
+        
         # Создаем интерфейс
         self.create_ui()
         
-        # Запускаем проверку Python
-        self.root.after(100, self.check_python)
+        # Выводим сообщение о проверке ПО
+        self.display_verification_result()
         
-        # Отладочная информация (можно убрать позже)
-        self.add_status(f"Рабочая директория: {self.script_dir}", "info")
+        # Если ПО легитимно - продолжаем обычную работу
+        if self.is_legitimate:
+            # Запускаем проверку Python
+            self.root.after(100, self.check_python)
+            # Отладочная информация
+            self.add_status(f"Рабочая директория: {self.script_dir}", "info")
+        else:
+            # Блокируем функционал при нелегитимном ПО
+            self.block_launcher()
+    
+    def check_legitimacy(self):
+        """Проверяет достоверность ПО без вывода в GUI"""
+        try:
+            hidden_file_path = self.script_dir / HIDDEN_FILE
+            self.current_machine_id = self.generate_machine_id()
+            
+            if not hidden_file_path.exists():
+                # Первый запуск - создаем файл
+                self.first_run_setup(hidden_file_path)
+                self.is_legitimate = True
+                self.verification_message = ("success", "+ ПО успешно авторизовано (первый запуск)\n")
+            else:
+                # Проверяем существующий ID
+                if self.verify_existing_id(hidden_file_path):
+                    self.is_legitimate = True
+                    self.verification_message = ("success", "+ Проверка лицензии пройдена успешно")
+                else:
+                    self.is_legitimate = False
+                    self.verification_message = ("error", "- ОШИБКА: ПО было видоизменено или передано нелегально\n"
+                                                          "Пожалуйста, посетите GitHub для скачивания актуальной версии")
+                
+        except Exception as e:
+            self.is_legitimate = False
+            self.verification_message = ("error", f"- ОШИБКА при проверке ПО: {str(e)}")
+    
+    def get_saved_id(self, file_path: Path) -> str:
+        """Получает сохраненный ID из файла"""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            saved_id = data.get('machine_id', '')
+            return saved_id[:16] + "..." if len(saved_id) > 16 else saved_id
+        except:
+            return "неизвестен"
+    
+    def generate_machine_id(self) -> str:
+        """Генерирует уникальный ID машины на основе аппаратной информации"""
+        try:
+            # Собираем информацию о системе
+            system_info = {
+                'machine': platform.machine(),
+                'node': platform.node(),
+                'processor': platform.processor(),
+                'system': platform.system(),
+                'release': platform.release()
+            }
+            
+            # Добавляем информацию о диске
+            if self.script_dir.exists():
+                disk_info = str(self.script_dir.stat().st_dev)
+            else:
+                disk_info = "unknown"
+            
+            # Для Windows используем дополнительную информацию
+            if platform.system() == 'Windows':
+                try:
+                    import winreg
+                    with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Cryptography") as key:
+                        machine_guid = winreg.QueryValueEx(key, "MachineGuid")[0]
+                        system_info['machine_guid'] = machine_guid
+                except:
+                    pass
+            
+            # Создаем строку для хеширования
+            info_string = json.dumps(system_info, sort_keys=True) + disk_info
+            
+            # Генерируем хеш
+            machine_id = hashlib.sha256(info_string.encode()).hexdigest()[:32]
+            return machine_id
+            
+        except Exception as e:
+            # Если не удалось собрать информацию, используем UUID
+            return str(uuid.uuid4())
+    
+    def first_run_setup(self, file_path: Path):
+        """Настройка при первом запуске"""
+        try:
+            # Сохраняем ID машины
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump({
+                    'machine_id': self.current_machine_id,
+                    'first_run_date': time.strftime("%Y-%m-%d %H:%M:%S"),
+                    'version': '1.0'
+                }, f, indent=2)
+            
+            # Делаем файл скрытым (для Windows)
+            if platform.system() == 'Windows':
+                import ctypes
+                FILE_ATTRIBUTE_HIDDEN = 0x02
+                ctypes.windll.kernel32.SetFileAttributesW(str(file_path), FILE_ATTRIBUTE_HIDDEN)
+            
+        except Exception as e:
+            raise Exception(f"Ошибка при первом запуске: {str(e)}")
+    
+    def verify_existing_id(self, file_path: Path) -> bool:
+        """Проверяет существующий ID машины"""
+        try:
+            # Читаем сохраненный ID
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            saved_id = data.get('machine_id', '')
+            
+            # Сравниваем с текущим ID
+            return saved_id == self.current_machine_id
+                
+        except json.JSONDecodeError:
+            return False
+        except Exception as e:
+            return False
+    
+    def display_verification_result(self):
+        """Выводит результат проверки в консоль GUI"""
+        if hasattr(self, 'status_text'):
+            msg_type, message = self.verification_message
+            for line in message.split('\n'):
+                self.add_status(line, msg_type)
+    
+    def show_illegal_software_dialog(self):
+        """Показывает диалоговое окно при нелегитимном ПО"""
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Нарушение лицензионного соглашения")
+        dialog.geometry("500x350")
+        dialog.resizable(False, False)
+        dialog.configure(bg='#f5f5f5')
+        
+        # Делаем окно модальным
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        # Центрируем окно
+        dialog.update_idletasks()
+        width = dialog.winfo_width()
+        height = dialog.winfo_height()
+        x = (dialog.winfo_screenwidth() // 2) - (width // 2)
+        y = (dialog.winfo_screenheight() // 2) - (height // 2)
+        dialog.geometry(f'500x350+{x}+{y}')
+        
+        # Иконка ошибки
+        icon_label = tk.Label(
+            dialog,
+            text="⚠",
+            font=('Segoe UI', 48),
+            bg='#f5f5f5',
+            fg='#d32f2f'
+        )
+        icon_label.pack(pady=(20, 10))
+        
+        # Заголовок
+        title_label = tk.Label(
+            dialog,
+            text="Нарушение лицензионного соглашения",
+            font=('Segoe UI', 14, 'bold'),
+            bg='#f5f5f5',
+            fg='#d32f2f'
+        )
+        title_label.pack(pady=(0, 10))
+        
+        # Текст сообщения
+        message_text = """Обнаружено нелегальное распространение ПО!
+
+ПО было видоизменено или передано на другое устройство
+с нарушением лицензионного соглашения.
+
+Для продолжения работы необходимо скачать актуальную
+версию ПО с официального GitHub репозитория."""
+
+        message_label = tk.Label(
+            dialog,
+            text=message_text,
+            font=('Segoe UI', 10),
+            bg='#f5f5f5',
+            fg='#333333',
+            justify=tk.CENTER,
+            wraplength=400
+        )
+        message_label.pack(pady=(0, 20), padx=20)
+        
+        # Кнопки
+        button_frame = tk.Frame(dialog, bg='#f5f5f5')
+        button_frame.pack(pady=(0, 20))
+        
+        github_button = tk.Button(
+            button_frame,
+            text="📂 Перейти на GitHub",
+            font=('Segoe UI', 10, 'bold'),
+            bg='#2196f3',
+            fg='white',
+            activebackground='#1976d2',
+            activeforeground='white',
+            relief=tk.FLAT,
+            padx=20,
+            pady=10,
+            cursor='hand2',
+            command=lambda: [webbrowser.open(GITHUB_LINK), dialog.destroy()]
+        )
+        github_button.pack(side=tk.LEFT, padx=5)
+        
+        exit_button = tk.Button(
+            button_frame,
+            text="Выйти",
+            font=('Segoe UI', 10, 'bold'),
+            bg='#757575',
+            fg='white',
+            activebackground='#616161',
+            activeforeground='white',
+            relief=tk.FLAT,
+            padx=20,
+            pady=10,
+            cursor='hand2',
+            command=lambda: [dialog.destroy(), self.root.destroy()]
+        )
+        exit_button.pack(side=tk.LEFT, padx=5)
+        
+        # Обработка закрытия окна
+        dialog.protocol("WM_DELETE_WINDOW", lambda: [dialog.destroy(), self.root.destroy()])
+    
+    def block_launcher(self):
+        """Блокирует лаунчер при нелегитимном ПО"""
+        # Блокируем все кнопки
+        self.start_button.config(state=tk.DISABLED)
+        self.connect_button.config(state=tk.DISABLED)
+        self.stop_button.config(state=tk.DISABLED)
+        
+        # Меняем цвет фона на предупреждающий
+        for widget in [self.root, self.button_frame, self.progress_frame]:
+            try:
+                widget.configure(bg='#ffebee')
+            except:
+                pass
+        
+        # Показываем диалоговое окно
+        self.root.after(500, self.show_illegal_software_dialog)
     
     def center_window(self):
         """Центрирует окно на экране"""
@@ -96,12 +352,13 @@ class TurtCDLauncher:
         )
         self.status_text.pack(fill=tk.BOTH, expand=False, padx=5, pady=5)
         
-        # Настраиваем теги для цветов (все черные)
+        # Настраиваем теги для цветов
         self.status_text.tag_config('info', foreground='#000000')
-        self.status_text.tag_config('warning', foreground='#000000')
-        self.status_text.tag_config('error', foreground='#000000')
+        self.status_text.tag_config('warning', foreground='#ff9900')  # Оранжевый
+        self.status_text.tag_config('error', foreground='#ff0000')  # Красный для ошибок
+        self.status_text.tag_config('success', foreground='#00aa00')  # Зеленый для успеха
         
-        # Фрейм для прогресса и его метки (между консолью и кнопками)
+        # Фрейм для прогресса и его метки
         self.progress_frame = tk.Frame(container, bg='#ffffff')
         self.progress_frame.pack(fill=tk.X, padx=20, pady=(0, 10))
         
@@ -197,6 +454,9 @@ class TurtCDLauncher:
     
     def add_status(self, message, status_type='info'):
         """Добавляет сообщение в область статуса"""
+        if not hasattr(self, 'status_text'):
+            return
+            
         timestamp = time.strftime("%H:%M:%S")
         full_message = f"{timestamp} - {message}\n"
         
@@ -636,4 +896,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
