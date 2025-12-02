@@ -20,7 +20,7 @@ import platform
 from typing import Optional, Tuple
 
 # Константы
-GITHUB_LINK = "https://github.com/your-username/your-repo"
+GITHUB_LINK = "https://github.com/SkyLink008/TurtCD"
 HIDDEN_FILE = ".currentuserid"
 
 class TurtCDLauncher:
