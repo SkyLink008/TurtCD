@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-TurtCD Launcher - Графический лаунчер для запуска TurtCD
-"""
 
 import os
 import sys
@@ -19,7 +16,6 @@ import uuid
 import platform
 from typing import Optional, Tuple
 
-# Константы
 GITHUB_LINK = "https://github.com/SkyLink008/TurtCD"
 HIDDEN_FILE = ".currentuserid"
 
@@ -30,41 +26,26 @@ class TurtCDLauncher:
         self.root.geometry("450x380")
         self.root.resizable(False, False)
         
-        # Переменные
         self.python_process = None
         self.is_running = False
-        self.is_legitimate = True  # Флаг легитимности ПО
+        self.is_legitimate = True
         self.current_machine_id = None
-        self.verification_message = ""  # Сообщение о проверке
+        self.verification_message = ""
         
-        # Определяем путь к директории скрипта (работает и в exe, и в .py)
         if getattr(sys, 'frozen', False):
-            # Если запущено как exe (PyInstaller)
             self.script_dir = Path(sys.executable).parent.absolute()
         else:
-            # Если запущено как .py скрипт
             self.script_dir = Path(__file__).parent.absolute()
         
-        # Проверяем достоверность ПО (но не выводим в консоль пока)
         self.check_legitimacy()
-        
-        # Центрируем окно
         self.center_window()
-        
-        # Создаем интерфейс
         self.create_ui()
-        
-        # Выводим сообщение о проверке ПО
         self.display_verification_result()
         
-        # Если ПО легитимно - продолжаем обычную работу
         if self.is_legitimate:
-            # Запускаем проверку Python
             self.root.after(100, self.check_python)
-            # Отладочная информация
             self.add_status(f"Рабочая директория: {self.script_dir}", "info")
         else:
-            # Блокируем функционал при нелегитимном ПО
             self.block_launcher()
     
     def check_legitimacy(self):
@@ -74,12 +55,10 @@ class TurtCDLauncher:
             self.current_machine_id = self.generate_machine_id()
             
             if not hidden_file_path.exists():
-                # Первый запуск - создаем файл
                 self.first_run_setup(hidden_file_path)
                 self.is_legitimate = True
                 self.verification_message = ("success", "+ ПО успешно авторизовано (первый запуск)\n")
             else:
-                # Проверяем существующий ID
                 if self.verify_existing_id(hidden_file_path):
                     self.is_legitimate = True
                     self.verification_message = ("success", "+ Проверка лицензии пройдена успешно")
@@ -105,7 +84,6 @@ class TurtCDLauncher:
     def generate_machine_id(self) -> str:
         """Генерирует уникальный ID машины на основе аппаратной информации"""
         try:
-            # Собираем информацию о системе
             system_info = {
                 'machine': platform.machine(),
                 'node': platform.node(),
@@ -114,13 +92,11 @@ class TurtCDLauncher:
                 'release': platform.release()
             }
             
-            # Добавляем информацию о диске
             if self.script_dir.exists():
                 disk_info = str(self.script_dir.stat().st_dev)
             else:
                 disk_info = "unknown"
             
-            # Для Windows используем дополнительную информацию
             if platform.system() == 'Windows':
                 try:
                     import winreg
@@ -130,21 +106,16 @@ class TurtCDLauncher:
                 except:
                     pass
             
-            # Создаем строку для хеширования
             info_string = json.dumps(system_info, sort_keys=True) + disk_info
-            
-            # Генерируем хеш
             machine_id = hashlib.sha256(info_string.encode()).hexdigest()[:32]
             return machine_id
             
         except Exception as e:
-            # Если не удалось собрать информацию, используем UUID
             return str(uuid.uuid4())
     
     def first_run_setup(self, file_path: Path):
         """Настройка при первом запуске"""
         try:
-            # Сохраняем ID машины
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump({
                     'machine_id': self.current_machine_id,
@@ -152,7 +123,6 @@ class TurtCDLauncher:
                     'version': '1.0'
                 }, f, indent=2)
             
-            # Делаем файл скрытым (для Windows)
             if platform.system() == 'Windows':
                 import ctypes
                 FILE_ATTRIBUTE_HIDDEN = 0x02
@@ -164,13 +134,10 @@ class TurtCDLauncher:
     def verify_existing_id(self, file_path: Path) -> bool:
         """Проверяет существующий ID машины"""
         try:
-            # Читаем сохраненный ID
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
             saved_id = data.get('machine_id', '')
-            
-            # Сравниваем с текущим ID
             return saved_id == self.current_machine_id
                 
         except json.JSONDecodeError:
@@ -193,11 +160,9 @@ class TurtCDLauncher:
         dialog.resizable(False, False)
         dialog.configure(bg='#f5f5f5')
         
-        # Делаем окно модальным
         dialog.transient(self.root)
         dialog.grab_set()
         
-        # Центрируем окно
         dialog.update_idletasks()
         width = dialog.winfo_width()
         height = dialog.winfo_height()
@@ -205,7 +170,6 @@ class TurtCDLauncher:
         y = (dialog.winfo_screenheight() // 2) - (height // 2)
         dialog.geometry(f'500x350+{x}+{y}')
         
-        # Иконка ошибки
         icon_label = tk.Label(
             dialog,
             text="⚠",
@@ -215,7 +179,6 @@ class TurtCDLauncher:
         )
         icon_label.pack(pady=(20, 10))
         
-        # Заголовок
         title_label = tk.Label(
             dialog,
             text="Нарушение лицензионного соглашения",
@@ -225,7 +188,6 @@ class TurtCDLauncher:
         )
         title_label.pack(pady=(0, 10))
         
-        # Текст сообщения
         message_text = """Обнаружено нелегальное распространение ПО!
 
 ПО было видоизменено или передано на другое устройство
@@ -245,7 +207,6 @@ class TurtCDLauncher:
         )
         message_label.pack(pady=(0, 20), padx=20)
         
-        # Кнопки
         button_frame = tk.Frame(dialog, bg='#f5f5f5')
         button_frame.pack(pady=(0, 20))
         
@@ -281,24 +242,20 @@ class TurtCDLauncher:
         )
         exit_button.pack(side=tk.LEFT, padx=5)
         
-        # Обработка закрытия окна
         dialog.protocol("WM_DELETE_WINDOW", lambda: [dialog.destroy(), self.root.destroy()])
     
     def block_launcher(self):
         """Блокирует лаунчер при нелегитимном ПО"""
-        # Блокируем все кнопки
         self.start_button.config(state=tk.DISABLED)
         self.connect_button.config(state=tk.DISABLED)
         self.stop_button.config(state=tk.DISABLED)
         
-        # Меняем цвет фона на предупреждающий
         for widget in [self.root, self.button_frame, self.progress_frame]:
             try:
                 widget.configure(bg='#ffebee')
             except:
                 pass
         
-        # Показываем диалоговое окно
         self.root.after(500, self.show_illegal_software_dialog)
     
     def center_window(self):
@@ -312,15 +269,12 @@ class TurtCDLauncher:
     
     def create_ui(self):
         """Создает пользовательский интерфейс"""
-        # Основной контейнер
         main_frame = tk.Frame(self.root, bg='#ffffff')
         main_frame.pack(fill=tk.BOTH, expand=True, padx=0, pady=0)
         
-        # Контейнер с содержимым
         container = tk.Frame(main_frame, bg='#ffffff', relief=tk.FLAT, bd=0)
         container.place(relx=0.5, rely=0.5, anchor=tk.CENTER, width=400, height=340)
         
-        # Заголовок
         title_label = tk.Label(
             container,
             text="TurtCD Launcher",
@@ -330,7 +284,6 @@ class TurtCDLauncher:
         )
         title_label.pack(pady=(10, 10))
         
-        # Область статуса
         status_frame = tk.Frame(container, bg='#e0e0e0', relief=tk.FLAT)
         status_frame.pack(fill=tk.BOTH, expand=False, padx=20, pady=(0, 15))
         status_frame.config(height=160)
@@ -348,21 +301,18 @@ class TurtCDLauncher:
             bd=0,
             padx=8,
             pady=8,
-            state=tk.DISABLED  # Отключаем редактирование
+            state=tk.DISABLED
         )
         self.status_text.pack(fill=tk.BOTH, expand=False, padx=5, pady=5)
         
-        # Настраиваем теги для цветов
         self.status_text.tag_config('info', foreground='#000000')
-        self.status_text.tag_config('warning', foreground='#ff9900')  # Оранжевый
-        self.status_text.tag_config('error', foreground='#ff0000')  # Красный для ошибок
-        self.status_text.tag_config('success', foreground='#00aa00')  # Зеленый для успеха
+        self.status_text.tag_config('warning', foreground='#ff9900')
+        self.status_text.tag_config('error', foreground='#ff0000')
+        self.status_text.tag_config('success', foreground='#00aa00')
         
-        # Фрейм для прогресса и его метки
         self.progress_frame = tk.Frame(container, bg='#ffffff')
         self.progress_frame.pack(fill=tk.X, padx=20, pady=(0, 10))
         
-        # Индикатор прогресса (черно-белый стиль)
         style = ttk.Style()
         style.theme_use('default')
         style.configure("TProgressbar",
@@ -379,7 +329,7 @@ class TurtCDLauncher:
             maximum=100
         )
         self.progress.pack(fill=tk.X, pady=(0, 3))
-        self.progress.pack_forget()  # Скрываем по умолчанию
+        self.progress.pack_forget()
         
         self.progress_label = tk.Label(
             self.progress_frame,
@@ -389,9 +339,8 @@ class TurtCDLauncher:
             fg='#000000'
         )
         self.progress_label.pack(fill=tk.X)
-        self.progress_label.pack_forget()  # Скрываем по умолчанию
+        self.progress_label.pack_forget()
         
-        # Кнопки
         self.button_frame = tk.Frame(container, bg='#ffffff')
         self.button_frame.pack(padx=20, pady=(0, 15), fill=tk.X)
         
@@ -447,9 +396,8 @@ class TurtCDLauncher:
             command=self.stop_server
         )
         self.stop_button.pack(fill=tk.X)
-        self.stop_button.pack_forget()  # Скрываем по умолчанию
+        self.stop_button.pack_forget()
         
-        # Обработка закрытия окна
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
     
     def add_status(self, message, status_type='info'):
@@ -460,11 +408,9 @@ class TurtCDLauncher:
         timestamp = time.strftime("%H:%M:%S")
         full_message = f"{timestamp} - {message}\n"
         
-        # Временно включаем редактирование для добавления текста
         self.status_text.config(state=tk.NORMAL)
         self.status_text.insert(tk.END, full_message, status_type)
         self.status_text.see(tk.END)
-        # Отключаем редактирование обратно
         self.status_text.config(state=tk.DISABLED)
         self.root.update_idletasks()
     
@@ -472,9 +418,7 @@ class TurtCDLauncher:
         """Показывает/скрывает индикатор прогресса"""
         if show:
             self.progress.config(mode=mode)
-            # Скрываем фрейм с кнопками
             self.button_frame.pack_forget()
-            # Показываем прогресс фрейм
             self.progress_frame.pack(fill=tk.X, padx=20, pady=(0, 10))
             if mode == 'indeterminate':
                 self.progress.pack(fill=tk.X, pady=(0, 3))
@@ -490,7 +434,6 @@ class TurtCDLauncher:
             self.progress.pack_forget()
             self.progress_label.pack_forget()
             self.progress_frame.pack_forget()
-            # Показываем фрейм с кнопками обратно
             self.button_frame.pack(padx=20, pady=(0, 15), fill=tk.X)
     
     def update_progress(self, value, text=""):
@@ -505,7 +448,6 @@ class TurtCDLauncher:
         commands = ['python', 'python3', 'py']
         for cmd in commands:
             try:
-                # Используем shell=True для Windows, чтобы правильно находить команды
                 if sys.platform == 'win32':
                     result = subprocess.run(
                         f'{cmd} --version',
@@ -531,7 +473,6 @@ class TurtCDLauncher:
         python_cmd = self.get_python_command()
         
         if python_cmd:
-            # Проверяем версию Python для отладки
             try:
                 if sys.platform == 'win32':
                     result = subprocess.run(
@@ -554,71 +495,53 @@ class TurtCDLauncher:
                 self.add_status(f"Python найден: {python_cmd}", "info")
             self.check_dependencies()
         else:
-            self.add_status("Python не найден. Начинаю установку через winget...", "warning")
+            self.add_status("Python не найден. Запускаю pyinst.exe для установки Python...", "warning")
             self.install_python()
     
     def install_python(self):
-        """Устанавливает Python через winget"""
-        self.add_status("Проверяю наличие winget...", "info")
+        """Запускает pyinst.exe для установки Python"""
+        pyinst_path = self.script_dir / "pyinst.exe"
+        self.add_status("Проверяю наличие pyinst.exe...", "info")
         
-        try:
-            if sys.platform == 'win32':
-                result = subprocess.run(
-                    'winget --version',
-                    shell=True,
-                    capture_output=True,
-                    timeout=5
-                )
-            else:
-                result = subprocess.run(
-                    ['winget', '--version'],
-                    capture_output=True,
-                    timeout=5
-                )
-            if result.returncode != 0:
-                raise FileNotFoundError
-        except (FileNotFoundError, subprocess.TimeoutExpired):
-            self.add_status("ОШИБКА: winget не найден. Установите App Installer из Microsoft Store", "error")
+        if not pyinst_path.exists():
+            self.add_status("ОШИБКА: pyinst.exe не найден в директории лаунчера", "error")
             self.add_status("Открываю страницу загрузки Python...", "info")
             webbrowser.open('https://www.python.org/downloads/')
             return
         
-        self.add_status("Устанавливаю Python через winget...", "info")
+        self.add_status("Запускаю pyinst.exe для установки Python...", "info")
         self.add_status("Это может занять несколько минут. Пожалуйста, подождите...", "info")
         self.show_progress(True)
         
         def install():
             try:
-                # Уменьшаем таймаут до 3 минут (180 секунд)
                 if sys.platform == 'win32':
                     result = subprocess.run(
-                        'winget install --id Python.Python.3.12 --silent --accept-package-agreements --accept-source-agreements',
+                        f'"{pyinst_path}"',
                         shell=True,
                         capture_output=True,
-                        timeout=180  # 3 минуты максимум
+                        timeout=600
                     )
                 else:
                     result = subprocess.run(
-                        ['winget', 'install', '--id', 'Python.Python.3.12', 
-                         '--silent', '--accept-package-agreements', '--accept-source-agreements'],
+                        [str(pyinst_path)],
                         capture_output=True,
-                        timeout=180  # 3 минуты максимум
+                        timeout=600
                     )
                 
                 self.root.after(0, self.show_progress, False)
                 
                 if result.returncode == 0:
-                    self.root.after(0, self.add_status, "Python установлен успешно!", "info")
-                    self.root.after(0, self.add_status, "Обновляю переменные окружения...", "info")
-                    time.sleep(2)
-                    self.root.after(0, self.check_python)
+                    self.root.after(0, self.add_status, "pyinst.exe завершил работу успешно!", "success")
+                    self.root.after(0, self.add_status, "ВАЖНО: После установки Python необходимо перезапустить лаунчер!", "warning")
+                    self.root.after(0, self.add_status, "Пожалуйста, закройте это окно и запустите лаунчер снова.", "warning")
                 else:
-                    self.root.after(0, self.add_status, "ОШИБКА: Не удалось установить Python через winget", "error")
+                    self.root.after(0, self.add_status, "ОШИБКА: pyinst.exe завершил работу с ошибкой", "error")
                     self.root.after(0, self.add_status, "Открываю страницу загрузки Python для ручной установки...", "info")
                     webbrowser.open('https://www.python.org/downloads/')
             except subprocess.TimeoutExpired:
                 self.root.after(0, self.show_progress, False)
-                self.root.after(0, self.add_status, "ОШИБКА: Установка Python через winget занимает слишком долго", "error")
+                self.root.after(0, self.add_status, "ОШИБКА: Установка Python через pyinst.exe занимает слишком долго", "error")
                 self.root.after(0, self.add_status, "Пожалуйста, установите Python вручную", "error")
                 self.root.after(0, self.add_status, "Открываю страницу загрузки Python...", "info")
                 webbrowser.open('https://www.python.org/downloads/')
@@ -642,7 +565,6 @@ class TurtCDLauncher:
         if not requirements_file.exists():
             self.add_status(f"Файл requirements.txt не найден по пути: {requirements_file}", "warning")
             self.add_status("Проверяю текущую директорию...", "info")
-            # Пробуем также текущую рабочую директорию
             alt_path = Path.cwd() / "requirements.txt"
             if alt_path.exists():
                 requirements_file = alt_path
@@ -656,7 +578,6 @@ class TurtCDLauncher:
         
         def install_deps():
             try:
-                # Проверяем pip
                 if sys.platform == 'win32':
                     result = subprocess.run(
                         f'{python_cmd} -m pip --version',
@@ -687,15 +608,13 @@ class TurtCDLauncher:
                             timeout=60
                         )
                 
-                # Читаем requirements.txt для подсчета зависимостей
                 try:
                     with open(requirements_file, 'r', encoding='utf-8') as f:
                         requirements = [line.strip() for line in f if line.strip() and not line.strip().startswith('#')]
                     total_deps = len(requirements)
                 except:
-                    total_deps = 1  # Если не удалось прочитать, используем 1
+                    total_deps = 1
                 
-                # Устанавливаем зависимости
                 self.root.after(0, self.add_status, f"Устанавливаю зависимости из requirements.txt ({total_deps} пакетов)...", "info")
                 self.root.after(0, self.show_progress, True, 'determinate')
                 self.root.after(0, self.update_progress, 0, "Подготовка к установке...")

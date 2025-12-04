@@ -892,6 +892,8 @@
     <div class="header">
       <h1>🐢 TurtCD</h1>
       <div class="header-actions">
+        <div id="socialLinks" style="display:flex; gap:8px; align-items:center;">
+        </div>
       </div>
     </div>
 
@@ -905,7 +907,7 @@
     <div class="modal-backdrop">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createProjectTitle" onkeydown="if(event.key==='Enter' && (event.target.id==='newProjectName' || event.target.id==='projectPath' || event.target.id==='templateSelect')){event.preventDefault();createNewProject();}">
         <h3 id="createProjectTitle">Создать новый проект</h3>
-        <input id="newProjectName" type="text" placeholder="Название проекта" maxlength="50">
+        <input id="newProjectName" type="text" placeholder="Название проекта" maxlength="30">
         <div style="margin-bottom: 16px;">
           <label style="display: block; margin-bottom: 8px; color: var(--white); font-weight: 600;">Путь проекта:</label>
           <input id="projectPath" type="text" placeholder="Выберите папку для проекта" readonly style="margin-bottom: 8px;">
@@ -914,9 +916,8 @@
         <div class="template-select-group">
           <label for="templateSelect">Шаблон проекта:</label>
           <select id="templateSelect" onchange="handleTemplateChange(event)">
-            <option value="blank">Пустой проект</option>
           </select>
-          <div id="templateDescription" class="template-description">Обычный пустой проект</div>
+          <div id="templateDescription" class="template-description">Описание отсутствует</div>
         </div>
         <div class="modal-actions">
           <button class="btn" onclick="createNewProject()">Создать</button>
@@ -931,7 +932,7 @@
     <div class="modal-backdrop">
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editProjectTitle" onkeydown="if(event.key==='Enter' && (event.target.id==='editProjectName' || event.target.id==='editProjectPath')){event.preventDefault();saveProjectEdit();}">
         <h3 id="editProjectTitle">Редактировать проект</h3>
-        <input id="editProjectName" type="text" placeholder="Название проекта" maxlength="50">
+        <input id="editProjectName" type="text" placeholder="Название проекта" maxlength="30">
         <div style="margin-bottom: 16px;">
           <label style="display: block; margin-bottom: 8px; color: var(--white); font-weight: 600;">Путь проекта:</label>
           <input id="editProjectPath" type="text" placeholder="Выберите папку для проекта" readonly style="margin-bottom: 8px;">
@@ -1030,12 +1031,7 @@ let licenseScrollListenerAttached = false;
 let licenseModalVisible = false;
 let projectTemplates = [];
 let templatesLoaded = false;
-let selectedTemplateId = 'blank';
-const defaultTemplateMeta = {
-  id: 'blank',
-  name: 'Пустой проект',
-  description: 'Обычный пустой проект'
-};
+let selectedTemplateId = null;
 
 /* License agreement management */
 async function checkLicenseStatus() {
@@ -1200,13 +1196,9 @@ async function loadTemplates(forceReload = false) {
   } catch (error) {
     console.error('Ошибка загрузки шаблонов:', error);
     projectTemplates = [];
-    showNotification('error', 'Ошибка', 'Не удалось загрузить шаблоны проектов. Будет доступен только пустой шаблон.');
+    showNotification('error', 'Ошибка', 'Не удалось загрузить шаблоны проектов.');
   }
 
-  const hasDefault = projectTemplates.some(t => t.id === defaultTemplateMeta.id);
-  if (!hasDefault) {
-    projectTemplates.unshift({ ...defaultTemplateMeta });
-  }
   templatesLoaded = true;
   renderTemplateSelect();
   return projectTemplates;
@@ -1216,34 +1208,40 @@ function renderTemplateSelect() {
   const selectEl = document.getElementById('templateSelect');
   if (!selectEl) return;
 
-  const templatesToRender = projectTemplates.length > 0 ? projectTemplates : [{ ...defaultTemplateMeta }];
-  if (!templatesToRender.some(t => t.id === selectedTemplateId)) {
-    selectedTemplateId = templatesToRender[0].id;
+  if (projectTemplates.length === 0) {
+    selectEl.innerHTML = '<option value="">Нет доступных шаблонов</option>';
+    selectedTemplateId = null;
+    updateTemplateDescription(null);
+    return;
   }
 
-  selectEl.innerHTML = templatesToRender.map(template => `
+  if (!projectTemplates.some(t => t.id === selectedTemplateId)) {
+    selectedTemplateId = projectTemplates[0]?.id || null;
+  }
+
+  selectEl.innerHTML = projectTemplates.map(template => `
     <option value="${template.id}">${escapeHtml(template.name || 'Без названия')}</option>
   `).join('');
-  selectEl.value = selectedTemplateId;
+  selectEl.value = selectedTemplateId || '';
   updateTemplateDescription(getTemplateById(selectedTemplateId));
 }
 
 function getTemplateById(id) {
-  if (!id || id === defaultTemplateMeta.id) {
-    return defaultTemplateMeta;
+  if (!id) {
+    return null;
   }
-  return projectTemplates.find(t => t.id === id) || defaultTemplateMeta;
+  return projectTemplates.find(t => t.id === id) || null;
 }
 
 function handleTemplateChange(event) {
-  selectedTemplateId = event.target.value || defaultTemplateMeta.id;
+  selectedTemplateId = event.target.value || null;
   updateTemplateDescription(getTemplateById(selectedTemplateId));
 }
 
 function updateTemplateDescription(template) {
   const descriptionEl = document.getElementById('templateDescription');
   if (!descriptionEl) return;
-  descriptionEl.textContent = template.description || 'Описание отсутствует';
+  descriptionEl.textContent = template ? (template.description || 'Описание отсутствует') : 'Описание отсутствует';
 }
 
 
@@ -1344,10 +1342,10 @@ function closeCreateModal() {
   document.getElementById('createProjectModal').style.display = 'none';
   document.getElementById('newProjectName').value = '';
   document.getElementById('projectPath').value = '';
-  selectedTemplateId = defaultTemplateMeta.id;
+  selectedTemplateId = projectTemplates.length > 0 ? projectTemplates[0].id : null;
   const templateSelect = document.getElementById('templateSelect');
   if (templateSelect) {
-    templateSelect.value = selectedTemplateId;
+    templateSelect.value = selectedTemplateId || '';
   }
   updateTemplateDescription(getTemplateById(selectedTemplateId));
 }
@@ -1368,10 +1366,25 @@ function handleFolderSelection(event) {
 async function createNewProject() {
   const name = document.getElementById('newProjectName').value.trim();
   const path = document.getElementById('projectPath').value.trim();
-  const templateId = selectedTemplateId || defaultTemplateMeta.id;
+  const templateId = selectedTemplateId;
 
   if (!name) {
     showNotification('error', 'Ошибка', 'Введите название проекта');
+    return;
+  }
+
+  if (name.length > 30) {
+    showNotification('error', 'Ошибка', 'Название проекта не должно превышать 30 символов');
+    return;
+  }
+
+  if (/\s/.test(name)) {
+    showNotification('error', 'Ошибка', 'Название проекта не должно содержать пробелы');
+    return;
+  }
+
+  if (!templateId) {
+    showNotification('error', 'Ошибка', 'Выберите шаблон проекта');
     return;
   }
 
@@ -1381,15 +1394,6 @@ async function createNewProject() {
       template_id: templateId,
       project_path: path || ''
     };
-
-    if (templateId === defaultTemplateMeta.id) {
-      payload.project_data = {
-        blocks: [],
-        connections: [],
-        projectPath: path || '',
-        createdAt: new Date().toISOString(),
-      };
-    }
 
     const response = await fetch('/api/project/save-file', {
       method: 'POST',
@@ -1445,6 +1449,16 @@ async function saveProjectEdit() {
 
   if (!newName) {
     showNotification('error', 'Ошибка', 'Введите название проекта');
+    return;
+  }
+
+  if (newName.length > 30) {
+    showNotification('error', 'Ошибка', 'Название проекта не должно превышать 30 символов');
+    return;
+  }
+
+  if (/\s/.test(newName)) {
+    showNotification('error', 'Ошибка', 'Название проекта не должно содержать пробелы');
     return;
   }
 
@@ -1752,6 +1766,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadTemplates();
   checkLicenseStatus();
   loadVersion();
+  loadSocialLinks();
 
   // Close modals when clicking outside
   document.addEventListener('click', function(event) {
@@ -1786,6 +1801,61 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+async function loadSocialLinks() {
+  try {
+    const response = await fetch('/static/social_links.json');
+    if (!response.ok) {
+      console.warn('Не удалось загрузить social_links.json, используем значения по умолчанию');
+      renderSocialLinks({
+        github: 'https://github.com',
+        telegram: 'https://t.me'
+      });
+      return;
+    }
+    const links = await response.json();
+    renderSocialLinks(links);
+  } catch (error) {
+    console.error('Ошибка загрузки social_links.json:', error);
+    renderSocialLinks({
+      github: 'https://github.com',
+      telegram: 'https://t.me'
+    });
+  }
+}
+
+function renderSocialLinks(links) {
+  const socialLinksContainer = document.getElementById('socialLinks');
+  if (!socialLinksContainer) return;
+
+  socialLinksContainer.innerHTML = '';
+
+  const githubIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.9;"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z" fill="currentColor"/></svg>';
+  
+  const telegramIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.9;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.13-.31-1.09-.66.02-.18.27-.37.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z" fill="currentColor"/></svg>';
+
+  if (links.github) {
+    const githubBtn = document.createElement('a');
+    githubBtn.href = links.github;
+    githubBtn.target = '_blank';
+    githubBtn.rel = 'noopener noreferrer';
+    githubBtn.className = 'btn-ghost';
+    githubBtn.style.cssText = 'padding:8px 12px; display:flex; align-items:center; gap:6px; text-decoration:none; color:var(--white);';
+    githubBtn.innerHTML = githubIcon + '<span>GitHub</span>';
+    socialLinksContainer.appendChild(githubBtn);
+  }
+
+  if (links.telegram) {
+    const telegramBtn = document.createElement('a');
+    telegramBtn.href = links.telegram;
+    telegramBtn.target = '_blank';
+    telegramBtn.rel = 'noopener noreferrer';
+    telegramBtn.className = 'btn-ghost';
+    telegramBtn.style.cssText = 'padding:8px 12px; display:flex; align-items:center; gap:6px; text-decoration:none; color:var(--white);';
+    telegramBtn.innerHTML = telegramIcon + '<span>Telegram</span>';
+    socialLinksContainer.appendChild(telegramBtn);
+  }
+}
 </script>
 </body>
 <!-- License badge element -->
