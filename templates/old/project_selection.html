@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TurtCD — Главное меню</title>
+<style>
+  :root{
+    --bg:#0f1724;
+    --panel:#0b1220;
+    --accent:#06b6d4;
+    --accent-2:#8b5cf6;
+    --card:#0b1226;
+    --muted:#94a3b8;
+    --white:#ffffff;
+    --success:#10b981;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+  }
+
+  /* Темы */
+  [data-theme="dark"] {
+    --bg:#0f1724;
+    --panel:#0b1220;
+    --accent:#06b6d4;
+    --accent-2:#8b5cf6;
+    --card:#0b1226;
+    --muted:#94a3b8;
+    --white:#ffffff;
+    --success:#10b981;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+  }
+
+  [data-theme="light"] {
+    --bg:#f8fafc;
+    --panel:#ffffff;
+    --accent:#0ea5e9;
+    --accent-2:#6366f1;
+    --card:#ffffff;
+    --muted:#64748b;
+    --white:#1e293b;
+    --success:#059669;
+    --danger:#dc2626;
+    --warning:#d97706;
+  }
+
+  /* Применяем фон к body (чтобы при прокрутке фон всегда соответствовал теме) */
+  body {
+    margin:0;
+    font-family:Inter, Roboto, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    color: var(--white);
+    min-height: 100vh;
+    background: linear-gradient(180deg,#071025 0%,#0b1220 100%);
+    background-attachment: fixed;
+    transition: background 0.25s ease, color 0.25s ease;
+    font-family: monospace !important;
+    font-size: 18px !important;
+  }
+
+  [data-theme="dark"] body {
+    background: linear-gradient(180deg,#071025 0%,#0b1220 100%);
+    color: var(--white);
+  }
+
+  [data-theme="light"] body {
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+    color: var(--white);
+  }
+
+  *{box-sizing:border-box}
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* прозрачный фон, весь фон управляется body */
+    background: transparent;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 20px rgba(2,6,23,0.5);
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: #022;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(14,165,233,0.08);
+    transition: transform 0.12s;
+    font-size: 14px;
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.05);
+  }
+
+  .btn-new {
+    background: linear-gradient(90deg, var(--success), #059669);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(16,185,129,0.08);
+    transition: transform 0.12s;
+    font-size: 14px;
+  }
+
+  .btn-new:hover {
+    transform: translateY(-3px);
+  }
+
+  .btn-warning {
+    background: linear-gradient(90deg, var(--warning), #d97706);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(245,158,11,0.08);
+    transition: transform 0.12s;
+    font-size: 14px;
+  }
+
+  .btn-warning:hover {
+    transform: translateY(-3px);
+  }
+
+  /* Селектор тем */
+  .theme-selector {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .theme-option {
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+  }
+
+  .theme-option.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 2px 8px rgba(14,165,233,0.3);
+  }
+
+  .theme-option:hover:not(.active) {
+    background: rgba(255,255,255,0.1);
+    color: var(--white);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    flex: 1;
+  }
+
+  .project-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.6);
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+  }
+
+  .project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(2,6,23,0.75);
+  }
+
+  .project-card.new-project {
+    border: 2px dashed rgba(255,255,255,0.3);
+    background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.05));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 200px;
+  }
+
+  .project-card.new-project:hover {
+    border-color: var(--success);
+    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.1));
+  }
+
+  .project-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--white);
+  }
+
+  .project-version {
+    display: inline-block;
+    background: rgba(6,182,212,0.2);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+
+  .project-info {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .project-description {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 60px;
+  }
+
+  .project-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .project-actions .btn {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .project-actions .btn-ghost {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .project-actions .btn-warning {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .new-project-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .new-project-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--success);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state h3 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    color: var(--white);
+  }
+
+  .empty-state p {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  /* Уведомления */
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    z-index: 10001;
+    min-width: 300px;
+    max-width: 400px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .notification.show {
+    transform: translateX(0);
+  }
+
+  .notification.success {
+    border-left: 4px solid var(--success);
+  }
+
+  .notification.error {
+    border-left: 4px solid var(--danger);
+  }
+
+  .notification-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .notification-icon {
+    font-size: 20px;
+  }
+
+  .notification-title {
+    font-weight: 600;
+    color: var(--white);
+    font-size: 16px;
+  }
+
+  .notification-message {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .notification-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .notification-close:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--white);
+  }
+
+  /* Модальные окна */
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 24px;
+    min-width: 450px;
+    max-width: 96%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .modal h3 {
+    margin: 0 0 16px 0;
+    font-size: 20px;
+    color: var(--white);
+  }
+
+  .modal input[type="text"], .modal input[type="search"], .modal textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: var(--white);
+    font-size: 14px;
+    margin-bottom: 16px;
+    font-family: inherit;
+    resize: vertical;
+  }
+
+  .modal input:focus, .modal textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(6,182,212,0.08);
+  }
+
+  .modal .mods-list {
+    max-height: 320px;
+    overflow: auto;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 8px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .mod-row {
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:center;
+    padding:8px;
+    border-radius:8px;
+    margin-bottom:6px;
+    background: rgba(0,0,0,0.03);
+  }
+
+  .mod-row .mod-name {
+    font-weight:600;
+    color:var(--white);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 60%;
+  }
+
+  .mod-row .mod-actions {
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+
+  .mod-empty {
+    text-align:center;
+    padding:28px 8px;
+    color:var(--muted);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top:8px;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+  }
+
+  /* Небольшая адаптация под мобильные экраны */
+  @media (max-width: 600px) {
+    .header h1 { font-size: 20px; }
+    .btn, .btn-ghost { padding: 8px 12px; font-size: 13px; }
+    .project-card { padding: 16px; }
+    .modal { min-width: 90%; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🐢 TurtCD</h1>
+      <div class="header-actions">
+        <div class="theme-selector" role="group" aria-label="Theme selector">
+          <button class="theme-option active" onclick="setTheme('dark')" aria-pressed="true" title="Тёмная тема">🌙</button>
+          <button class="theme-option" onclick="setTheme('light')" aria-pressed="false" title="Светлая тема">☀️</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="projectsContainer">
+      <div class="loading">Загрузка проектов...</div>
+    </div>
+  </div>
+
+  <!-- Модальное окно создания проекта -->
+  <div id="createProjectModal" style="display:none">
+    <div class="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="createProjectTitle">
+        <h3 id="createProjectTitle">Создать новый проект</h3>
+        <input id="newProjectName" type="text" placeholder="Название проекта" maxlength="50">
+        <input id="newProjectVersion" type="text" placeholder="Версия проекта (например: 1.0.0)" maxlength="20">
+        <textarea id="newProjectDescription" placeholder="Описание проекта (необязательно)" rows="3" maxlength="200"></textarea>
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px; color: var(--white); font-weight: 600;">Путь проекта:</label>
+          <input id="projectPath" type="text" placeholder="Выберите папку для проекта" readonly style="margin-bottom: 8px;">
+          <button class="btn-ghost" onclick="selectProjectPath()" style="width: 100%;">📁 Выбрать папку</button>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" onclick="createNewProject()">Создать</button>
+          <button class="btn-ghost" onclick="closeCreateModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно редактирования проекта -->
+  <div id="editProjectModal" style="display:none">
+    <div class="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editProjectTitle">
+        <h3 id="editProjectTitle">Редактировать проект</h3>
+        <input id="editProjectName" type="text" placeholder="Название проекта" maxlength="50">
+        <input id="editProjectVersion" type="text" placeholder="Версия проекта (например: 1.0.0)" maxlength="20">
+        <textarea id="editProjectDescription" placeholder="Описание проекта (необязательно)" rows="3" maxlength="200"></textarea>
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px; color: var(--white); font-weight: 600;">Путь проекта:</label>
+          <input id="editProjectPath" type="text" placeholder="Выберите папку для проекта" readonly style="margin-bottom: 8px;">
+          <button class="btn-ghost" onclick="selectEditProjectPath()" style="width: 100%;">📁 Выбрать папку</button>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" onclick="saveProjectEdit()">Сохранить</button>
+          <button class="btn-ghost" onclick="closeEditModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно удаления проекта -->
+  <div id="deleteProjectModal" style="display:none">
+    <div class="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteProjectTitle">
+        <h3 id="deleteProjectTitle">Удалить проект</h3>
+        <p>Вы уверены, что хотите удалить проект "<span id="deleteProjectName"></span>"? Это действие нельзя отменить.</p>
+        <div class="modal-actions">
+          <button class="btn" style="background: linear-gradient(90deg, var(--danger), #dc2626);" onclick="confirmDelete()">Удалить</button>
+          <button class="btn-ghost" onclick="closeDeleteModal()">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно настроек модификаций -->
+  <div id="modsSettingsModal" style="display:none">
+    <div class="modal-backdrop" onclick="if(event.target === this) closeModsSettings()">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modsSettingsTitle">
+        <h3 id="modsSettingsTitle">Настройки модификаций</h3>
+
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <input id="modsSearch" type="search" placeholder="Поиск модификаций..." oninput="renderModsList()" style="flex:1;">
+          <button class="btn" onclick="selectModFile()" title="Выгрузить модификацию">⬆️ Выгрузить</button>
+        </div>
+
+        <div id="modsList" class="mods-list" aria-live="polite">
+          <div class="mod-empty">Загрузка списка модификаций...</div>
+        </div>
+
+        <div style="font-size:13px; color:var(--muted); margin-bottom:8px;">
+          Все модификации хранятся в папке <code>mods</code> и имеют формат <code>.json</code>. Удаление модификации удалит её из папки.
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-ghost" onclick="closeModsSettings()">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Скрытые input'ы для выбора папки и загрузки модификации -->
+  <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" onchange="handleFolderSelection(event)">
+  <input type="file" id="editFolderInput" webkitdirectory directory multiple style="display: none;" onchange="handleEditFolderSelection(event)">
+  <input type="file" id="modUploadInput" accept=".json" style="display: none;" onchange="uploadModFile(event)">
+
+<script>
+let projects = [];
+let currentDeleteProject = null;
+let currentEditProject = null;
+
+/* ========== Theme management ========== */
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('turtcd-theme', theme);
+
+  // Update theme selector buttons
+  document.querySelectorAll('.theme-option').forEach(btn => {
+    btn.classList.remove('active');
+    btn.setAttribute('aria-pressed', 'false');
+  });
+  const btn = document.querySelector(`[onclick="setTheme('${theme}')"]`);
+  if (btn) {
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+  }
+
+  // Дополнительная синхронизация - форсированно обновляем модальные окна и элементы, которые могут остаться несинхронизированными
+  document.querySelectorAll('.modal, .modal-backdrop, .header, .project-card, .mods-list, .theme-selector').forEach(el => {
+    // перерисуем элемент через изменение свойства, чтобы браузер применил новые CSS-переменные
+    el.style.transition = 'none';
+    void el.offsetWidth;
+    el.style.transition = '';
+  });
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('turtcd-theme') || 'dark';
+  setTheme(savedTheme);
+}
+
+/* ========== Project management ========== */
+async function loadProjects() {
+  try {
+    const response = await fetch('/api/project/list');
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      // Сортируем проекты по дате создания (от старых к новым)
+      projects = (data.projects || []).sort((a, b) => {
+        const dateA = new Date(a.createdAt || a.lastModified || 0);
+        const dateB = new Date(b.createdAt || b.lastModified || 0);
+        return dateA - dateB;
+      });
+      renderProjects();
+    } else {
+      console.error('Ошибка загрузки проектов:', data.message);
+      projects = [];
+      renderProjects();
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки проектов:', error);
+    projects = [];
+    renderProjects();
+  }
+}
+
+function renderProjects() {
+  const container = document.getElementById('projectsContainer');
+
+  if (projects.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <h3>Нет проектов</h3>
+        <p>Создайте свой первый проект, чтобы начать работу</p>
+        <button class="btn-new" onclick="openCreateModal()">+ Создать проект</button>
+      </div>
+    `;
+    return;
+  }
+
+  const projectsHTML = projects.map(project => {
+    const projectName = project.filename ? project.filename.replace('.turtcd', '') : project.replace('.turtcd', '');
+    const createdDate = project.createdAt ? 
+      new Date(project.createdAt).toLocaleDateString('ru-RU') : 
+      new Date().toLocaleDateString('ru-RU');
+    
+    const version = project.version || '1.0.0';
+    const description = project.description || '';
+
+    return `
+      <div class="project-card" onclick="openProject('${encodeURIComponent(project.filename || project)}')">
+        <div class="project-name">
+          ${escapeHtml(projectName)}
+          <span class="project-version">v${escapeHtml(version)}</span>
+        </div>
+        <div class="project-info">Создан: ${createdDate}</div>
+        ${description ? `<div class="project-description" title="${escapeHtml(description)}">${escapeHtml(description)}</div>` : ''}
+        <div class="project-actions" onclick="event.stopPropagation()">
+          <button class="btn" onclick="openProject('${encodeURIComponent(project.filename || project)}')">Открыть</button>
+          <button class="btn-ghost" onclick="editProject('${encodeURIComponent(project.filename || project)}')">✏️</button>
+          <button class="btn-ghost" onclick="duplicateProject('${encodeURIComponent(project.filename || project)}')">⎘</button>
+          <button class="btn-ghost" onclick="deleteProject('${encodeURIComponent(project.filename || project)}')">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="projects-grid">
+      ${projectsHTML}
+      <div class="project-card new-project" onclick="openCreateModal()">
+        <div class="new-project-icon">+</div>
+        <div class="new-project-text">Создать новый проект</div>
+      </div>
+    </div>
+  `;
+}
+
+function openProject(encodedFilename) {
+  const filename = decodeURIComponent(encodedFilename);
+  // Сохраняем выбранный проект в localStorage
+  localStorage.setItem('currentProject', filename);
+  // Переходим к редактору
+  window.location.href = '/editor';
+}
+
+function openCreateModal() {
+  document.getElementById('createProjectModal').style.display = 'block';
+  setTimeout(() => document.getElementById('newProjectName').focus(), 50);
+}
+
+function closeCreateModal() {
+  document.getElementById('createProjectModal').style.display = 'none';
+  document.getElementById('newProjectName').value = '';
+  document.getElementById('newProjectVersion').value = '';
+  document.getElementById('newProjectDescription').value = '';
+  document.getElementById('projectPath').value = '';
+}
+
+function selectProjectPath() {
+  document.getElementById('folderInput').click();
+}
+
+function handleFolderSelection(event) {
+  const files = event.target.files;
+  if (files.length > 0) {
+    // Получаем путь к выбранной папке
+    const path = files[0].webkitRelativePath.split('/')[0];
+    document.getElementById('projectPath').value = path;
+  }
+}
+
+async function createNewProject() {
+  const name = document.getElementById('newProjectName').value.trim();
+  const version = document.getElementById('newProjectVersion').value.trim() || '1.0.0';
+  const description = document.getElementById('newProjectDescription').value.trim();
+  const path = document.getElementById('projectPath').value.trim();
+
+  if (!name) {
+    showNotification('error', 'Ошибка', 'Введите название проекта');
+    return;
+  }
+
+  try {
+    const projectData = { 
+      blocks: [], 
+      connections: [],
+      projectPath: path || '',
+      createdAt: new Date().toISOString(),
+      version: version,
+      description: description
+    };
+
+    const response = await fetch('/api/project/save-file', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filename: name + '.turtcd',
+        project_data: projectData
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      showNotification('success', 'Успех', 'Проект успешно создан!');
+      closeCreateModal();
+      // Принудительно обновляем список проектов
+      setTimeout(() => {
+        loadProjects();
+      }, 500);
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка создания проекта: ' + (data.message || 'Неизвестная ошибка'));
+    }
+  } catch (error) {
+    showNotification('error', 'Ошибка', 'Ошибка создания проекта: ' + error.message);
+  }
+}
+
+function editProject(encodedFilename) {
+  currentEditProject = decodeURIComponent(encodedFilename);
+  const project = projects.find(p => (p.filename || p) === currentEditProject);
+  
+  if (project) {
+    const projectName = project.filename ? project.filename.replace('.turtcd', '') : project.replace('.turtcd', '');
+    document.getElementById('editProjectName').value = projectName;
+    document.getElementById('editProjectVersion').value = project.version || '1.0.0';
+    document.getElementById('editProjectDescription').value = project.description || '';
+    document.getElementById('editProjectPath').value = project.projectPath || '';
+    document.getElementById('editProjectModal').style.display = 'block';
+    setTimeout(() => document.getElementById('editProjectName').focus(), 50);
+  }
+}
+
+function closeEditModal() {
+  document.getElementById('editProjectModal').style.display = 'none';
+  currentEditProject = null;
+}
+
+function selectEditProjectPath() {
+  document.getElementById('editFolderInput').click();
+}
+
+function handleEditFolderSelection(event) {
+  const files = event.target.files;
+  if (files.length > 0) {
+    // Получаем путь к выбранной папке
+    const path = files[0].webkitRelativePath.split('/')[0];
+    document.getElementById('editProjectPath').value = path;
+  }
+}
+
+async function saveProjectEdit() {
+  if (!currentEditProject) return;
+  
+  const newName = document.getElementById('editProjectName').value.trim();
+  const newVersion = document.getElementById('editProjectVersion').value.trim() || '1.0.0';
+  const newDescription = document.getElementById('editProjectDescription').value.trim();
+  const newPath = document.getElementById('editProjectPath').value.trim();
+
+  if (!newName) {
+    showNotification('error', 'Ошибка', 'Введите название проекта');
+    return;
+  }
+
+  try {
+    // Сначала загружаем текущий проект
+    const loadResponse = await fetch('/api/project/load-file', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename: currentEditProject })
+    });
+
+    const loadData = await loadResponse.json();
+    
+    if (loadData.status !== 'success') {
+      showNotification('error', 'Ошибка', 'Не удалось загрузить проект для редактирования');
+      return;
+    }
+
+    // Обновляем данные проекта
+    const projectData = loadData.project_data || {};
+    projectData.projectPath = newPath;
+    projectData.version = newVersion;
+    projectData.description = newDescription;
+    
+    // Если имя изменилось, создаем новый файл и удаляем старый
+    const newFilename = newName + '.turtcd';
+    
+    if (newFilename !== currentEditProject) {
+      // Создаем проект с новым именем
+      const createResponse = await fetch('/api/project/save-file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: newFilename,
+          project_data: projectData
+        })
+      });
+
+      const createData = await createResponse.json();
+
+      if (createData.status === 'success') {
+        // Удаляем старый проект
+        await fetch('/api/project/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: currentEditProject })
+        });
+        
+        showNotification('success', 'Успех', 'Проект успешно обновлен!');
+        closeEditModal();
+        loadProjects();
+      } else {
+        showNotification('error', 'Ошибка', 'Ошибка обновления проекта: ' + (createData.message || 'Неизвестная ошибка'));
+      }
+    } else {
+      // Имя не изменилось, просто обновляем данные
+      const updateResponse = await fetch('/api/project/save-file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: currentEditProject,
+          project_data: projectData
+        })
+      });
+
+      const updateData = await updateResponse.json();
+
+      if (updateData.status === 'success') {
+        showNotification('success', 'Успех', 'Проект успешно обновлен!');
+        closeEditModal();
+        loadProjects();
+      } else {
+        showNotification('error', 'Ошибка', 'Ошибка обновления проекта: ' + (updateData.message || 'Неизвестная ошибка'));
+      }
+    }
+  } catch (error) {
+    showNotification('error', 'Ошибка', 'Ошибка обновления проекта: ' + error.message);
+  }
+}
+
+async function duplicateProject(encodedFilename) {
+  const filename = decodeURIComponent(encodedFilename);
+  
+  try {
+    // Загружаем проект для копирования
+    const loadResponse = await fetch('/api/project/load-file', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename })
+    });
+
+    const loadData = await loadResponse.json();
+    
+    if (loadData.status !== 'success') {
+      showNotification('error', 'Ошибка', 'Не удалось загрузить проект для копирования');
+      return;
+    }
+
+    // Создаем новое имя для копии
+    const originalName = filename.replace('.turtcd', '');
+    const copyName = originalName + '(копия)';
+    let counter = 1;
+    let newFilename = copyName + '.turtcd';
+    
+    // Проверяем, существует ли уже проект с таким именем
+    while (projects.some(p => (p.filename || p) === newFilename)) {
+      newFilename = `${copyName}(${counter}).turtcd`;
+      counter++;
+    }
+
+    // Создаем копию проекта
+    const projectData = loadData.project_data || {};
+    projectData.createdAt = new Date().toISOString();
+    projectData.version = projectData.version || '1.0.0';
+    // Описание копируется, но можно добавить примечание о копировании
+    if (projectData.description) {
+      projectData.description = projectData.description + ' (копия)';
+    }
+
+    const createResponse = await fetch('/api/project/save-file', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filename: newFilename,
+        project_data: projectData
+      })
+    });
+
+    const createData = await createResponse.json();
+
+    if (createData.status === 'success') {
+      showNotification('success', 'Успех', 'Проект успешно скопирован!');
+      loadProjects();
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка копирования проекта: ' + (createData.message || 'Неизвестная ошибка'));
+    }
+  } catch (error) {
+    showNotification('error', 'Ошибка', 'Ошибка копирования проекта: ' + error.message);
+  }
+}
+
+function deleteProject(encodedFilename) {
+  const filename = decodeURIComponent(encodedFilename);
+  const projectName = filename.replace('.turtcd', '');
+  
+  currentDeleteProject = filename;
+  document.getElementById('deleteProjectName').textContent = projectName;
+  document.getElementById('deleteProjectModal').style.display = 'block';
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteProjectModal').style.display = 'none';
+  currentDeleteProject = null;
+}
+
+async function confirmDelete() {
+  if (!currentDeleteProject) return;
+
+  try {
+    const response = await fetch('/api/project/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename: currentDeleteProject })
+    });
+
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      showNotification('success', 'Успех', 'Проект успешно удален');
+      closeDeleteModal();
+      loadProjects();
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка удаления проекта: ' + (data.message || 'Неизвестная ошибка'));
+    }
+  } catch (error) {
+    showNotification('error', 'Ошибка', 'Ошибка удаления проекта: ' + error.message);
+  }
+}
+
+/* ========== Mods management ========== */
+function openModsSettings() {
+  document.getElementById('modsSettingsModal').style.display = 'block';
+  loadModsList();
+}
+
+function closeModsSettings() {
+  document.getElementById('modsSettingsModal').style.display = 'none';
+}
+
+async function loadModsList() {
+  try {
+    const response = await fetch('/api/mods/list');
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      renderModsList(data.mods || []);
+    } else {
+      document.getElementById('modsList').innerHTML = `
+        <div class="mod-empty">Ошибка загрузки модификаций: ${data.message || 'Неизвестная ошибка'}</div>
+      `;
+    }
+  } catch (error) {
+    document.getElementById('modsList').innerHTML = `
+      <div class="mod-empty">Ошибка загрузки модификаций: ${error.message}</div>
+    `;
+  }
+}
+
+function renderModsList(mods = []) {
+  const searchTerm = document.getElementById('modsSearch').value.toLowerCase();
+  const filteredMods = mods.filter(mod => 
+    mod.toLowerCase().includes(searchTerm)
+  );
+
+  const modsList = document.getElementById('modsList');
+  
+  if (filteredMods.length === 0) {
+    modsList.innerHTML = `
+      <div class="mod-empty">
+        ${searchTerm ? 'Модификации не найдены' : 'Модификации не загружены'}
+      </div>
+    `;
+    return;
+  }
+
+  modsList.innerHTML = filteredMods.map(mod => `
+    <div class="mod-row">
+      <div class="mod-name" title="${escapeHtml(mod)}">${escapeHtml(mod)}</div>
+      <div class="mod-actions">
+        <button class="btn-ghost" onclick="deleteMod('${encodeURIComponent(mod)}')" title="Удалить модификацию">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectModFile() {
+  document.getElementById('modUploadInput').click();
+}
+
+function uploadModFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('mod_file', file);
+
+  fetch('/api/mods/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      showNotification('success', 'Успех', 'Модификация успешно загружена');
+      loadModsList();
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка загрузки модификации: ' + (data.message || 'Неизвестная ошибка'));
+    }
+  })
+  .catch(error => {
+    showNotification('error', 'Ошибка', 'Ошибка загрузки модификации: ' + error.message);
+  });
+
+  // Сбрасываем input для возможности повторной загрузки того же файла
+  event.target.value = '';
+}
+
+function deleteMod(encodedModName) {
+  const modName = decodeURIComponent(encodedModName);
+
+  fetch('/api/mods/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mod_name: modName })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      showNotification('success', 'Успех', 'Модификация успешно удалена');
+      loadModsList();
+    } else {
+      showNotification('error', 'Ошибка', 'Ошибка удаления модификации: ' + (data.message || 'Неизвестная ошибка'));
+    }
+  })
+  .catch(error => {
+    showNotification('error', 'Ошибка', 'Ошибка удаления модификации: ' + error.message);
+  });
+}
+
+/* ========== Utility functions ========== */
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function showNotification(type, title, message) {
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.innerHTML = `
+    <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
+    <div class="notification-header">
+      <div class="notification-icon">${type === 'success' ? '✅' : '❌'}</div>
+      <div class="notification-title">${escapeHtml(title)}</div>
+    </div>
+    <div class="notification-message">${escapeHtml(message)}</div>
+  `;
+
+  document.body.appendChild(notification);
+
+  // Показываем уведомление
+  setTimeout(() => notification.classList.add('show'), 10);
+
+  // Автоматически скрываем через 5 секунд
+  setTimeout(() => {
+    if (notification.parentElement) {
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 300);
+    }
+  }, 5000);
+}
+
+/* ========== Initialize ========== */
+document.addEventListener('DOMContentLoaded', function() {
+  loadTheme();
+  loadProjects();
+});
+</script>
+</body>
+</html>

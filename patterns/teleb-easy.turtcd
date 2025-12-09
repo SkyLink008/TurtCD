@@ -1,0 +1,432 @@
+{
+  "blocks": [
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {},
+      "fields": {},
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-jpuhkdno",
+      "ignoreIssues": false,
+      "template": "start",
+      "type": "header",
+      "width": 180,
+      "x": 433,
+      "y": 114
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 105
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Блоком ниже инициализируем telebot, укажите в блоке ниже ваш токен, получите его у BotFather"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-61u3ob6a",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 429,
+      "y": 228
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "token": "single-line"
+      },
+      "fields": {
+        "token": "telebot token"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-ak3ldxtm",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_5cc5d123",
+      "type": "action",
+      "width": 180,
+      "x": 423,
+      "y": 437
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {},
+      "fields": {},
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-3qqgteg4",
+      "ignoreIssues": false,
+      "template": "block_e77e3a15",
+      "type": "loop",
+      "width": 180,
+      "x": 446,
+      "y": 826
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 143
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Объявляем слушателя, это цикл, который будет бесконечно запрашивать у серверов телеграмма не отправили ли нам новых сообщений"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-cf4np1e0",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 431,
+      "y": 566
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "content": "single-line"
+      },
+      "fields": {
+        "content": "\"Привет\""
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-tdk86ke7",
+      "ignoreIssues": false,
+      "template": "block_a79b4f57",
+      "type": "condition",
+      "width": 180,
+      "x": 652,
+      "y": 1105
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 84
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "В тело цикла программа попадет в случае если нам пришло новое сообщение, тогда нам нужно сверить сообщение и отреагировать на него, блоком ниже сверяем сообщение"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-03hdsp9h",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 687,
+      "y": 909
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 52
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Реагируем на сообщение \"Привет\""
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-kaiwogog",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 1014,
+      "y": 1191
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "message": "single-line"
+      },
+      "fields": {
+        "message": "\"И тебе привет !\""
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-uzjmomld",
+      "ignoreIssues": false,
+      "template": "block_01441389",
+      "type": "action",
+      "width": 180,
+      "x": 1020,
+      "y": 1345
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {
+        "content": "single-line"
+      },
+      "fields": {
+        "content": "\"/start\""
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-i0h5nm9a",
+      "ignoreIssues": false,
+      "template": "block_a79b4f57",
+      "type": "condition",
+      "width": 180,
+      "x": 653,
+      "y": 1487
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 143
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Но чаще всего при первом запуске пользователь отправляет \"/start\" и это команда, она тоже обрабатывается как сообщение"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-7urd0359",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 688,
+      "y": 1244
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 52
+      },
+      "fieldTypes": {
+        "comment": "single-line"
+      },
+      "fields": {
+        "comment": "Реагируем на /start"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-wp03qee0",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 1020,
+      "y": 1575
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "message": 71
+      },
+      "fieldTypes": {
+        "message": "multi-line"
+      },
+      "fields": {
+        "message": "\"Привет, я простой бот написанный на TurtCD\""
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-zov5r1qg",
+      "ignoreIssues": false,
+      "template": "block_01441389",
+      "type": "action",
+      "width": 180,
+      "x": 1017,
+      "y": 1715
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 107
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "После того как мы предписали логику работы слушателя, запускаем бота блоком ниже"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-21ib9r8b",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 430,
+      "y": 950
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldTypes": {},
+      "fields": {},
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-pesk19zj",
+      "ignoreIssues": false,
+      "template": "block_4458c56b",
+      "type": "action",
+      "width": 180,
+      "x": 459,
+      "y": 1170
+    },
+    {
+      "collapsedRightBranch": false,
+      "fieldHeights": {
+        "comment": 54
+      },
+      "fieldTypes": {
+        "comment": "multi-line"
+      },
+      "fields": {
+        "comment": "Теперь у вас есть свой телеграмм бот !"
+      },
+      "height": 80,
+      "hiddenBy": [],
+      "id": "b-ztwfqlkj",
+      "ignoreIssues": false,
+      "locked": true,
+      "template": "block_af72cacb",
+      "type": "action",
+      "width": 180,
+      "x": 430,
+      "y": 1291
+    }
+  ],
+  "camera": {
+    "x": -44,
+    "y": 113,
+    "scale": 1
+  },
+  "connections": [
+    {
+      "color": "system",
+      "from": "b-jpuhkdno",
+      "fromConnector": "bottom",
+      "to": "b-61u3ob6a",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-61u3ob6a",
+      "fromConnector": "bottom",
+      "to": "b-ak3ldxtm",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-ak3ldxtm",
+      "fromConnector": "bottom",
+      "to": "b-cf4np1e0",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-cf4np1e0",
+      "fromConnector": "bottom",
+      "to": "b-3qqgteg4",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-3qqgteg4",
+      "fromConnector": "right",
+      "to": "b-03hdsp9h",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-03hdsp9h",
+      "fromConnector": "bottom",
+      "to": "b-tdk86ke7",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-tdk86ke7",
+      "fromConnector": "right",
+      "to": "b-kaiwogog",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-kaiwogog",
+      "fromConnector": "bottom",
+      "to": "b-uzjmomld",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-tdk86ke7",
+      "fromConnector": "bottom",
+      "to": "b-7urd0359",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-7urd0359",
+      "fromConnector": "bottom",
+      "to": "b-i0h5nm9a",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-i0h5nm9a",
+      "fromConnector": "right",
+      "to": "b-wp03qee0",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-wp03qee0",
+      "fromConnector": "bottom",
+      "to": "b-zov5r1qg",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-3qqgteg4",
+      "fromConnector": "bottom",
+      "to": "b-21ib9r8b",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-21ib9r8b",
+      "fromConnector": "bottom",
+      "to": "b-pesk19zj",
+      "toConnector": "top"
+    },
+    {
+      "color": "system",
+      "from": "b-pesk19zj",
+      "fromConnector": "bottom",
+      "to": "b-ztwfqlkj",
+      "toConnector": "top"
+    }
+  ],
+  "createdAt": "2025-11-18T18:14:43.300280Z",
+  "globalIgnore": false,
+  "projectPath": "",
+  "variableTags": {}
+}

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Скомпилированный код</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+  :root{
+    --bg:#0f1724;
+    --accent:#06b6d4;
+    --accent-2:#8b5cf6;
+    --card:#0b1226;
+    --white:#ffffff;
+    --success:#10b981;
+    --danger:#ef4444;
+  }
+  
+  /* Светлая тема */
+  [data-theme="light"] {
+    --bg:#f8fafc;
+    --accent:#0ea5e9;
+    --accent-2:#6366f1;
+    --card:#ffffff;
+    --white:#1e293b;
+    --success:#059669;
+    --danger:#dc2626;
+  }
+  
+  [data-theme="light"] body {
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+    color: var(--white);
+  }
+  
+  [data-theme="light"] .toolbar {
+    background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] .code-box {
+    background: var(--card);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] #console {
+    background: #f8fafc;
+    color: #1e293b;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] #console.error {
+    color: var(--danger);
+  }
+  
+  [data-theme="light"] #inputField {
+    background: var(--card);
+    color: var(--white);
+    border: 2px solid rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] #inputField.focused {
+    border-color: var(--accent-2);
+    box-shadow: 0 0 12px rgba(99,102,241,0.3);
+  }
+  html,body{height:100%; margin:0; font-family:Inter, Roboto, Arial, sans-serif; background:linear-gradient(180deg,#071025 0%,#0b1220 100%); color:var(--white);}
+  .app{display:flex; flex-direction:column; height:100vh; padding:16px; gap:12px;}
+  .toolbar{display:flex; gap:12px; padding:14px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.03), transparent); box-shadow:0 6px 20px rgba(2,6,23,0.5);}
+  .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#022; padding:12px 18px; border-radius:12px; border:none; font-weight:700; font-size:15px; cursor:pointer; box-shadow:0 8px 24px rgba(14,165,233,0.08); transition:transform .12s;}
+  .btn:hover{transform:translateY(-3px);}
+  .btn-ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--white); padding:12px 16px; border-radius:12px; font-size:15px; cursor:pointer;}
+  .input-bar{display:flex; gap:8px;}
+  #inputField{flex:1; padding:10px; border-radius:8px; border:2px solid transparent; font-size:14px; outline:none;}
+  #inputField.focused{border-color:var(--accent-2); box-shadow:0 0 12px var(--accent-2);}
+  
+  /* Селектор тем */
+  .theme-selector {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .theme-option {
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+  }
+  
+  .theme-option.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 2px 8px rgba(14,165,233,0.3);
+  }
+  
+  .theme-option:hover:not(.active) {
+    background: rgba(255,255,255,0.1);
+    color: var(--white);
+  }
+  
+  [data-theme="light"] .theme-selector {
+    background: rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  [data-theme="light"] .theme-option {
+    color: var(--muted);
+  }
+  
+  [data-theme="light"] .theme-option:hover:not(.active) {
+    background: rgba(0,0,0,0.1);
+    color: var(--white);
+  }
+  .code-box{flex:1; border-radius:16px; background:var(--card); padding:12px; overflow:auto;}
+  pre code{font-size:16px; font-family:Consolas, monospace; border-radius:16px; display:block;}
+  [contenteditable="true"]{outline:none; white-space:pre; display:block;}
+  #console{height:280px; border-radius:12px; background:#000; padding:12px; overflow:auto; font-family:Consolas, monospace; font-size:16px; white-space:pre-wrap; color:var(--success);}
+  #console.error{color:var(--danger);}
+
+  /* Система экскурса */
+  .help-tour-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    pointer-events: none;
+  }
+
+  .help-tour-spotlight {
+    position: absolute;
+    border: 3px solid var(--accent);
+    border-radius: 12px;
+    background: rgba(6, 182, 212, 0.1);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 30px rgba(6, 182, 212, 0.8), inset 0 0 20px rgba(6, 182, 212, 0.2);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 10001;
+  }
+
+  .help-tour-tooltip {
+    position: absolute;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 350px;
+    z-index: 10001;
+    pointer-events: auto;
+    animation: helpTooltipAppear 0.3s ease;
+  }
+
+  @keyframes helpTooltipAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .help-tour-tooltip h3 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .help-tour-tooltip p {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .help-tour-tooltip .help-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .help-tour-tooltip .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .help-tour-tooltip .btn-ghost {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .help-tour-progress {
+    position: absolute;
+    bottom: 12px;
+    left: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Эффект для подсвечиваемых элементов */
+  .help-tour-highlighted {
+    position: relative;
+    z-index: 10002 !important;
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+  }
+body {
+    font-family: monospace !important;
+    font-size: 18px !important;
+}
+button, .button, input[type=button], input[type=submit] {
+    font-family: monospace !important;
+    font-size: 16px !important;
+}
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="toolbar">
+      <button class="btn" onclick="startCode()">▶ Запустить</button>
+      <button class="btn" style="background:linear-gradient(90deg,#ef4444,#b91c1c);" onclick="stopCode()">⏹ Остановить</button>
+      <button class="btn-ghost" onclick="copyCode()">📋 Копировать</button>
+      <button class="btn-ghost" onclick="downloadCode()">💾 Скачать</button>
+      <button class="btn-ghost" onclick="goBackToProject()">🔙 Вернуться к проекту</button>
+      <button class="btn-ghost" onclick="startHelpTour()">❓ Помощь</button>
+      <div style="flex:1"></div>
+      <div class="theme-selector">
+        <button class="theme-option active" onclick="setTheme('dark')">🌙 Тёмная</button>
+        <button class="theme-option" onclick="setTheme('light')">☀️ Светлая</button>
+      </div>
+    </div>
+    <div class="input-bar">
+      <input id="inputField" placeholder="Введите текст и нажмите Enter" onkeydown="if(event.key==='Enter'){sendInput();}">
+      <button class="btn" onclick="sendInput()">Отправить</button>
+    </div>
+    <div class="code-box">
+      <pre><code id="code" class="language-python" contenteditable="true"></code></pre>
+    </div>
+    <div id="console"></div>
+  </div>
+
+<script>
+let code = localStorage.getItem("compiled_code") || "# пусто";
+const codeEl = document.getElementById("code");
+codeEl.textContent = code;
+hljs.highlightElement(codeEl);
+
+let sessionId = null;
+let pollTimer = null;
+
+function getEditedCode(){
+  return codeEl.textContent;
+}
+
+function copyCode(){
+  navigator.clipboard.writeText(getEditedCode());
+  alert("Код скопирован в буфер обмена!");
+}
+
+function downloadCode(){
+  const fname = prompt("Введите имя файла", "program.py");
+  if(!fname) return;
+  const blob = new Blob([getEditedCode()], {type:"text/x-python"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = fname;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function goBackToProject(){
+  window.location.href = "/editor";
+}
+
+async function startCode(){
+  code = getEditedCode();
+  // пересветим подсветку перед запуском
+  hljs.highlightElement(codeEl);
+
+  const resp = await fetch("/api/project/start", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({code})
+  });
+  const j = await resp.json();
+  if(j.status !== "success"){ alert("Ошибка запуска: " + j.message); return; }
+  sessionId = j.session_id;
+  document.getElementById("console").textContent = "";
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(readOutput, 200);
+}
+
+async function readOutput(){
+  if(!sessionId) return;
+  const resp = await fetch(`/api/project/read/${sessionId}`);
+  const j = await resp.json();
+  if(j.status === "success" && j.output){
+    const consoleEl = document.getElementById("console");
+    let text = j.output.replace("__EXIT__","");
+    consoleEl.textContent += text;
+    consoleEl.scrollTop = consoleEl.scrollHeight;
+    if(text.includes(">")){
+      const inputField = document.getElementById("inputField");
+      inputField.classList.add("focused");
+      inputField.focus();
+    }
+    if(j.output.includes("__EXIT__")){
+      clearInterval(pollTimer);
+      sessionId = null;
+    }
+  }
+}
+
+async function sendInput(){
+  if(!sessionId) return;
+  const field = document.getElementById("inputField");
+  const text = field.value;
+  field.value = "";
+  field.classList.remove("focused");
+
+  const consoleEl = document.getElementById("console");
+  consoleEl.textContent += text + "\n";
+  consoleEl.scrollTop = consoleEl.scrollHeight;
+
+  await fetch(`/api/project/write/${sessionId}`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({text})
+  });
+}
+
+async function stopCode(){
+  if(!sessionId) return;
+  await fetch(`/api/project/stop/${sessionId}`, {method:"POST"});
+  clearInterval(pollTimer);
+  sessionId = null;
+  document.getElementById("console").textContent += "\n[Программа остановлена]\n";
+}
+
+// Автоподсветка при редактировании
+codeEl.addEventListener("input", () => {
+  hljs.highlightElement(codeEl);
+});
+
+/* ========== Theme management ========== */
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('turtcd-theme', theme);
+  
+  // Update theme selector buttons
+  document.querySelectorAll('.theme-option').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`[onclick="setTheme('${theme}')"]`).classList.add('active');
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('turtcd-theme') || 'dark';
+  setTheme(savedTheme);
+}
+
+// Load theme on page load
+loadTheme();
+
+/* ========== Help Tour System ========== */
+let helpTour = {
+  isActive: false,
+  currentStep: 0,
+  steps: [],
+  overlay: null,
+  spotlight: null,
+  tooltip: null
+};
+
+// Шаги экскурса для окна скомпилированного кода
+const compiledSteps = [
+  {
+    target: '.toolbar .btn',
+    title: 'Управление выполнением',
+    content: 'Кнопка "Запустить" запускает ваш Python код. Кнопка "Остановить" принудительно завершает выполнение программы.',
+    position: 'bottom'
+  },
+  {
+    target: '.toolbar .btn-ghost',
+    title: 'Работа с кодом',
+    content: 'Кнопка "Копировать" копирует код в буфер обмена. "Скачать" сохраняет код как .py файл. "Вернуться к проекту" возвращает в редактор блоков.',
+    position: 'bottom'
+  },
+  {
+    target: '.toolbar .btn-ghost[onclick="startHelpTour()"]',
+    title: 'Справка',
+    content: 'Эта кнопка запускает экскурс по интерфейсу. Вы можете использовать её для получения подсказок в любой момент.',
+    position: 'bottom'
+  },
+  {
+    target: '.theme-selector',
+    title: 'Переключатель тем',
+    content: 'Здесь вы можете переключаться между тёмной и светлой темой интерфейса для комфортной работы.',
+    position: 'bottom'
+  },
+  {
+    target: '.input-bar',
+    title: 'Ввод данных',
+    content: 'Это поле для ввода данных в программу. Если ваша программа запрашивает ввод (input()), используйте это поле.',
+    position: 'top'
+  },
+  {
+    target: '.code-box',
+    title: 'Редактор кода',
+    content: 'Здесь отображается скомпилированный Python код. Вы можете редактировать его напрямую, если нужно внести изменения.',
+    position: 'top'
+  },
+  {
+    target: '#console',
+    title: 'Консоль вывода',
+    content: 'Здесь отображается результат выполнения программы: вывод print(), ошибки и запросы на ввод данных.',
+    position: 'top'
+  }
+];
+
+function startHelpTour() {
+  if (helpTour.isActive) {
+    return;
+  }
+
+  helpTour.isActive = true;
+  helpTour.currentStep = 0;
+  helpTour.steps = compiledSteps;
+
+  createHelpOverlay();
+  showHelpStep(0);
+}
+
+function createHelpOverlay() {
+  // Создаем оверлей
+  helpTour.overlay = document.createElement('div');
+  helpTour.overlay.className = 'help-tour-overlay';
+  document.body.appendChild(helpTour.overlay);
+
+  // Создаем spotlight
+  helpTour.spotlight = document.createElement('div');
+  helpTour.spotlight.className = 'help-tour-spotlight';
+  helpTour.overlay.appendChild(helpTour.spotlight);
+
+  // Создаем tooltip
+  helpTour.tooltip = document.createElement('div');
+  helpTour.tooltip.className = 'help-tour-tooltip';
+  helpTour.overlay.appendChild(helpTour.tooltip);
+}
+
+function showHelpStep(stepIndex) {
+  if (stepIndex >= helpTour.steps.length) {
+    endHelpTour();
+    return;
+  }
+
+  // Убираем подсветку с предыдущего элемента
+  document.querySelectorAll('.help-tour-highlighted').forEach(el => {
+    el.classList.remove('help-tour-highlighted');
+  });
+
+  const step = helpTour.steps[stepIndex];
+  const targetElement = document.querySelector(step.target);
+
+  if (!targetElement) {
+    // Если элемент не найден, пропускаем этот шаг
+    showHelpStep(stepIndex + 1);
+    return;
+  }
+
+  // Добавляем подсветку к текущему элементу
+  targetElement.classList.add('help-tour-highlighted');
+
+  // Позиционируем spotlight
+  const rect = targetElement.getBoundingClientRect();
+  helpTour.spotlight.style.left = (rect.left - 8) + 'px';
+  helpTour.spotlight.style.top = (rect.top - 8) + 'px';
+  helpTour.spotlight.style.width = (rect.width + 16) + 'px';
+  helpTour.spotlight.style.height = (rect.height + 16) + 'px';
+
+  // Позиционируем tooltip
+  positionTooltip(step, rect);
+
+  // Обновляем содержимое tooltip
+  helpTour.tooltip.innerHTML = `
+    <h3>${step.title}</h3>
+    <p>${step.content}</p>
+    <div class="help-actions">
+      ${stepIndex > 0 ? '<button class="btn-ghost" onclick="previousHelpStep()">← Назад</button>' : ''}
+      <button class="btn-ghost" onclick="endHelpTour()">Пропустить</button>
+      <button class="btn" onclick="nextHelpStep()">${stepIndex === helpTour.steps.length - 1 ? 'Завершить' : 'Далее →'}</button>
+    </div>
+    <div class="help-tour-progress">${stepIndex + 1} из ${helpTour.steps.length}</div>
+  `;
+
+  helpTour.currentStep = stepIndex;
+}
+
+function positionTooltip(step, targetRect) {
+  const tooltip = helpTour.tooltip;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const tooltipWidth = 350;
+  const tooltipHeight = 200;
+  const margin = 20;
+
+  let left, top;
+
+  switch (step.position) {
+    case 'top':
+      left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+      top = targetRect.top - tooltipHeight - margin;
+      break;
+    case 'bottom':
+      left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+      top = targetRect.bottom + margin;
+      break;
+    case 'left':
+      left = targetRect.left - tooltipWidth - margin;
+      top = targetRect.top + (targetRect.height / 2) - (tooltipHeight / 2);
+      break;
+    case 'right':
+      left = targetRect.right + margin;
+      top = targetRect.top + (targetRect.height / 2) - (tooltipHeight / 2);
+      break;
+    default:
+      left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+      top = targetRect.bottom + margin;
+  }
+
+  // Проверяем границы viewport
+  if (left < margin) left = margin;
+  if (left + tooltipWidth > viewportWidth - margin) left = viewportWidth - tooltipWidth - margin;
+  if (top < margin) top = targetRect.bottom + margin;
+  if (top + tooltipHeight > viewportHeight - margin) top = targetRect.top - tooltipHeight - margin;
+
+  tooltip.style.left = Math.max(0, left) + 'px';
+  tooltip.style.top = Math.max(0, top) + 'px';
+}
+
+function nextHelpStep() {
+  showHelpStep(helpTour.currentStep + 1);
+}
+
+function previousHelpStep() {
+  if (helpTour.currentStep > 0) {
+    showHelpStep(helpTour.currentStep - 1);
+  }
+}
+
+function endHelpTour() {
+  // Убираем подсветку со всех элементов
+  document.querySelectorAll('.help-tour-highlighted').forEach(el => {
+    el.classList.remove('help-tour-highlighted');
+  });
+
+  if (helpTour.overlay) {
+    helpTour.overlay.remove();
+  }
+  helpTour.isActive = false;
+  helpTour.currentStep = 0;
+  helpTour.overlay = null;
+  helpTour.spotlight = null;
+  helpTour.tooltip = null;
+}
+
+// Обработка клавиш для навигации по экскурсу
+document.addEventListener('keydown', function(e) {
+  if (!helpTour.isActive) return;
+
+  switch (e.key) {
+    case 'Escape':
+      endHelpTour();
+      break;
+    case 'ArrowRight':
+    case ' ':
+      e.preventDefault();
+      nextHelpStep();
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      previousHelpStep();
+      break;
+  }
+});
+</script>
+</body>
+</html>
