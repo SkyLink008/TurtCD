@@ -1,0 +1,1408 @@
+{
+  "categories": [
+    {
+      "id": "category_fresh_lifecycle",
+      "name": "UI - Жизненный цикл",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_header",
+          "name": "Инициализировать UI",
+          "type": "header",
+          "color": "#4682B4",
+          "code": "from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QMessageBox, QFileDialog, QGraphicsScene, QGraphicsView, QCheckBox, QProgressBar)\nfrom PySide6.QtGui import QPixmap, QFont, QColor, QPen, QPainter, QBrush\nfrom PySide6.QtCore import Qt\nfrom PySide6.QtGui import QPalette\nimport sys\n\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_app_create",
+          "name": "Создать жизненный цикл",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{app} = QApplication(sys.argv)\n\n\n",
+          "fields": [
+            {
+              "name": "app",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "app"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_app_exec",
+          "name": "Запустить жизненный цикл",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "sys.exit({app}.exec())\n\n\n",
+          "fields": [
+            {
+              "name": "app",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "app"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fresh_window",
+      "name": "UI - Окно приложения",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_create_window",
+          "name": "Создать окно",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name} = QWidget()\n{name}.setWindowTitle({title})\n{name}.resize(int({width}), int({height}))\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "title",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"title\""
+            },
+            {
+              "name": "width",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "width"
+            },
+            {
+              "name": "height",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "height"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_show_window",
+          "name": "Запуск окна",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.show()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_place_widget",
+          "name": "Разместить элемент на X Y",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setParent({parent})\n{name}.move(int({x}), int({y}))\n{name}.show()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "widget"
+            },
+            {
+              "name": "parent",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "parent window"
+            },
+            {
+              "name": "x",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "x"
+            },
+            {
+              "name": "y",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "y"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_no_resize",
+          "name": "Запретить масштабирование",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setFixedSize({name}.width(), {name}.height())\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_allow_resize",
+          "name": "Разрешить масштабирование",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setMinimumSize(0, 0)\n{name}.setMaximumSize(16777215, 16777215)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_opacity",
+          "name": "Установить прозрачность окна",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setWindowOpacity(float({value}))\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "0.0 - 1.0"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_debug_grid",
+          "name": "Запустить в режиме отладчика (сетка)",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name} = QWidget()\n{name}.setWindowTitle(\"Debug grid\")\n{name}.resize(500, 400)\n\nstep_value = int({step}) if str({step}).isdigit() else 20\nstep_value = max(4, min(step_value, 200))\n\npixmap = QPixmap(step_value, step_value)\npixmap.fill(Qt.transparent)\n_p = QPainter(pixmap)\n_p.setPen(QPen(QColor(255, 255, 255, 25)))\n_p.drawLine(0, 0, step_value, 0)\n_p.drawLine(0, 0, 0, step_value)\n_p.end()\n\npal = QPalette()\npal.setBrush(QPalette.Window, QBrush(pixmap))\n{name}.setAutoFillBackground(True)\n{name}.setPalette(pal)\n\ncoord_label = QLabel(\"x=0 y=0\", {name})\ncoord_label.move(10, 10)\ncoord_label.setStyleSheet(\"color: #ffffff; background: rgba(0,0,0,0.35); padding: 4px 8px; border-radius: 6px;\")\ncoord_label.adjustSize()\n\n{name}.setMouseTracking(True)\ncoord_label.setMouseTracking(True)\n\n# Обновляем координаты курсора\n{name}.mouseMoveEvent = lambda e: (coord_label.setText(f\"x={int(e.position().x())} y={int(e.position().y())}\"), coord_label.adjustSize())\n\n# Копирование координат по клику\n{name}.mousePressEvent = lambda e: QApplication.clipboard().setText(coord_label.text())\n\n{name}.show()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "debugWin"
+            },
+            {
+              "name": "step",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "20"
+            }
+          ],
+          "width": 200,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fresh_text",
+      "name": "UI - Текст",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_label_color",
+          "name": "Создать цветную текстовую метку",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name} = QLabel({text})\n{name}.setFont(QFont({font}, int({size})))\n{name}.setStyleSheet('color: {color};')\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            },
+            {
+              "name": "font",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"Arial\""
+            },
+            {
+              "name": "size",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "16"
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "color",
+              "required": true,
+              "placeholder": "#000000"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_label",
+          "name": "Создать текстовую метку",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name} = QLabel({text})\n{name}.setFont(QFont({font}, int({size})))\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            },
+            {
+              "name": "font",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"Arial\""
+            },
+            {
+              "name": "size",
+              "label": "",
+              "type": "number",
+              "required": true,
+              "placeholder": "16"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_label_set_text",
+          "name": "Изменить текст текстовой метки",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setText({text})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fresh_interactive",
+      "name": "UI - Интерактив",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_entry",
+          "name": "Создать поле ввода",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name} = QLineEdit()\n{name}.setFixedWidth(int({width}))\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "width",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "width"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_entry_get",
+          "name": "Получить введенный текст",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{output} = {name}.text()\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "name",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_entry_clear",
+          "name": "Очистить поле ввода",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.clear()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_entry_insert",
+          "name": "Вставить в поле ввода",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setText({text})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_button",
+          "name": "Создать кнопку",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name} = QPushButton({text})\n{name}.clicked.connect({function})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            },
+            {
+              "name": "function",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "function"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_button_disable",
+          "name": "Заблокировать кнопку",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(True)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "button"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_button_enable",
+          "name": "Разблокировать кнопку",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(False)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "button"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_entry_disable",
+          "name": "Заблокировать поле ввода",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(True)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "entry"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_entry_enable",
+          "name": "Разблокировать поле ввода",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(False)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "entry"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_if_entry_disabled",
+          "name": "Если поле ввода заблокировано",
+          "type": "condition",
+          "color": "#4682B4",
+          "code": "if not {name}.isEnabled():\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "entry"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_if_button_disabled",
+          "name": "Если кнопка заблокирована",
+          "type": "condition",
+          "color": "#4682B4",
+          "code": "if not {name}.isEnabled():\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "button"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fresh_multiline",
+      "name": "UI - Многострочное поле ввода",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_textarea",
+          "name": "Создать многострочное поле ввода",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name} = QPlainTextEdit()\n{name}.setFixedSize(int({width}), int({height}))\n{name}.setLineWrapMode(QPlainTextEdit.WidgetWidth)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "width",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "width"
+            },
+            {
+              "name": "height",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "height"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_textarea_clear",
+          "name": "Очистить многострочное поле ввода",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.clear()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_textarea_insert",
+          "name": "Вставить в многострочное поле",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setPlainText({text})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_textarea_get",
+          "name": "Получить текст из многострочного поля",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{output} = {name}.toPlainText()\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_textarea_disable",
+          "name": "Заблокировать многострочное поле ввода",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(True)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "textarea"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_textarea_enable",
+          "name": "Разблокировать многострочное поле ввода",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(False)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "textarea"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_if_textarea_disabled",
+          "name": "Если многострочное поле ввода заблокировано",
+          "type": "condition",
+          "color": "#4682B4",
+          "code": "if not {name}.isEnabled():\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "textarea"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fresh_combo",
+      "name": "UI - Выпадающие списки",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_combobox",
+          "name": "Создать выпадающий список",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}_list = {objects}\n{name} = QComboBox()\n{name}.addItems([str(x) for x in {name}_list])\n{name}.setCurrentIndex(int({noun}))\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "objects",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "objects"
+            },
+            {
+              "name": "noun",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "index"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_combobox_get",
+          "name": "Выбранный элемент списка",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{output} = {name}.currentText()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_combobox_disable",
+          "name": "Заблокировать выпадающий список",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(True)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "combobox"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_combobox_enable",
+          "name": "Разблокировать выпадающий список",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(False)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "combobox"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_if_combobox_disabled",
+          "name": "Если выпадающий список заблокирован",
+          "type": "condition",
+          "color": "#4682B4",
+          "code": "if not {name}.isEnabled():\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "combobox"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fresh_dialogs",
+      "name": "UI - Всплывающие окна",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_info",
+          "name": "Сообщить информацию",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "QMessageBox.information(None, {title}, {message})\n",
+          "fields": [
+            {
+              "name": "title",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"title\""
+            },
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"message\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_warning",
+          "name": "Сообщить об опасности",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "QMessageBox.warning(None, {title}, {message})\n",
+          "fields": [
+            {
+              "name": "title",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"title\""
+            },
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"message\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_error",
+          "name": "Сообщить об ошибке",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "QMessageBox.critical(None, {title}, {message})\n",
+          "fields": [
+            {
+              "name": "title",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"title\""
+            },
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"message\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_file_dialog",
+          "name": "Запросить путь до файла",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{output} = QFileDialog.getOpenFileName(None, \"Выберите файл\")[0]\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fresh_canvas",
+      "name": "UI - Canvas",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_canvas_create",
+          "name": "Создать canvas",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}_scene = QGraphicsScene()\n{name} = QGraphicsView({name}_scene)\n{name}.setBackgroundBrush(QColor({bg}))\n{name}.setSceneRect(0, 0, float({w}), float({h}))\n{name}.setFixedSize(int({w}) + 2, int({h}) + 2)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "bg",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"#ffffff\""
+            },
+            {
+              "name": "w",
+              "label": "",
+              "type": "number",
+              "required": true,
+              "placeholder": "width"
+            },
+            {
+              "name": "h",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "height"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_canvas_rect",
+          "name": "Отрисовать прямоугольник на canvas",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.scene().addRect(float({x0}), float({y0}), float({x1})-float({x0}), float({y1})-float({y0}), QPen(Qt.NoPen), QColor({color}))\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name (canvas)"
+            },
+            {
+              "name": "x0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X0"
+            },
+            {
+              "name": "y0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y0"
+            },
+            {
+              "name": "x1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X1"
+            },
+            {
+              "name": "y1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y1"
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"#ff0000\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_canvas_text",
+          "name": "Отрисовать текст на canvas",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "_text_item = {name}.scene().addText({text}, QFont({font}, int({size})))\n_text_item.setDefaultTextColor(QColor({color}))\n_text_item.setPos(float({x0}), float({y0}))\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name (canvas)"
+            },
+            {
+              "name": "x0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X"
+            },
+            {
+              "name": "y0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y"
+            },
+            {
+              "name": "font",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"Arial\""
+            },
+            {
+              "name": "size",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "14"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"#000\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_canvas_line",
+          "name": "Отрисовать линию на canvas",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "_pen = QPen(QColor({color}))\n{name}.scene().addLine(float({x0}), float({y0}), float({x1}), float({y1}), _pen)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name (canvas)"
+            },
+            {
+              "name": "x0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X0"
+            },
+            {
+              "name": "y0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y0"
+            },
+            {
+              "name": "x1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X1"
+            },
+            {
+              "name": "y1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y1"
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"#000\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_canvas_dash_line",
+          "name": "Отрисовать прерывистую линию на canvas",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "_pen = QPen(QColor({color}))\n_pen.setStyle(Qt.DashLine)\n_pen.setDashPattern([float({dash}), float({dash})])\n{name}.scene().addLine(float({x0}), float({y0}), float({x1}), float({y1}), _pen)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name (canvas)"
+            },
+            {
+              "name": "x0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X0"
+            },
+            {
+              "name": "y0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y0"
+            },
+            {
+              "name": "x1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X1"
+            },
+            {
+              "name": "y1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y1"
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"#000\""
+            },
+            {
+              "name": "dash",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "dash (>0)"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_canvas_clear",
+          "name": "Очистить canvas",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.scene().clear()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fresh_checkbox",
+      "name": "UI - Checkbox",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_checkbox_create",
+          "name": "Создать checkbox",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name} = QCheckBox({text})\n{name}.setChecked(False)\n\n",
+          "fields": [
+            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "name" },
+            { "name": "text", "label": "", "type": "text", "required": true, "placeholder": "\"text\"" }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_checkbox_enable",
+          "name": "Разблокировать checkbox",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(False)\n\n",
+          "fields": [
+            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_checkbox_disable",
+          "name": "Заблокировать checkbox",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setDisabled(True)\n\n",
+          "fields": [
+            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_if_checkbox_disabled",
+          "name": "Если checkbox заблокирован",
+          "type": "condition",
+          "color": "#4682B4",
+          "code": "if not {name}.isEnabled():\n\n",
+          "fields": [
+            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_checkbox_on",
+          "name": "Включить checkbox",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setChecked(True)\n\n",
+          "fields": [
+            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_checkbox_off",
+          "name": "Выключить checkbox",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setChecked(False)\n\n",
+          "fields": [
+            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_if_checkbox_checked",
+          "name": "Если checkbox активен",
+          "type": "condition",
+          "color": "#4682B4",
+          "code": "if {name}.isChecked():\n\n",
+          "fields": [
+            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_fresh_progress",
+      "name": "UI - ProgressBar",
+      "color": "#4682B4",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_fresh_progress_create",
+          "name": "Создать ProgressBar",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name} = QProgressBar()\n{name}.setRange(0, 100)\n{name}.setValue(int({value}))\n{name}.setFixedSize(int({width}), 20)\n\n",
+          "fields": [
+            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "name" },
+            { "name": "width", "label": "", "type": "text", "required": true, "placeholder": "width" },
+            { "name": "value", "label": "", "type": "text", "required": true, "placeholder": "0-100" }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fresh_progress_set",
+          "name": "Установить прогресс (%)",
+          "type": "action",
+          "color": "#4682B4",
+          "code": "{name}.setValue(int({value}))\n\n",
+          "fields": [
+            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "progress" },
+            { "name": "value", "label": "", "type": "text", "required": true, "placeholder": "0-100" }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    }
+  ]
+}

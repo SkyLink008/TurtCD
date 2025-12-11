@@ -1542,6 +1542,9 @@ button, .button, input[type=button], input[type=submit] {
       <button id="toggleGlobalIgnoreBtn" class="btn" onclick="toggleGlobalIgnore()">Игнорировать все ошибки</button>
 
       <div style="height:8px"></div>
+      <button id="openRgbPickerBtn" class="btn-ghost" onclick="openRgbPickerModal()" style="width:100%;">🎨 RGB</button>
+
+      <div style="height:8px"></div>
       
 
       <!-- Issues and warnings panel -->
@@ -2137,6 +2140,25 @@ button, .button, input[type=button], input[type=submit] {
         <div class="error-modal-footer">
           <button class="btn-ghost" onclick="closeErrorWarningModal()">← Вернуться к коду</button>
           <button id="ignoreErrorsBtn" class="btn btn-danger" onclick="ignoreErrorsAndCompile()" disabled>Игнорировать (3с)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RGB picker modal -->
+  <div id="rgbPickerModal" style="display:none">
+    <div class="modal-backdrop" onclick="closeRgbPickerModal()">
+      <div class="modal" onclick="event.stopPropagation()" style="max-width:380px">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+          <h3 style="margin:0;">Выбор цвета</h3>
+          <button class="btn-ghost" onclick="closeRgbPickerModal()" title="Закрыть" style="padding:6px 10px;">✕</button>
+        </div>
+        <div style="margin-top:12px; display:flex; flex-direction:column; gap:12px;">
+          <input id="rgbColorInput" type="color" value="#ff0000" style="width:100%; height:48px; border:none; background:transparent; cursor:pointer;">
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input id="rgbColorValue" type="text" readonly value="#ff0000" style="flex:1; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.05); color:var(--white); font-family:'Consolas','Fira Code',monospace;">
+            <button class="btn" onclick="copyRgbValue()" style="padding:10px 14px;">📋</button>
+          </div>
         </div>
       </div>
     </div>
@@ -3650,7 +3672,8 @@ function createInstance(blockData){
       blockCfg: cfg || null,
       snappedPosition: null,
       snappedToBlock: null,
-      snappedToConnector: null
+      snappedToConnector: null,
+      wasMovedWithShift: false
     };
   });
 
@@ -3681,17 +3704,82 @@ document.addEventListener('mousemove', (e)=>{
     if(isAutoSnapBlocksEnabled() && !dragState.isDraggingSelection){
       const UNSNAP_DISTANCE = 80;
       if(dragState.snappedPosition){
-        const distanceFromSnap = Math.sqrt(
-          Math.pow(nx - dragState.snappedPosition.x, 2) + 
-          Math.pow(ny - dragState.snappedPosition.y, 2)
-        );
-        if(distanceFromSnap > UNSNAP_DISTANCE){
-          dragState.snappedPosition = null;
-          dragState.snappedToBlock = null;
-          dragState.snappedToConnector = null;
+        // If Shift is held and block is snapped, allow movement with constraints
+        if(e.shiftKey && dragState.snappedToBlock && dragState.snappedToConnector){
+          // Mark that block is being moved with Shift
+          dragState.wasMovedWithShift = true;
+          
+          const spacing = getBlockSpacing();
+          const flowchartType = getFlowchartType();
+          const snappedToBlockData = projectData.blocks.find(b => b.id === dragState.snappedToBlock);
+          const snappedToBlockEl = mainCanvas.querySelector(`.block[data-block-id="${dragState.snappedToBlock}"]`);
+          
+          if(snappedToBlockData && snappedToBlockEl){
+            const snappedToBlockRect = snappedToBlockEl.getBoundingClientRect();
+            const draggedBlockRect = dragState.el.getBoundingClientRect();
+            
+            // Check if snapped to output connector
+            // Horizontal: right (not right-top) or right-bottom
+            // Vertical: bottom
+            const isOutputConnector = flowchartType === 'horizontal' 
+              ? (dragState.snappedToConnector === 'right' || dragState.snappedToConnector === 'right-bottom')
+              : (dragState.snappedToConnector === 'bottom');
+            
+            // Check if snapped to body connector
+            // Horizontal: right-top
+            // Vertical: right
+            const isBodyConnector = flowchartType === 'horizontal'
+              ? (dragState.snappedToConnector === 'right-top')
+              : (dragState.snappedToConnector === 'right');
+            
+            if(isOutputConnector){
+              // Output connector: allow movement only on Y axis, keep X from snap position
+              nx = dragState.snappedPosition.x;
+              // Y can move freely (ny is already calculated from mouse movement)
+            } else if(isBodyConnector){
+              // Body connector: allow movement only on Y axis, but maintain minimum X distance
+              const bodySpacing = spacing * 1.5;
+              let minX;
+              
+              if(flowchartType === 'horizontal'){
+                // Horizontal: maintain spacing on X axis (body connector is on right-top)
+                minX = snappedToBlockData.x + snappedToBlockRect.width + bodySpacing;
+              } else {
+                // Vertical: maintain spacing on X axis (body connector is on right)
+                minX = snappedToBlockData.x + snappedToBlockRect.width + bodySpacing;
+              }
+              
+              // Fix X at minimum distance, allow Y movement only
+              nx = minX;
+              // Y can move freely (ny is already calculated from mouse movement)
+            }
+          }
         } else {
-          nx = dragState.snappedPosition.x;
-          ny = dragState.snappedPosition.y;
+          // Normal snap behavior: check distance from snap position
+          // If block was previously snapped (moved with Shift), restore to snap position
+          // Only unsnap if moved far away from snap position WITHOUT Shift
+          const distanceFromSnap = Math.sqrt(
+            Math.pow(nx - dragState.snappedPosition.x, 2) + 
+            Math.pow(ny - dragState.snappedPosition.y, 2)
+          );
+          
+          // Check if block was moved with Shift (track this in dragState)
+          const wasMovedWithShift = dragState.wasMovedWithShift || false;
+          
+          if(distanceFromSnap > UNSNAP_DISTANCE && !wasMovedWithShift){
+            // Moved far away without Shift - unsnap
+            dragState.snappedPosition = null;
+            dragState.snappedToBlock = null;
+            dragState.snappedToConnector = null;
+            dragState.wasMovedWithShift = false;
+          } else {
+            // Keep snapped: restore to snap position
+            // If was moved with Shift, always restore to snap position
+            nx = dragState.snappedPosition.x;
+            ny = dragState.snappedPosition.y;
+            // Clear the flag after restoring
+            dragState.wasMovedWithShift = false;
+          }
         }
       } else {
         const snapped = findSnapPosition(dragState.el, nx, ny);
@@ -6198,6 +6286,20 @@ async function saveRequirementsChanges(){
     button.textContent = originalText;
   }
 }
+async function resetRequirementsToDefault(){
+  const textarea = document.getElementById('requirementsEditor');
+  try {
+    const response = await fetch('/api/system/requirements/reset', { method:'POST' });
+    if(!response.ok) throw new Error('Сервер вернул ошибку ' + response.status);
+    const data = await response.json();
+    if(data.status !== 'success') throw new Error(data.message || 'Не удалось сбросить requirements.txt');
+    if(textarea) textarea.value = data.content || '';
+    return { success: true };
+  } catch (error) {
+    console.error('Не удалось сбросить requirements.txt', error);
+    return { success: false, message: error.message };
+  }
+}
 function showRequirementsStatusModal(type, title, message){
   const modal = document.getElementById('requirementsStatusModal');
   const titleEl = document.getElementById('requirementsStatusModalTitle');
@@ -6225,7 +6327,7 @@ function openResetSettingsModal(){
 function closeResetSettingsModal(){
   document.getElementById('resetSettingsModal').style.display = 'none';
 }
-function confirmResetSettings(){
+async function confirmResetSettings(){
   changeFlowchartType('vertical');
   const flowVertical = document.getElementById('flowchartTypeVertical');
   if(flowVertical) flowVertical.checked = true;
@@ -6297,10 +6399,17 @@ function confirmResetSettings(){
   const tssToggle = document.getElementById('tssSecurityToggle');
   if(tssToggle) tssToggle.checked = true;
 
+  const resetRequirementsResult = await resetRequirementsToDefault();
   closeResetSettingsModal();
 
   if(typeof showNotification === 'function'){
-    showNotification('success', 'Настройки', 'Все настройки восстановлены по умолчанию.');
+    if(resetRequirementsResult && resetRequirementsResult.success){
+      showNotification('success', 'Настройки', 'Все настройки восстановлены по умолчанию. requirements.txt обновлен из static/req.');
+    } else if(resetRequirementsResult && !resetRequirementsResult.success){
+      showNotification('error', 'Настройки', 'Настройки сброшены, но не удалось обновить requirements.txt: ' + (resetRequirementsResult.message || 'неизвестная ошибка'));
+    } else {
+      showNotification('success', 'Настройки', 'Все настройки восстановлены по умолчанию.');
+    }
   }
 }
 function updateBlockHighlighting(){
@@ -7101,6 +7210,36 @@ function closeErrorWarningModal() {
   }
   modal.style.display = 'none';
 }
+
+function openRgbPickerModal(){
+  const modal = document.getElementById('rgbPickerModal');
+  const input = document.getElementById('rgbColorInput');
+  const val = document.getElementById('rgbColorValue');
+  if(!modal || !input || !val) return;
+  val.value = input.value || '#ffffff';
+  modal.style.display = 'block';
+}
+function closeRgbPickerModal(){
+  const modal = document.getElementById('rgbPickerModal');
+  if(modal) modal.style.display = 'none';
+}
+function copyRgbValue(){
+  const val = document.getElementById('rgbColorValue');
+  if(!val) return;
+  const text = val.value || '';
+  if(text && navigator.clipboard){
+    navigator.clipboard.writeText(text).catch(()=>{});
+  }
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+  const input = document.getElementById('rgbColorInput');
+  const val = document.getElementById('rgbColorValue');
+  if(input && val){
+    input.addEventListener('input', ()=>{
+      val.value = input.value || '';
+    });
+  }
+});
 
 /* Compile blocked modal handlers */
 function showCompileBlockedModal(errorCount){

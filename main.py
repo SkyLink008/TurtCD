@@ -24,6 +24,7 @@ BLOCKS_CONFIG_PATH = 'blocks_config.json'
 LICENSE_FILE_PATH = 'license.txt'
 LICENSE_ACCEPT_MARKER = '.turtcd_license.accepted'
 REQUIREMENTS_FILE_PATH = 'requirements.txt'
+DEFAULT_REQUIREMENTS_SOURCE = os.path.join('static', 'req')
 
 DEFAULT_BLOCKS_CONFIG = {
     "categories": [
@@ -247,6 +248,23 @@ def save_requirements_file():
         return jsonify({"status": "success"})
     except Exception as exc:
         return jsonify({"status": "error", "message": f'Не удалось сохранить requirements.txt: {exc}'}), 500
+
+
+@app.route('/api/system/requirements/reset', methods=['POST'])
+def reset_requirements_file():
+    try:
+        if not os.path.exists(DEFAULT_REQUIREMENTS_SOURCE):
+            return jsonify({"status": "error", "message": "Файл static/req не найден"}), 404
+
+        with open(DEFAULT_REQUIREMENTS_SOURCE, 'r', encoding='utf-8') as src:
+            default_content = src.read()
+
+        with open(REQUIREMENTS_FILE_PATH, 'w', encoding='utf-8') as dst:
+            dst.write(default_content)
+
+        return jsonify({"status": "success", "content": default_content})
+    except Exception as exc:
+        return jsonify({"status": "error", "message": f'Не удалось сбросить requirements.txt: {exc}'}), 500
 
 
 def _default_template_payload(path_override=''):
