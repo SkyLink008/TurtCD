@@ -1557,7 +1557,13 @@ button, .button, input[type=button], input[type=submit] {
 
       <div class="mods-section">
         <div style="height:16px"></div>
-        <div class="panel-title">Модификации</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
+          <div class="panel-title" style="margin:0;">Модификации</div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" title="Активировать все модификации" onclick="enableAllMods()" style="width:26px; height:26px; border:2px solid #22c55e; background:transparent; color:#22c55e; border-radius:6px; font-weight:700; padding:0;">A</button>
+            <button type="button" title="Оставить только основную модификацию" onclick="disableAllNonCoreMods()" style="width:26px; height:26px; border:2px solid #9ca3af; background:transparent; color:#9ca3af; border-radius:6px; font-weight:700; padding:0;">O</button>
+          </div>
+        </div>
         <div id="modsPanel" class="mods-panel small"></div>
       </div>
     </div>
@@ -1766,30 +1772,6 @@ button, .button, input[type=button], input[type=submit] {
           <!-- Системные настройки -->
           <div style="flex:1; min-width:320px; padding:12px; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
             <div style="font-weight:700; font-size:14px; margin-bottom:12px; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px;">Системные</div>
-            
-            <div class="settings-subgroup" style="margin-bottom:16px; padding:12px; border:1px dashed rgba(255,255,255,0.4); border-radius:8px;">
-              <div style="font-weight:600; margin-bottom:6px">Тип блок-схемы</div>
-              <div style="display:flex; gap:8px; flex-direction:column">
-                <label style="display:flex; align-items:center; gap:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; cursor:pointer; border:2px solid transparent; transition:all 0.2s" 
-                       onmouseover="this.style.borderColor='var(--accent)'" 
-                       onmouseout="this.style.borderColor='transparent'">
-                  <input type="radio" name="flowchartType" value="vertical" id="flowchartTypeVertical" onchange="changeFlowchartType('vertical')" style="cursor:pointer">
-                  <div style="flex:1">
-                    <div style="font-weight:600">Вертикальная</div>
-                    <div class="small" style="opacity:0.7">Классический вид сверху вниз</div>
-                  </div>
-                </label>
-                <label style="display:flex; align-items:center; gap:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; cursor:pointer; border:2px solid transparent; transition:all 0.2s" 
-                       onmouseover="this.style.borderColor='var(--accent)'" 
-                       onmouseout="this.style.borderColor='transparent'">
-                  <input type="radio" name="flowchartType" value="horizontal" id="flowchartTypeHorizontal" onchange="changeFlowchartType('horizontal')" style="cursor:pointer">
-                  <div style="flex:1">
-                    <div style="font-weight:600">Горизонтальная</div>
-                    <div class="small" style="opacity:0.7">Вид слева направо</div>
-                  </div>
-                </label>
-              </div>
-            </div>
             
             <div style="margin-bottom:12px; margin-top:16px;">
               <div style="font-weight:700; font-size:14px; margin-bottom:12px; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px;">Прочее:</div>
@@ -2158,6 +2140,29 @@ button, .button, input[type=button], input[type=submit] {
           <div style="display:flex; gap:8px; align-items:center;">
             <input id="rgbColorValue" type="text" readonly value="#ff0000" style="flex:1; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.05); color:var(--white); font-family:'Consolas','Fira Code',monospace;">
             <button class="btn" onclick="copyRgbValue()" style="padding:10px 14px;">📋</button>
+          </div>
+
+          <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:8px; display:flex; flex-direction:column; gap:10px;">
+            <div style="font-weight:600;">Стиль текста</div>
+            <div style="display:flex; gap:8px;">
+              <select id="rgbFontSelector" style="flex:1; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.28); background:#0f172a; color:#e5e7eb;">
+                <option value="Arial" selected style="background:#0f172a; color:#e5e7eb;">Arial</option>
+                <option value="Segoe UI" style="background:#0f172a; color:#e5e7eb;">Segoe UI</option>
+                <option value="Roboto" style="background:#0f172a; color:#e5e7eb;">Roboto</option>
+                <option value="Courier New" style="background:#0f172a; color:#e5e7eb;">Courier New</option>
+                <option value="Times New Roman" style="background:#0f172a; color:#e5e7eb;">Times New Roman</option>
+                <option value="Tahoma" style="background:#0f172a; color:#e5e7eb;">Tahoma</option>
+                <option value="Verdana" style="background:#0f172a; color:#e5e7eb;">Verdana</option>
+                <option value="Monospace" style="background:#0f172a; color:#e5e7eb;">Monospace</option>
+              </select>
+              <input id="rgbFontSize" type="number" min="6" max="72" value="14" style="width:80px; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.04); color:var(--white);" />
+            </div>
+            <div id="rgbFontPreview" style="padding:10px; border-radius:8px; border:1px dashed rgba(255,255,255,0.25); background:rgba(255,255,255,0.03); color:var(--white);">
+              Это простой пример выбранного вами стиля !
+            </div>
+            <div id="rgbFontInfo" style="padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.02); color:var(--white); font-family:'Consolas','Fira Code',monospace; font-size:13px;">
+              Arial, 14
+            </div>
           </div>
         </div>
       </div>
@@ -2977,6 +2982,29 @@ function getEnabledMods(){
 function setModEnabled(modId, value){
   enabledMods[modId] = value;
   try{ localStorage.setItem('turtcd_enabled_mods', JSON.stringify(enabledMods)); }catch(e){}
+  renderModsPanel();
+  renderPalette();
+  updateGlobalIgnoreButtonState();
+}
+function enableAllMods(){
+  const mods = summarizeMods();
+  const state = getEnabledMods();
+  mods.forEach(m=>{ state[m.modId] = true; });
+  try{ localStorage.setItem('turtcd_enabled_mods', JSON.stringify(state)); }catch(e){}
+  enabledMods = state;
+  renderModsPanel();
+  renderPalette();
+  updateGlobalIgnoreButtonState();
+}
+function disableAllNonCoreMods(){
+  const mods = summarizeMods();
+  const state = getEnabledMods();
+  mods.forEach(m=>{
+    if(m.modId === 'core') state[m.modId] = true;
+    else state[m.modId] = false;
+  });
+  try{ localStorage.setItem('turtcd_enabled_mods', JSON.stringify(state)); }catch(e){}
+  enabledMods = state;
   renderModsPanel();
   renderPalette();
   updateGlobalIgnoreButtonState();
@@ -6016,8 +6044,12 @@ function closeSettingsModal(){
   document.getElementById('settingsModal').style.display = 'none';
 }
 function changeFlowchartType(type){
-  localStorage.setItem('flowchartType', type);
-  // Recreate all blocks with new connector positions
+  // Always vertical; ignore requested type
+  const target = 'vertical';
+  const current = localStorage.getItem('flowchartType') || 'vertical';
+  if(current === target) return;
+  localStorage.setItem('flowchartType', target);
+  // Recreate all blocks with new connector positions (no-op if already vertical)
   const blocks = projectData.blocks.map(b => b);
   projectData.blocks = [];
   mainCanvas.querySelectorAll('.block').forEach(el => el.remove());
@@ -6316,7 +6348,7 @@ function closeRequirementsStatusModal(){
   if(modal) modal.style.display = 'none';
 }
 function getFlowchartType(){
-  return localStorage.getItem('flowchartType') || 'vertical';
+  return 'vertical';
 }
 function isArrowInversionEnabled(){
   return localStorage.getItem('arrowInversion') === 'true';
@@ -7217,6 +7249,7 @@ function openRgbPickerModal(){
   const val = document.getElementById('rgbColorValue');
   if(!modal || !input || !val) return;
   val.value = input.value || '#ffffff';
+  updateRgbFontPreview();
   modal.style.display = 'block';
 }
 function closeRgbPickerModal(){
@@ -7231,6 +7264,19 @@ function copyRgbValue(){
     navigator.clipboard.writeText(text).catch(()=>{});
   }
 }
+function updateRgbFontPreview(){
+  const fontSel = document.getElementById('rgbFontSelector');
+  const fontSizeEl = document.getElementById('rgbFontSize');
+  const preview = document.getElementById('rgbFontPreview');
+  const info = document.getElementById('rgbFontInfo');
+  if(!fontSel || !fontSizeEl || !preview || !info) return;
+  const font = fontSel.value || 'Arial';
+  const size = Math.max(6, Math.min(72, parseInt(fontSizeEl.value || '14', 10)));
+  preview.style.fontFamily = font;
+  preview.style.fontSize = size + 'px';
+  info.textContent = `${font}, ${size}`;
+  fontSizeEl.value = size;
+}
 document.addEventListener('DOMContentLoaded', ()=>{
   const input = document.getElementById('rgbColorInput');
   const val = document.getElementById('rgbColorValue');
@@ -7239,6 +7285,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
       val.value = input.value || '';
     });
   }
+  const fontSel = document.getElementById('rgbFontSelector');
+  const fontSizeEl = document.getElementById('rgbFontSize');
+  if(fontSel) fontSel.addEventListener('change', updateRgbFontPreview);
+  if(fontSizeEl) fontSizeEl.addEventListener('input', updateRgbFontPreview);
+  updateRgbFontPreview();
 });
 
 /* Compile blocked modal handlers */
