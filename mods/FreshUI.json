@@ -222,7 +222,7 @@
           "name": "Запустить в режиме отладчика (сетка)",
           "type": "action",
           "color": "#4682B4",
-          "code": "{name} = QWidget()\n{name}.setWindowTitle(\"Debug grid\")\n{name}.resize(500, 400)\n\nstep_value = int({step}) if str({step}).isdigit() else 20\nstep_value = max(4, min(step_value, 200))\n\npixmap = QPixmap(step_value, step_value)\npixmap.fill(Qt.transparent)\n_p = QPainter(pixmap)\n_p.setPen(QPen(QColor(255, 255, 255, 25)))\n_p.drawLine(0, 0, step_value, 0)\n_p.drawLine(0, 0, 0, step_value)\n_p.end()\n\npal = QPalette()\npal.setBrush(QPalette.Window, QBrush(pixmap))\n{name}.setAutoFillBackground(True)\n{name}.setPalette(pal)\n\ncoord_label = QLabel(\"x=0 y=0\", {name})\ncoord_label.move(10, 10)\ncoord_label.setStyleSheet(\"color: #ffffff; background: rgba(0,0,0,0.35); padding: 4px 8px; border-radius: 6px;\")\ncoord_label.adjustSize()\n\n{name}.setMouseTracking(True)\ncoord_label.setMouseTracking(True)\n\n# Обновляем координаты курсора\n{name}.mouseMoveEvent = lambda e: (coord_label.setText(f\"x={int(e.position().x())} y={int(e.position().y())}\"), coord_label.adjustSize())\n\n# Копирование координат по клику\n{name}.mousePressEvent = lambda e: QApplication.clipboard().setText(coord_label.text())\n\n{name}.show()\n\n",
+          "code": "{name} = QWidget()\n{name}.setWindowTitle(\"Debug grid\")\n{name}.resize(500, 400)\n\nstep_value = int({step}) if str({step}).isdigit() else 20\nstep_value = max(4, min(step_value, 200))\n\npixmap = QPixmap(step_value, step_value)\npixmap.fill(Qt.transparent)\n_p = QPainter(pixmap)\n_p.setPen(QPen(QColor(255, 255, 255, 25)))\n_p.drawLine(0, 0, step_value, 0)\n_p.drawLine(0, 0, 0, step_value)\n_p.end()\n\npal = QPalette()\npal.setBrush(QPalette.Window, QBrush(pixmap))\n{name}.setAutoFillBackground(True)\n{name}.setPalette(pal)\n\ncoord_label = QLabel(\"x=0 y=0\", {name})\ncoord_label.move(10, 10)\ncoord_label.setStyleSheet(\"color: #ffffff; background: rgba(0,0,0,0.35); padding: 4px 8px; border-radius: 6px;\")\ncoord_label.adjustSize()\n\n{name}.setMouseTracking(True)\ncoord_label.setMouseTracking(True)\n\n# Обновляем координаты курсора\n{name}.mouseMoveEvent = lambda e: (coord_label.setText(f\"x={int(e.position().x())} y={int(e.position().y())}\"), coord_label.adjustSize())\n\n# Копирование координат по клику\n{name}.mousePressEvent = lambda e: QApplication.clipboard().setText(coord_label.text())\n\n{name}.show()\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -236,7 +236,7 @@
               "label": "",
               "type": "text",
               "required": true,
-              "placeholder": "20"
+              "placeholder": "step"
             }
           ],
           "width": 200,
@@ -255,7 +255,7 @@
           "name": "Создать цветную текстовую метку",
           "type": "action",
           "color": "#4682B4",
-          "code": "{name} = QLabel({text})\n{name}.setFont(QFont({font}, int({size})))\n{name}.setStyleSheet('color: {color};')\n\n\n",
+          "code": "{name} = QLabel({text})\n{name}.setFont(QFont({font}, int({size})))\n{name}.setStyleSheet('color: {color};')\n\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -290,7 +290,7 @@
               "label": "",
               "type": "color",
               "required": true,
-              "placeholder": "#000000"
+              "placeholder": "color"
             }
           ],
           "width": 180,
@@ -567,10 +567,10 @@
         },
         {
           "id": "block_fresh_if_entry_disabled",
-          "name": "Если поле ввода заблокировано",
+          "name": "Поле ввода заблокировано",
           "type": "condition",
           "color": "#4682B4",
-          "code": "if not {name}.isEnabled():\n\n",
+          "code": "if not {name}.isEnabled():\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -585,10 +585,10 @@
         },
         {
           "id": "block_fresh_if_button_disabled",
-          "name": "Если кнопка заблокирована",
+          "name": "Кнопка заблокирована",
           "type": "condition",
           "color": "#4682B4",
-          "code": "if not {name}.isEnabled():\n\n",
+          "code": "if not {name}.isEnabled():\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -747,10 +747,10 @@
         },
         {
           "id": "block_fresh_if_textarea_disabled",
-          "name": "Если многострочное поле ввода заблокировано",
+          "name": "Многострочное поле ввода заблокировано",
           "type": "condition",
           "color": "#4682B4",
-          "code": "if not {name}.isEnabled():\n\n",
+          "code": "if not {name}.isEnabled():\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -996,7 +996,7 @@
           "name": "Создать canvas",
           "type": "action",
           "color": "#4682B4",
-          "code": "{name}_scene = QGraphicsScene()\n{name} = QGraphicsView({name}_scene)\n{name}.setBackgroundBrush(QColor({bg}))\n{name}.setSceneRect(0, 0, float({w}), float({h}))\n{name}.setFixedSize(int({w}) + 2, int({h}) + 2)\n\n",
+          "code": "{name}_scene = QGraphicsScene()\n{name} = QGraphicsView({name}_scene)\n{name}.setBackgroundBrush(QColor({bg}))\n{name}.setSceneRect(0, 0, float({w}), float({h}))\n{name}.setFixedSize(int({w}) + 2, int({h}) + 2)\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -1010,7 +1010,7 @@
               "label": "",
               "type": "text",
               "required": true,
-              "placeholder": "\"#ffffff\""
+              "placeholder": "bg"
             },
             {
               "name": "w",
@@ -1035,7 +1035,7 @@
           "name": "Отрисовать прямоугольник на canvas",
           "type": "action",
           "color": "#4682B4",
-          "code": "{name}.scene().addRect(float({x0}), float({y0}), float({x1})-float({x0}), float({y1})-float({y0}), QPen(Qt.NoPen), QColor({color}))\n\n",
+          "code": "{name}.scene().addRect(float({x0}), float({y0}), float({x1})-float({x0}), float({y1})-float({y0}), QPen(Qt.NoPen), QColor({color}))\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -1077,7 +1077,7 @@
               "label": "",
               "type": "text",
               "required": true,
-              "placeholder": "\"#ff0000\""
+              "placeholder": "color"
             }
           ],
           "width": 180,
@@ -1088,7 +1088,7 @@
           "name": "Отрисовать текст на canvas",
           "type": "action",
           "color": "#4682B4",
-          "code": "_text_item = {name}.scene().addText({text}, QFont({font}, int({size})))\n_text_item.setDefaultTextColor(QColor({color}))\n_text_item.setPos(float({x0}), float({y0}))\n\n",
+          "code": "_text_item = {name}.scene().addText({text}, QFont({font}, int({size})))\n_text_item.setDefaultTextColor(QColor({color}))\n_text_item.setPos(float({x0}), float({y0}))\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -1137,7 +1137,7 @@
               "label": "",
               "type": "text",
               "required": true,
-              "placeholder": "\"#000\""
+              "placeholder": "color"
             }
           ],
           "width": 180,
@@ -1148,7 +1148,7 @@
           "name": "Отрисовать линию на canvas",
           "type": "action",
           "color": "#4682B4",
-          "code": "_pen = QPen(QColor({color}))\n{name}.scene().addLine(float({x0}), float({y0}), float({x1}), float({y1}), _pen)\n\n",
+          "code": "_pen = QPen(QColor({color}))\n{name}.scene().addLine(float({x0}), float({y0}), float({x1}), float({y1}), _pen)\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -1190,7 +1190,7 @@
               "label": "",
               "type": "text",
               "required": true,
-              "placeholder": "\"#000\""
+              "placeholder": "color"
             }
           ],
           "width": 180,
@@ -1201,7 +1201,7 @@
           "name": "Отрисовать прерывистую линию на canvas",
           "type": "action",
           "color": "#4682B4",
-          "code": "_pen = QPen(QColor({color}))\n_pen.setStyle(Qt.DashLine)\n_pen.setDashPattern([float({dash}), float({dash})])\n{name}.scene().addLine(float({x0}), float({y0}), float({x1}), float({y1}), _pen)\n\n",
+          "code": "_pen = QPen(QColor({color}))\n_pen.setStyle(Qt.DashLine)\n_pen.setDashPattern([float({dash}), float({dash})])\n{name}.scene().addLine(float({x0}), float({y0}), float({x1}), float({y1}), _pen)\n\n\n",
           "fields": [
             {
               "name": "name",
@@ -1243,7 +1243,7 @@
               "label": "",
               "type": "text",
               "required": true,
-              "placeholder": "\"#000\""
+              "placeholder": "color"
             },
             {
               "name": "dash",
@@ -1289,8 +1289,20 @@
           "color": "#4682B4",
           "code": "{name} = QCheckBox({text})\n{name}.setChecked(False)\n\n",
           "fields": [
-            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "name" },
-            { "name": "text", "label": "", "type": "text", "required": true, "placeholder": "\"text\"" }
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            }
           ],
           "width": 180,
           "height": 80
@@ -1302,7 +1314,13 @@
           "color": "#4682B4",
           "code": "{name}.setDisabled(False)\n\n",
           "fields": [
-            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "checkbox"
+            }
           ],
           "width": 180,
           "height": 80
@@ -1314,19 +1332,31 @@
           "color": "#4682B4",
           "code": "{name}.setDisabled(True)\n\n",
           "fields": [
-            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "checkbox"
+            }
           ],
           "width": 180,
           "height": 80
         },
         {
           "id": "block_fresh_if_checkbox_disabled",
-          "name": "Если checkbox заблокирован",
+          "name": "checkbox заблокирован",
           "type": "condition",
           "color": "#4682B4",
-          "code": "if not {name}.isEnabled():\n\n",
+          "code": "if not {name}.isEnabled():\n\n\n",
           "fields": [
-            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "checkbox"
+            }
           ],
           "width": 180,
           "height": 80
@@ -1338,7 +1368,13 @@
           "color": "#4682B4",
           "code": "{name}.setChecked(True)\n\n",
           "fields": [
-            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "checkbox"
+            }
           ],
           "width": 180,
           "height": 80
@@ -1350,7 +1386,13 @@
           "color": "#4682B4",
           "code": "{name}.setChecked(False)\n\n",
           "fields": [
-            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "checkbox"
+            }
           ],
           "width": 180,
           "height": 80
@@ -1362,7 +1404,13 @@
           "color": "#4682B4",
           "code": "if {name}.isChecked():\n\n",
           "fields": [
-            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "checkbox" }
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "checkbox"
+            }
           ],
           "width": 180,
           "height": 80
@@ -1382,9 +1430,27 @@
           "color": "#4682B4",
           "code": "{name} = QProgressBar()\n{name}.setRange(0, 100)\n{name}.setValue(int({value}))\n{name}.setFixedSize(int({width}), 20)\n\n",
           "fields": [
-            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "name" },
-            { "name": "width", "label": "", "type": "text", "required": true, "placeholder": "width" },
-            { "name": "value", "label": "", "type": "text", "required": true, "placeholder": "0-100" }
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "width",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "width"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "0-100"
+            }
           ],
           "width": 180,
           "height": 80
@@ -1394,10 +1460,22 @@
           "name": "Установить прогресс (%)",
           "type": "action",
           "color": "#4682B4",
-          "code": "{name}.setValue(int({value}))\n\n",
+          "code": "{name}.setValue(int({value}))\n\n\n",
           "fields": [
-            { "name": "name", "label": "", "type": "value", "required": true, "placeholder": "progress" },
-            { "name": "value", "label": "", "type": "text", "required": true, "placeholder": "0-100" }
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "0-100"
+            }
           ],
           "width": 180,
           "height": 80
