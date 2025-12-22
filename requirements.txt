@@ -1,5 +1,2 @@
 Flask
-telebot
 pyinstaller
-PySide6
-arcade

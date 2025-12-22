@@ -1543,5 +1543,11 @@
         }
       ]
     }
-  ]
+  ],
+  "license": {
+    "key": "TURTCD-224B592278734D10",
+    "modId": "blocks_config",
+    "modName": "Система",
+    "licensed": true
+  }
 }
