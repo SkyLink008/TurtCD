@@ -1,0 +1,402 @@
+{
+  "categories": [
+    {
+      "id": "category_23b3a057",
+      "name": "Telebot - Управление",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_5cc5d123",
+          "name": "Инициализировать telebot",
+          "type": "action",
+          "color": "#008040",
+          "code": "import telebot\nfrom telebot import types\nbot = telebot.TeleBot('{token}')\n\n\n",
+          "fields": [
+            {
+              "name": "token",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "bot token"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_4458c56b",
+          "name": "Запустить бота",
+          "type": "action",
+          "color": "#008040",
+          "code": "bot.polling(none_stop=True, interval=0)\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_e34fa5bf",
+          "name": "Получить username пользователя",
+          "type": "action",
+          "color": "#008040",
+          "code": "{output} = message.from_user.username\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_25915ea2",
+          "name": "Получить name пользователя",
+          "type": "action",
+          "color": "#008040",
+          "code": "{output} = message.from_user.first_name\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_a45bbed5",
+          "name": "Получить id пользователя",
+          "type": "action",
+          "color": "#008040",
+          "code": "{output} = message.from_user.id\n\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_b9e75793",
+      "name": "Telebot - Слушатель",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_e77e3a15",
+          "name": "Объявить слушателя",
+          "type": "loop",
+          "color": "#008040",
+          "code": "@bot.message_handler(content_types=['text'])\ndef get_text_messages(message):\n\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_a79b4f57",
+          "name": "Сравнить сообщение от слушателя",
+          "type": "condition",
+          "color": "#008040",
+          "code": "if message.text == {content}:\n\n",
+          "fields": [
+            {
+              "name": "content",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"content\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_01441389",
+          "name": "Отправить сообщение",
+          "type": "action",
+          "color": "#008040",
+          "code": "bot.send_message(message.from_user.id, {message})\n\n",
+          "fields": [
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"message\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_0073e2ed",
+          "name": "Ответить на сообщение пользователя",
+          "type": "action",
+          "color": "#008040",
+          "code": "bot.reply_to(message, {message})\n",
+          "fields": [
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"message\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_b4c887d8",
+          "name": "Создать шаг",
+          "type": "loop",
+          "color": "#008040",
+          "code": "def {step}(message):\n    {value} = message.text\n\n",
+          "fields": [
+            {
+              "name": "step",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "step name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output value"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_784a6c8c",
+          "name": "Перейти к шагу",
+          "type": "action",
+          "color": "#008040",
+          "code": "bot.register_next_step_handler(message, {step})\n\n\n",
+          "fields": [
+            {
+              "name": "step",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "step"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_64544d3b",
+          "name": "Отправить фото",
+          "type": "action",
+          "color": "#008040",
+          "code": "photo = open(path, \"rb\")\nbot.send_photo(message.chat.id, photo, caption={text})\nphoto.close()\n\n\n\n\n\n\n",
+          "fields": [
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"destription\""
+            },
+            {
+              "name": "path",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "\"path\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_dfb788e8",
+      "name": "Telebot - Обработчик",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_36c13e27",
+          "name": "Обрабочик команды",
+          "type": "condition",
+          "color": "#008040",
+          "code": "@bot.message_handler(commands=['{command}'])\ndef handle_{command}(message):\n\n",
+          "fields": [
+            {
+              "name": "command",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "command"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_c2950246",
+      "name": "Telebot - Клавиатура",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_5a25e02d",
+          "name": "Инициализация callback слушателя",
+          "type": "loop",
+          "color": "#008040",
+          "code": "@bot.callback_query_handler(func=lambda call: True)\ndef callback_worker(message):\n\n\n\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_66a5d5a9",
+          "name": "Сравнить callback",
+          "type": "condition",
+          "color": "#008040",
+          "code": "if message.data == \"{callback}\":\n\n\n",
+          "fields": [
+            {
+              "name": "callback",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "callback"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_c58c3125",
+          "name": "Создать клавиатуру",
+          "type": "action",
+          "color": "#008040",
+          "code": "{name} = types.InlineKeyboardMarkup()\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_1b7997ab",
+          "name": "Создать кнопку",
+          "type": "action",
+          "color": "#008040",
+          "code": "{name} = types.InlineKeyboardButton(text={text}, callback_data=\"{data}\")\n\n",
+          "fields": [
+            {
+              "name": "data",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "callback"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            },
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_fcee9e1b",
+          "name": "Добавить кнопку в клавиатуру",
+          "type": "action",
+          "color": "#008040",
+          "code": "{ke_n}.add({bu_n})\n\n",
+          "fields": [
+            {
+              "name": "ke_n",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "keyboard name"
+            },
+            {
+              "name": "bu_n",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "button name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_c1a187d3",
+          "name": "Отправить сообщение с клавиатурой",
+          "type": "action",
+          "color": "#008040",
+          "code": "bot.send_message(message.from_user.id, text={text}, reply_markup={keyb})\n\n",
+          "fields": [
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            },
+            {
+              "name": "keyb",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "keyboard"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    }
+  ],
+  "license": {
+    "key": "TURTCD-42264216A2A2A008",
+    "modId": "Telebot",
+    "modName": "Telebot",
+    "licensed": true
+  }
+}

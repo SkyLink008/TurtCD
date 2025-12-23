@@ -1,0 +1,1079 @@
+{
+  "categories": [
+    {
+      "id": "category_f7130daf",
+      "name": "UI - Окно приложения",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_75ef04dc",
+          "name": "Создать окно",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name} = Tk() \n{name}.title(\"{title}\") \n{name}.geometry(\"{width}x{height}\") \n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "title",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "title"
+            },
+            {
+              "name": "width",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "width"
+            },
+            {
+              "name": "height",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "height"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_3d9192d2",
+          "name": "Инициализировать UI",
+          "type": "header",
+          "color": "#5300a6",
+          "code": "from tkinter import *\nfrom tkinter import ttk\nfrom tkinter.scrolledtext import ScrolledText\nfrom tkinter.messagebox import showerror, showwarning, showinfo\nfrom tkinter import filedialog\nimport os\n\n\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_330df33f",
+          "name": "Инициализировать UI (action)",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "from tkinter import *\nfrom tkinter import ttk\nfrom tkinter.scrolledtext import ScrolledText\nfrom tkinter.messagebox import showerror, showwarning, showinfo\nfrom tkinter import filedialog\nimport os\n",
+          "fields": [],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_bf9da9a7",
+          "name": "Запуск окна",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.mainloop()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_ba3edfc8",
+          "name": "Разметить элемент",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.pack()\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_54695cf4",
+          "name": "Разместить элемент на X Y",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.place(x={x}, y={y})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "x",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "x"
+            },
+            {
+              "name": "y",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "y"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_bc73cba4",
+          "name": "Запретить масштабирование",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.resizable(False, False)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_8bc4e749",
+          "name": "Разрешить масштабирование",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.resizable(True, True)\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_acceab6d",
+          "name": "Установить прозрачность окна",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.attributes(\"-alpha\", {value})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "value",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "alpha"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_35ff827d",
+      "name": "UI - Текст \\ Изображения",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_f66b721c",
+          "name": "Инициализировать изображение",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name} = PhotoImage(file={path})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "path",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "path"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_1690f646",
+          "name": "Создать изображение",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name} = ttk.Label(image={image_name})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "image_name",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "image name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_11fe50c8",
+          "name": "Создать цветную текстовую метку",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name} = ttk.Label(text={text}, font=(\"{font}\", {size}), foreground=\"{color}\")\n\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "text"
+            },
+            {
+              "name": "font",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "font (Arial)"
+            },
+            {
+              "name": "size",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "size (16)"
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "color (HTML)"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_7faf387c",
+          "name": "Создать текстовую метку",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name} = ttk.Label(text={text}, font=(\"{font}\", {size}))\n\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            },
+            {
+              "name": "font",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "font (Arial)"
+            },
+            {
+              "name": "size",
+              "label": "",
+              "type": "number",
+              "required": true,
+              "placeholder": "font size (16)"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_e93a7954",
+          "name": "Изменить текст текстовой метки",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}[\"text\"] = {text}\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_2de334e5",
+      "name": "UI - Интерактив",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_7ae17e42",
+          "name": "Создать поле ввода",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name} = ttk.Entry(width={width})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "width",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "width"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_a01e8f74",
+          "name": "Получить введенный текст",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{output} = {name}.get()\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "name",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_56c6aa64",
+          "name": "Очистить поле ввода",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.delete(0, END)\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_4cdc92ba",
+          "name": "Вставить в поле ввода",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.insert(0, {text})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_244aa483",
+          "name": "Создать кнопку",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name} = ttk.Button(text={text}, command={function})\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            },
+            {
+              "name": "function",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "function"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_7028f650",
+      "name": "UI - Многострочное поле ввода",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_ccfc1ad8",
+          "name": "Создать многострочное поле ввода",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name} = ScrolledText(width={width},  height={height}, wrap=\"{wrap}\")\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "width",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "width"
+            },
+            {
+              "name": "height",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "height"
+            },
+            {
+              "name": "wrap",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "wrap (char / word)"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_a8783e94",
+          "name": "Очистить многострочное поле ввода",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.delete(\"0.0\", END)\n\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_d2ffd271",
+          "name": "Вставить в многострочное поле",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.insert(\"0.0\", {text})\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "text"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_8eff18c5",
+          "name": "Получить текст из многострочного поля",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{output} = {name}.get(\"1.0\", \"end\")\n\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            },
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_9d134ed7",
+      "name": "UI - Выпадающие списки",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_2054e9e5",
+          "name": "Создать выпадающий список",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}_list = {objects}\n{name} = ttk.Combobox(values={name}_list)\n{name}.set({name}_list[{noun}])\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "objects",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "objects"
+            },
+            {
+              "name": "noun",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "element by noun id"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_35364477",
+          "name": "Выбранный элемент списка",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{output} = {name}.get()\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_bccbe3e9",
+      "name": "UI - Всплывающие окна",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_6e00a19a",
+          "name": "Сообщить информацию",
+          "type": "action",
+          "color": "#9b0a64",
+          "code": "showinfo(title={title}, message={message})\n",
+          "fields": [
+            {
+              "name": "title",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"title\""
+            },
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"message\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_135060be",
+          "name": "Сообщить о опасности",
+          "type": "action",
+          "color": "#9b0a64",
+          "code": "showwarning(title={title}, message={message})\n",
+          "fields": [
+            {
+              "name": "title",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"title\""
+            },
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"message\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_b578f3e4",
+          "name": "Сообщить о ошибке",
+          "type": "action",
+          "color": "#9b0a64",
+          "code": "showerror(title={title}, message={message})\n",
+          "fields": [
+            {
+              "name": "title",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"title\""
+            },
+            {
+              "name": "message",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"message\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_d3ad50da",
+          "name": "Запросить путь до файла",
+          "type": "action",
+          "color": "#9b0a64",
+          "code": "{output} = filedialog.askopenfilename()\n\n\n",
+          "fields": [
+            {
+              "name": "output",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "output"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    },
+    {
+      "id": "category_f54dfde7",
+      "name": "UI - Canvas",
+      "color": "#3498db",
+      "collapsed": true,
+      "blocks": [
+        {
+          "id": "block_04aa9f4c",
+          "name": "Создать canvas",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name} = Canvas(bg=\"{bg}\", width={w}, height={h})\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            },
+            {
+              "name": "bg",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "bg"
+            },
+            {
+              "name": "w",
+              "label": "",
+              "type": "number",
+              "required": true,
+              "placeholder": "width"
+            },
+            {
+              "name": "h",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "height"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_70973a4e",
+          "name": "Отрисовать прямоугольник на canvas",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.create_rectangle({x0}, {y0}, {x1}, {y1}, fill=\"{color}\")\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name (canvas)"
+            },
+            {
+              "name": "x0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X0"
+            },
+            {
+              "name": "y0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y0"
+            },
+            {
+              "name": "x1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X1"
+            },
+            {
+              "name": "y1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y1"
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "color"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_c923cb75",
+          "name": "Отрисовать текст на canvas",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.create_text({x0}, {y0}, font=\"{font} {size}\", text={text}, fill=\"{color}\")\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name (canvas)"
+            },
+            {
+              "name": "x0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X"
+            },
+            {
+              "name": "y0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y"
+            },
+            {
+              "name": "font",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "font (Arial)"
+            },
+            {
+              "name": "size",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "size (14)"
+            },
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"text\""
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "color"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_1306e6a7",
+          "name": "Отрисовать линию на canvas",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.create_line({x0}, {y0}, {x1}, {y1}, fill=\"{color}\")\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name (canvas)"
+            },
+            {
+              "name": "x0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X0"
+            },
+            {
+              "name": "y0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y0"
+            },
+            {
+              "name": "x1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X1"
+            },
+            {
+              "name": "y1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y1"
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "color"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_59862e5d",
+          "name": "Отрисовать прерывистую линию на canvas",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.create_line({x0}, {y0}, {x1}, {y1}, fill=\"{color}\", dash = {dash})\n\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name (canvas)"
+            },
+            {
+              "name": "x0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X0"
+            },
+            {
+              "name": "y0",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y0"
+            },
+            {
+              "name": "x1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "X1"
+            },
+            {
+              "name": "y1",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "Y1"
+            },
+            {
+              "name": "color",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "color"
+            },
+            {
+              "name": "dash",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "dash ( != 0)"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_c385efd5",
+          "name": "Очистить canvas",
+          "type": "action",
+          "color": "#5300a6",
+          "code": "{name}.delete(\"all\")\n\n\n",
+          "fields": [
+            {
+              "name": "name",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "name"
+            }
+          ],
+          "width": 180,
+          "height": 80
+        }
+      ]
+    }
+  ],
+  "license": {
+    "key": "TURTCD-09796A94E34FEBAD",
+    "modId": "UI",
+    "modName": "UI",
+    "licensed": true
+  }
+}
