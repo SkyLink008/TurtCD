@@ -1249,6 +1249,33 @@
 [data-theme="pinkviolet"] .context-menu-item { color: #fff1fa; }
 [data-theme="pinkviolet"] .context-menu-item:hover { background: #ff91e9; color: #2a133d; }
 
+/* Theme: Red */
+[data-theme="red"] {
+  --bg: #0f0f0f;
+  --panel: #111111;
+  --accent: #ff2121;
+  --accent-2: #ee5959;
+  --card: #0b0b0b;
+  --muted: #ee5959;
+  --white: #ff2121;
+}
+[data-theme="red"] body { background: #0b0b0b; color: var(--white); }
+[data-theme="red"] .block,
+[data-theme="red"] .block-header,
+[data-theme="red"] .block-content,
+[data-theme="red"] .block-item {
+  background: #111 !important;
+  color: #ff2121 !important;
+  border: 1px solid #ff2121 !important;
+}
+[data-theme="red"] .color-dot { background: #ff2121 !important; }
+[data-theme="red"] .connection-line { background: linear-gradient(90deg, #ff2121, #ee5959) !important; }
+[data-theme="red"] .theme-option.active { background: #ff2121; color: #111; }
+[data-theme="red"] .context-menu { background: #111; color: #ff2121; border-color: #ff2121; }
+[data-theme="red"] .context-menu-item { color: #ff2121; }
+[data-theme="red"] .context-menu-item:hover { background: #ff2121; color: #000; }
+
+
 /* Fixed themes and context menu */
 
 /* Context menu with white text for all themes */
@@ -1483,6 +1510,7 @@ button, .button, input[type=button], input[type=submit] {
             <option value="mono">⬛ Моно</option>
             <option value="halloween">🎃 Хэллоуин</option>
             <option value="pinkviolet">🌸 Розово-фиолетовая</option>
+            <option value="red">🔴 Красная</option>
           </select>
         </div>
       </div>
@@ -2887,8 +2915,6 @@ async function loadBlocksConfig(){
   try {
     const r = await fetch('/api/blocks');
     blocksConfig = await r.json();
-    // Убеждаемся, что modsMetadata существует
-    if(!blocksConfig.modsMetadata) blocksConfig.modsMetadata = {};
   } catch(err){
     console.error('Не удалось загрузить /api/blocks', err);
     // fallback example config so UI is usable
@@ -2898,8 +2924,7 @@ async function loadBlocksConfig(){
           { id: 'start', name: 'Start', color: '#0ea5a4', type: 'header', width: 220, height: 60, fields: [] },
           { id: 'print', name: 'Print', color: '#8b5cf6', type: 'classic', width: 160, height: 80, fields: [{ name: 'text', label: 'Text' }] },
         ] }
-      ],
-      modsMetadata: {}
+      ]
     };
   }
   renderPalette();
@@ -2984,39 +3009,12 @@ function disableAllNonCoreMods(){
   renderPalette();
   updateGlobalIgnoreButtonState();
 }
-function checkModLicense(modId){
-  // Проверяем наличие лицензии в загруженных модах
-  if(!blocksConfig) return false;
-  
-  // Проверяем метаданные модификаций
-  const modsMetadata = blocksConfig.modsMetadata || {};
-  const modMeta = modsMetadata[modId];
-  if(!modMeta || !modMeta.license) return false;
-  
-  // Проверяем валидность лицензии
-  const license = modMeta.license;
-  if(!license.licensed || !license.key || license.modId !== modId) return false;
-  
-  // Проверяем формат ключа (TURTCD-XXXXXXXXXXXX)
-  if(!license.key.startsWith('TURTCD-') || license.key.length !== 23) return false;
-  
-  return true;
-}
-
 function summarizeMods(){
   const byMod = {};
   for(const cat of (blocksConfig.categories||[])){
     const modId = cat.modId || 'core';
     const modName = cat.modName || (modId==='core'?'Основные':'Мод');
-    if(!byMod[modId]) {
-      byMod[modId] = { 
-        modId, 
-        modName, 
-        groups: 0, 
-        blocks: 0,
-        licensed: checkModLicense(modId)
-      };
-    }
+    if(!byMod[modId]) byMod[modId] = { modId, modName, groups: 0, blocks: 0 };
     byMod[modId].groups += 1;
     byMod[modId].blocks += (cat.blocks||[]).length;
   }
@@ -3046,36 +3044,8 @@ function renderModsPanel(){
     row.style.alignItems = 'center';
     row.style.justifyContent = 'space-between';
     row.style.padding = '6px 0';
-    
-    // Контейнер для информации с галочкой лицензии
-    const infoContainer = document.createElement('div');
-    infoContainer.style.display = 'flex';
-    infoContainer.style.alignItems = 'center';
-    infoContainer.style.gap = '8px';
-    
-    // Галочка лицензии (если есть)
-    if(m.licensed){
-      const licenseBadge = document.createElement('div');
-      licenseBadge.innerHTML = '✓';
-      licenseBadge.style.width = '20px';
-      licenseBadge.style.height = '20px';
-      licenseBadge.style.borderRadius = '50%';
-      licenseBadge.style.backgroundColor = '#22c55e';
-      licenseBadge.style.color = 'white';
-      licenseBadge.style.display = 'flex';
-      licenseBadge.style.alignItems = 'center';
-      licenseBadge.style.justifyContent = 'center';
-      licenseBadge.style.fontSize = '12px';
-      licenseBadge.style.fontWeight = 'bold';
-      licenseBadge.style.flexShrink = '0';
-      licenseBadge.title = 'Лицензированная модификация';
-      infoContainer.appendChild(licenseBadge);
-    }
-    
     const info = document.createElement('div');
     info.textContent = `${m.modName} — групп: ${m.groups}, блоков: ${m.blocks}`;
-    infoContainer.appendChild(info);
-    
     const toggle = document.createElement('label');
     toggle.style.display = 'inline-flex'; 
     toggle.style.alignItems = 'center'; 
@@ -3112,6 +3082,7 @@ function renderModsPanel(){
     // Add click handler
     toggle.addEventListener('click', (e) => {
       e.preventDefault();
+      playButtonSound('toggle');
       const newState = !(state[m.modId] !== false);
       setModEnabled(m.modId, newState);
       
@@ -3122,7 +3093,7 @@ function renderModsPanel(){
     });
     toggle.appendChild(switchContainer); 
     toggle.appendChild(span);
-    row.appendChild(infoContainer); 
+    row.appendChild(info); 
     row.appendChild(toggle);
     panel.appendChild(row);
   });
@@ -8189,8 +8160,21 @@ function confirmUnsavedDiscard(){
   if (typeof next === 'function') next();
 }
 
+/* ========== Sound system ========== */
+// Система звуков вынесена в отдельный файл /static/js/sounds.js
+
 /* ========== Custom notifications ========== */
 function showNotification(type, title, message, duration = 4000) {
+  // Воспроизводим звук уведомления (playSound из sounds.js)
+  const soundMap = {
+    'success': 'notification_success',
+    'error': 'notification_error',
+    'warning': 'notification_warning',
+    'info': 'notification_info'
+  };
+  const soundName = soundMap[type] || 'notification_info';
+  playSound(soundName);
+  
   const notification = document.createElement('div');
   notification.className = `notification ${type}`;
   notification.innerHTML = `
@@ -8840,4 +8824,5 @@ document.addEventListener('keydown', function(e) {
       </div>
     </div>
   </div>
+<script src="/static/js/sounds.js"></script>
 </html>

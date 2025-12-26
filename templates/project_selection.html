@@ -1741,7 +1741,18 @@ function deleteMod(encodedModName) {
 }
 
 /* Utility functions */
-function showNotification(type, title, message) {
+function showNotification(type, title, message, duration = 4000) {
+  // Воспроизводим звук уведомления (playSound из sounds.js)
+  const soundMap = {
+    'success': 'notification_success',
+    'error': 'notification_error',
+    'warning': 'notification_warning',
+    'info': 'notification_info'
+  };
+  const soundName = soundMap[type] || 'notification_info';
+  if (typeof playSound === 'function') {
+    playSound(soundName);
+  }
   const notification = document.createElement('div');
   notification.className = `notification ${type}`;
   notification.innerHTML = `
@@ -1758,7 +1769,7 @@ function showNotification(type, title, message) {
   setTimeout(() => {
     notification.classList.remove('show');
     setTimeout(() => notification.remove(), 300);
-  }, 5000);
+  }, duration);
 }
 
 function escapeHtml(text) {
@@ -1926,6 +1937,7 @@ function renderSocialLinks(links) {
   }
 }
 </script>
+<script src="/static/js/sounds.js"></script>
 </body>
 <!-- License badge element -->
 <div id="licenseBadge" class="license-badge">

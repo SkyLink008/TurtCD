@@ -94,29 +94,29 @@ def load_blocks_config():
                     try:
                         with open(mod_path, 'r', encoding='utf-8') as f:
                             mod_config = json.load(f)
-                            mod_id = os.path.splitext(filename)[0]
-                            mod_name = mod_config.get('name', mod_id)
-                            
-                            # Сохраняем метаданные модификации, включая лицензию
-                            mods_metadata[mod_id] = {
-                                'modId': mod_id,
-                                'modName': mod_name,
-                                'license': mod_config.get('license')
-                            }
-                            
-                            # Merge categories from mod config
-                            if 'categories' in mod_config:
-                                for cat in mod_config['categories']:
-                                    cat.setdefault('modId', mod_id)
-                                    cat.setdefault('modName', mod_name)
-                                config['categories'].extend(mod_config['categories'])
+                        mod_id = os.path.splitext(filename)[0]
+                        mod_name = mod_config.get('name', mod_id)
+                        
+                        # Сохраняем метаданные модификации, включая лицензию
+                        mods_metadata[mod_id] = {
+                            'modId': mod_id,
+                            'modName': mod_name,
+                            'license': mod_config.get('license')
+                        }
+                        
+                        # Merge categories from mod config
+                        if 'categories' in mod_config:
+                            for cat in mod_config['categories']:
+                                cat.setdefault('modId', mod_id)
+                                cat.setdefault('modName', mod_name)
+                            config['categories'].extend(mod_config['categories'])
                     except Exception as e:
                         print(f"Ошибка загрузки мода {filename}: {e}")
-    
-    # Добавляем метаданные модификаций в конфигурацию
-        config['modsMetadata'] = mods_metadata
     else:
         print("Загрузка модов отключена в конфигурации")
+    
+    # Добавляем метаданные модификаций в конфигурацию
+    config['modsMetadata'] = mods_metadata
     
     return config
 
