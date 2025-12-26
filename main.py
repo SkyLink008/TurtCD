@@ -1097,6 +1097,50 @@ def send_static(path):
     return send_from_directory('static', path)
 
 
+@app.route('/api/sound/volume', methods=['GET', 'POST'])
+def sound_volume():
+    volume_file = os.path.join('static', 'sound', 'volume.json')
+    
+    if request.method == 'GET':
+        # Чтение громкости
+        try:
+            if os.path.exists(volume_file):
+                with open(volume_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    volume = data.get('volume', 100)
+                    return jsonify({"status": "success", "volume": volume})
+            else:
+                # Создаем файл с громкостью по умолчанию
+                os.makedirs(os.path.dirname(volume_file), exist_ok=True)
+                default_data = {"volume": 100}
+                with open(volume_file, 'w', encoding='utf-8') as f:
+                    json.dump(default_data, f, ensure_ascii=False, indent=2)
+                return jsonify({"status": "success", "volume": 100})
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)})
+    
+    elif request.method == 'POST':
+        # Сохранение громкости
+        try:
+            data = request.get_json()
+            volume = data.get('volume', 100)
+            
+            # Ограничиваем значение от 0 до 100
+            volume = max(0, min(100, int(volume)))
+            
+            # Создаем директорию, если её нет
+            os.makedirs(os.path.dirname(volume_file), exist_ok=True)
+            
+            # Сохраняем громкость
+            volume_data = {"volume": volume}
+            with open(volume_file, 'w', encoding='utf-8') as f:
+                json.dump(volume_data, f, ensure_ascii=False, indent=2)
+            
+            return jsonify({"status": "success", "volume": volume})
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)})
+
+
 if __name__ == '__main__':
     os.makedirs('static', exist_ok=True)
     load_blocks_config()

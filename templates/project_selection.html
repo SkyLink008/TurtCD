@@ -145,6 +145,34 @@
     align-items: center;
   }
 
+  .btn-sound {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    padding: 10px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+  }
+
+  .btn-sound:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .btn-sound.muted {
+    opacity: 0.5;
+  }
+
+  .btn-sound.muted:hover {
+    opacity: 0.7;
+  }
 
   .btn {
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
@@ -893,29 +921,6 @@
 [data-theme="pinkviolet"] .context-menu-item { color: #fff1fa; }
 [data-theme="pinkviolet"] .context-menu-item:hover { background: #ff91e9; color: #2a133d; }
 
-/* Theme: Red */
-[data-theme="red"] {
-  --bg: #0f0f0f;
-  --panel: #111111;
-  --accent: #ff2121;
-  --accent-2: #ee5959;
-  --card: #0b0b0b;
-  --muted: #ee5959;
-  --white: #ff2121;
-}
-[data-theme="red"] body { background: #0b0b0b; color: var(--white); }
-[data-theme="red"] .block,
-[data-theme="red"] .block-header,
-[data-theme="red"] .block-content,
-[data-theme="red"] .block-item {
-  background: #111 !important;
-  color: #ff2121 !important;
-  border: 1px solid #ff2121 !important;
-}
-[data-theme="red"] .color-dot { background: #ff2121 !important; }
-[data-theme="red"] .context-menu { background: #111; color: #ff2121; border-color: #ff2121; }
-[data-theme="red"] .context-menu-item { color: #ff2121; }
-[data-theme="red"] .context-menu-item:hover { background: #ff2121; color: #000; }
 </style>
 </head>
 <body>
@@ -923,6 +928,9 @@
     <div class="header">
       <h1>🐢 TurtCD</h1>
       <div class="header-actions">
+        <button id="soundToggleBtn" class="btn-sound" onclick="toggleSound()" title="Переключить звук">
+          <span id="soundIcon">🔊</span>
+        </button>
         <div id="socialLinks" style="display:flex; gap:8px; align-items:center;">
         </div>
       </div>
