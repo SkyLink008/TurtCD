@@ -3,15 +3,15 @@
     {
       "id": "category_23b3a057",
       "name": "Telebot - Управление",
-      "color": "#3498db",
+      "color": "#8FBC8F",
       "collapsed": true,
       "blocks": [
         {
           "id": "block_5cc5d123",
           "name": "Инициализировать telebot",
           "type": "action",
-          "color": "#008040",
-          "code": "import telebot\nfrom telebot import types\nbot = telebot.TeleBot('{token}')\n\n\n",
+          "color": "#8FBC8F",
+          "code": "import telebot\nfrom telebot import types\nimport os\n\nbot = telebot.TeleBot('{token}')\n\n",
           "fields": [
             {
               "name": "token",
@@ -28,8 +28,8 @@
           "id": "block_4458c56b",
           "name": "Запустить бота",
           "type": "action",
-          "color": "#008040",
-          "code": "bot.polling(none_stop=True, interval=0)\n",
+          "color": "#8FBC8F",
+          "code": "try:\n    bot.polling(none_stop=True, interval=0, timeout=20)\nexcept Exception as e:\n    print(f\"Ошибка: {e}\")\n",
           "fields": [],
           "width": 180,
           "height": 80
@@ -38,8 +38,8 @@
           "id": "block_e34fa5bf",
           "name": "Получить username пользователя",
           "type": "action",
-          "color": "#008040",
-          "code": "{output} = message.from_user.username\n",
+          "color": "#8FBC8F",
+          "code": "{output} = message.from_user.username if message.from_user.username else None\n",
           "fields": [
             {
               "name": "output",
@@ -56,8 +56,8 @@
           "id": "block_25915ea2",
           "name": "Получить name пользователя",
           "type": "action",
-          "color": "#008040",
-          "code": "{output} = message.from_user.first_name\n",
+          "color": "#8FBC8F",
+          "code": "{output} = message.from_user.first_name if message.from_user.first_name else \"Пользователь\"\n",
           "fields": [
             {
               "name": "output",
@@ -74,8 +74,8 @@
           "id": "block_a45bbed5",
           "name": "Получить id пользователя",
           "type": "action",
-          "color": "#008040",
-          "code": "{output} = message.from_user.id\n\n\n",
+          "color": "#8FBC8F",
+          "code": "{output} = message.from_user.id\n",
           "fields": [
             {
               "name": "output",
@@ -93,15 +93,15 @@
     {
       "id": "category_b9e75793",
       "name": "Telebot - Слушатель",
-      "color": "#3498db",
+      "color": "#8FBC8F",
       "collapsed": true,
       "blocks": [
         {
           "id": "block_e77e3a15",
           "name": "Объявить слушателя",
           "type": "loop",
-          "color": "#008040",
-          "code": "@bot.message_handler(content_types=['text'])\ndef get_text_messages(message):\n\n",
+          "color": "#8FBC8F",
+          "code": "@bot.message_handler(content_types=['text'])\ndef handle_text_message(message):\n",
           "fields": [],
           "width": 180,
           "height": 80
@@ -110,8 +110,8 @@
           "id": "block_a79b4f57",
           "name": "Сравнить сообщение от слушателя",
           "type": "condition",
-          "color": "#008040",
-          "code": "if message.text == {content}:\n\n",
+          "color": "#8FBC8F",
+          "code": "if message.text and message.text.strip() == {content}:\n",
           "fields": [
             {
               "name": "content",
@@ -128,8 +128,8 @@
           "id": "block_01441389",
           "name": "Отправить сообщение",
           "type": "action",
-          "color": "#008040",
-          "code": "bot.send_message(message.from_user.id, {message})\n\n",
+          "color": "#8FBC8F",
+          "code": "try:\n    bot.send_message(chat_id=message.chat.id, text={message}, parse_mode='HTML')\nexcept Exception as e:\n    print(f\"Ошибка отправки: {e}\")\n",
           "fields": [
             {
               "name": "message",
@@ -146,8 +146,8 @@
           "id": "block_0073e2ed",
           "name": "Ответить на сообщение пользователя",
           "type": "action",
-          "color": "#008040",
-          "code": "bot.reply_to(message, {message})\n",
+          "color": "#8FBC8F",
+          "code": "try:\n    bot.reply_to(message, {message}, parse_mode='HTML')\nexcept Exception as e:\n    print(f\"Ошибка ответа: {e}\")\n",
           "fields": [
             {
               "name": "message",
@@ -164,8 +164,8 @@
           "id": "block_b4c887d8",
           "name": "Создать шаг",
           "type": "loop",
-          "color": "#008040",
-          "code": "def {step}(message):\n    {value} = message.text\n\n",
+          "color": "#8FBC8F",
+          "code": "def {step}(message):\n    try:\n        {value} = message.text if message.text else \"\"\n    except Exception as e:\n        {value} = \"\"\n        print(f\"Ошибка: {e}\")\n",
           "fields": [
             {
               "name": "step",
@@ -189,8 +189,8 @@
           "id": "block_784a6c8c",
           "name": "Перейти к шагу",
           "type": "action",
-          "color": "#008040",
-          "code": "bot.register_next_step_handler(message, {step})\n\n\n",
+          "color": "#8FBC8F",
+          "code": "try:\n    bot.register_next_step_handler(message, {step})\nexcept Exception as e:\n    print(f\"Ошибка регистрации шага: {e}\")\n",
           "fields": [
             {
               "name": "step",
@@ -207,8 +207,83 @@
           "id": "block_64544d3b",
           "name": "Отправить фото",
           "type": "action",
-          "color": "#008040",
-          "code": "photo = open(path, \"rb\")\nbot.send_photo(message.chat.id, photo, caption={text})\nphoto.close()\n\n\n\n\n\n\n",
+          "color": "#8FBC8F",
+          "code": "try:\n    with open({path}, 'rb') as photo_file:\n        bot.send_photo(chat_id=message.chat.id, photo=photo_file, caption={text}, parse_mode='HTML')\nexcept FileNotFoundError:\n    bot.send_message(message.chat.id, \"Файл не найден\")\nexcept Exception as e:\n    bot.send_message(message.chat.id, f\"Ошибка отправки фото: {e}\")\n",
+          "fields": [
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"destription\""
+            },
+            {
+              "name": "path",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "\"path\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_9a8b7c6d",
+          "name": "Отправить изображение",
+          "type": "action",
+          "color": "#8FBC8F",
+          "code": "try:\n    with open({path}, 'rb') as image_file:\n        bot.send_photo(chat_id=message.chat.id, photo=image_file, caption={text}, parse_mode='HTML')\nexcept FileNotFoundError:\n    bot.send_message(message.chat.id, \"Изображение не найдено\")\nexcept Exception as e:\n    bot.send_message(message.chat.id, f\"Ошибка отправки изображения: {e}\")\n",
+          "fields": [
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"destription\""
+            },
+            {
+              "name": "path",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "\"path\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_7f6e5d4c",
+          "name": "Отправить видео",
+          "type": "action",
+          "color": "#8FBC8F",
+          "code": "try:\n    with open({path}, 'rb') as video_file:\n        bot.send_video(chat_id=message.chat.id, video=video_file, caption={text}, parse_mode='HTML')\nexcept FileNotFoundError:\n    bot.send_message(message.chat.id, \"Видео не найдено\")\nexcept Exception as e:\n    bot.send_message(message.chat.id, f\"Ошибка отправки видео: {e}\")\n",
+          "fields": [
+            {
+              "name": "text",
+              "label": "",
+              "type": "text",
+              "required": true,
+              "placeholder": "\"destription\""
+            },
+            {
+              "name": "path",
+              "label": "",
+              "type": "value",
+              "required": true,
+              "placeholder": "\"path\""
+            }
+          ],
+          "width": 180,
+          "height": 80
+        },
+        {
+          "id": "block_8e9d0c1b",
+          "name": "Отправить файл",
+          "type": "action",
+          "color": "#8FBC8F",
+          "code": "try:\n    with open({path}, 'rb') as document_file:\n        bot.send_document(chat_id=message.chat.id, document=document_file, caption={text}, parse_mode='HTML')\nexcept FileNotFoundError:\n    bot.send_message(message.chat.id, \"Файл не найден\")\nexcept Exception as e:\n    bot.send_message(message.chat.id, f\"Ошибка отправки файла: {e}\")\n",
           "fields": [
             {
               "name": "text",
@@ -233,15 +308,15 @@
     {
       "id": "category_dfb788e8",
       "name": "Telebot - Обработчик",
-      "color": "#3498db",
+      "color": "#8FBC8F",
       "collapsed": true,
       "blocks": [
         {
           "id": "block_36c13e27",
           "name": "Обрабочик команды",
           "type": "condition",
-          "color": "#008040",
-          "code": "@bot.message_handler(commands=['{command}'])\ndef handle_{command}(message):\n\n",
+          "color": "#8FBC8F",
+          "code": "@bot.message_handler(commands=['{command}'])\ndef handle_command_{command}(message):\n",
           "fields": [
             {
               "name": "command",
@@ -259,15 +334,15 @@
     {
       "id": "category_c2950246",
       "name": "Telebot - Клавиатура",
-      "color": "#3498db",
+      "color": "#8FBC8F",
       "collapsed": true,
       "blocks": [
         {
           "id": "block_5a25e02d",
           "name": "Инициализация callback слушателя",
           "type": "loop",
-          "color": "#008040",
-          "code": "@bot.callback_query_handler(func=lambda call: True)\ndef callback_worker(message):\n\n\n\n",
+          "color": "#8FBC8F",
+          "code": "@bot.callback_query_handler(func=lambda call: True)\ndef callback_worker(call):\n    message = call.message\n",
           "fields": [],
           "width": 180,
           "height": 80
@@ -276,8 +351,8 @@
           "id": "block_66a5d5a9",
           "name": "Сравнить callback",
           "type": "condition",
-          "color": "#008040",
-          "code": "if message.data == \"{callback}\":\n\n\n",
+          "color": "#8FBC8F",
+          "code": "if call.data == \"{callback}\":\n",
           "fields": [
             {
               "name": "callback",
@@ -294,8 +369,8 @@
           "id": "block_c58c3125",
           "name": "Создать клавиатуру",
           "type": "action",
-          "color": "#008040",
-          "code": "{name} = types.InlineKeyboardMarkup()\n",
+          "color": "#8FBC8F",
+          "code": "{name} = types.InlineKeyboardMarkup(row_width=1)\n",
           "fields": [
             {
               "name": "name",
@@ -312,8 +387,8 @@
           "id": "block_1b7997ab",
           "name": "Создать кнопку",
           "type": "action",
-          "color": "#008040",
-          "code": "{name} = types.InlineKeyboardButton(text={text}, callback_data=\"{data}\")\n\n",
+          "color": "#8FBC8F",
+          "code": "{name} = types.InlineKeyboardButton(text={text}, callback_data=\"{data}\")\n",
           "fields": [
             {
               "name": "data",
@@ -344,8 +419,8 @@
           "id": "block_fcee9e1b",
           "name": "Добавить кнопку в клавиатуру",
           "type": "action",
-          "color": "#008040",
-          "code": "{ke_n}.add({bu_n})\n\n",
+          "color": "#8FBC8F",
+          "code": "{ke_n}.add({bu_n})\n",
           "fields": [
             {
               "name": "ke_n",
@@ -369,8 +444,8 @@
           "id": "block_c1a187d3",
           "name": "Отправить сообщение с клавиатурой",
           "type": "action",
-          "color": "#008040",
-          "code": "bot.send_message(message.from_user.id, text={text}, reply_markup={keyb})\n\n",
+          "color": "#8FBC8F",
+          "code": "try:\n    bot.send_message(chat_id=message.chat.id, text={text}, reply_markup={keyb}, parse_mode='HTML')\nexcept Exception as e:\n    print(f\"Ошибка отправки сообщения с клавиатурой: {e}\")\n",
           "fields": [
             {
               "name": "text",
